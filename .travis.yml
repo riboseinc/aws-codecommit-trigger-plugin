@@ -1,0 +1,9 @@
+sudo: false
+dist: trusty
+
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+  - openjdk6
+
+language: java

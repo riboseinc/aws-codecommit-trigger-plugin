@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.model.matchers;
+package com.ribose.jenkins.awssqs.matchers.model;
 
 import io.relution.jenkins.awssqs.interfaces.EventTriggerMatcher;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,24 +24,20 @@ import java.util.List;
 
 public abstract class AbstractEventTriggerMatcher implements EventTriggerMatcher {
 
-    protected final List<EventTriggerMatcher> matchers;
+    protected List<EventTriggerMatcher> matchers;
 
     public AbstractEventTriggerMatcher(EventTriggerMatcher... matchers) {
         this.matchers = new ArrayList<>();
         CollectionUtils.addAll(this.matchers, matchers);
     }
 
-    public AbstractEventTriggerMatcher(List<EventTriggerMatcher> matchers) {
-        this.matchers = new ArrayList<>(matchers);
-    }
-
     public AbstractEventTriggerMatcher and(EventTriggerMatcher... matchers) {
         CollectionUtils.addAll(this.matchers, matchers);
-        return new AndEventTriggerMatcher(this.matchers);
+        return new AndEventTriggerMatcher(this.matchers.toArray(new EventTriggerMatcher[]{}));
     }
 
     public AbstractEventTriggerMatcher or(EventTriggerMatcher... matchers) {
         CollectionUtils.addAll(this.matchers, matchers);
-        return new OrEventTriggerMatcher(this.matchers);
+        return new OrEventTriggerMatcher(this.matchers.toArray(new EventTriggerMatcher[]{}));
     }
 }

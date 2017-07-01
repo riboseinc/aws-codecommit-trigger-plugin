@@ -1,4 +1,5 @@
 /*
+ * Copyright 2017 Ribose Inc. <https://www.ribose.com>
  * Copyright 2016 M-Way Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +18,14 @@
 package io.relution.jenkins.awssqs.threading;
 
 import com.amazonaws.services.sqs.model.Message;
+import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitor;
+import io.relution.jenkins.awssqs.logging.Log;
+import io.relution.jenkins.awssqs.net.SQSChannel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitor;
-import io.relution.jenkins.awssqs.logging.Log;
-import io.relution.jenkins.awssqs.net.SQSChannel;
 
 
 public class SQSQueueMonitorImpl implements SQSQueueMonitor {
@@ -121,19 +121,15 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
             Log.fine("Start synchronous monitor for %s", this.channel);
             this.processMessages();
-
         } catch (final com.amazonaws.services.sqs.model.QueueDoesNotExistException e) {
             Log.warning("Queue %s does not exist, monitor stopped", this.channel);
             this.isShutDown = true;
-
         } catch (final com.amazonaws.AmazonServiceException e) {
             Log.warning("Service error for queue %s, monitor stopped", this.channel);
             this.isShutDown = true;
-
         } catch (final Exception e) {
             Log.severe(e, "Unknown error, monitor for queue %s stopped", this.channel);
             this.isShutDown = true;
-
         } finally {
             if (!this.isRunning.compareAndSet(true, false)) {
                 Log.warning("Monitor for %s already stopped", this.channel);
@@ -170,31 +166,33 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
     }
 
     private void processMessages() {
-        final List<Message> messages = this.channel.getMessages();
-
         if (this.isShutDown) {
             return;
         }
 
-        if (this.notifyListeners(messages)) {
-            this.channel.deleteMessages(messages);
-        }
+        final List<Message> messages = this.channel.getMessages();
+        List<Message> proceedMessages = notifyListeners(messages);
+        Log.fine("Received %s messages, proceed %s messages", messages.size(), proceedMessages.size());
+        this.channel.deleteMessages(proceedMessages);
     }
 
-    private boolean notifyListeners(final List<Message> messages) {
-        if (messages.isEmpty()) {
+    private List<Message> notifyListeners(final List<Message> messages) {
+        List<Message> proceedMessages = new ArrayList<>();
+
+        if (!messages.isEmpty()) {
+            Log.info("Received %d message(s) from %s", messages.size(), this.channel);
+            final List<io.relution.jenkins.awssqs.interfaces.SQSQueueListener> listeners = this.getListeners();
+
+            for (final io.relution.jenkins.awssqs.interfaces.SQSQueueListener listener : listeners) {
+                List<Message> msgs = listener.handleMessages(messages);
+                proceedMessages.addAll(msgs);
+                messages.removeAll(msgs);
+            }
+        } else {
             Log.fine("Received no messages from %s", this.channel);
-            return false;
         }
 
-        Log.info("Received %d message(s) from %s", messages.size(), this.channel);
-        final List<io.relution.jenkins.awssqs.interfaces.SQSQueueListener> listeners = this.getListeners();
-
-        for (final io.relution.jenkins.awssqs.interfaces.SQSQueueListener listener : listeners) {
-            listener.handleMessages(messages);
-        }
-
-        return true;
+        return proceedMessages;
     }
 
     private List<io.relution.jenkins.awssqs.interfaces.SQSQueueListener> getListeners() {

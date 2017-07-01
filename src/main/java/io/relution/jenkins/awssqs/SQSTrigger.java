@@ -44,7 +44,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -122,10 +121,14 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
     }
 
     @Override
-    public void handleMessages(final List<Message> messages) {
+    public List<Message> handleMessages(final List<Message> messages) {
+        List<Message> proceedMessages = new ArrayList<>();
         for (final Message message : messages) {
-            this.handleMessage(message);
+            if (this.handleMessage(message)) {
+                proceedMessages.add(message);
+            }
         }
+        return proceedMessages;
     }
 
     @Override
@@ -189,18 +192,23 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
         return this.executor;
     }
 
-    private void handleMessage(final Message message) {
+    private boolean handleMessage(final Message message) {
         Log.info("Message '%s' received...", message.getMessageId());
+
         final MessageParser parser = this.messageParserFactory.createParser(message);
         final EventTriggerMatcher matcher = this.getEventTriggerMatcher();
         final List<Event> events = parser.parseMessage(message);
+
         if (matcher.matches(events, this.job)) {
             Log.info("Event matched, executing job '%s'", this.job.getName());
             if (this.upcomingMessagesQueue.add(message)) {
                 Log.info("Job is being in queue?: %s",this.job.isInQueue());
                 this.execute();
+                return true;
             }
         }
+
+        return false;
     }
 
     private void execute() {

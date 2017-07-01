@@ -1,4 +1,5 @@
 /*
+ * Copyright 2017 Ribose Inc. <https://www.ribose.com>
  * Copyright 2016 M-Way Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,7 +114,8 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
     public AmazonSQS getSQSClient() {
         if (this.sqs == null) {
-            this.sqs = this.getFactory().createSQS(this);
+//            this.sqs = this.getFactory().createSQS(this);
+            this.sqs = this.getFactory().createSQSAsync(this);
         }
         return this.sqs;
     }
@@ -156,7 +158,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
     }
 
     @Override
-    public int getMaxNumberOfMessages() {
+    public int getMaxNumberOfMessages() {//TODO max is 10, see com.amazonaws.services.sqs.AmazonSQS.receiveMessage(com.amazonaws.services.sqs.model.ReceiveMessageRequest)
         if (this.maxNumberOfMessages == null) {
             return MAX_NUMBER_OF_MESSAGES_DEFAULT;
         }
@@ -201,12 +203,12 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         if (StringUtils.isBlank(this.getName())) {
             return false;
         }
-//        if (StringUtils.isEmpty(this.getAWSAccessKeyId())) {
-//            return false;
-//        }
-//        if (StringUtils.isEmpty(this.getAWSSecretKey())) {
-//            return false;
-//        }
+        if (StringUtils.isBlank(this.getAWSAccessKeyId())) {
+            return false;
+        }
+        if (StringUtils.isBlank(this.getAWSSecretKey())) {
+            return false;
+        }
         return true;
     }
 
@@ -220,16 +222,20 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         if (obj == this) {
             return true;
         }
+
         if (obj == null) {
             return false;
         }
+
         if (!(obj instanceof SQSTriggerQueue)) {
             return false;
         }
+
         final SQSTriggerQueue other = (SQSTriggerQueue) obj;
         if (!this.uuid.equals(other.uuid)) {
             return false;
         }
+
         return true;
     }
 
@@ -267,7 +273,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
         @Override
         public String getDisplayName() {
-            return Messages.displayName(); // unused
+            return Messages.displayName();
         }
 
         public FormValidation doCheckNameOrUrl(@QueryParameter final String value) {
@@ -323,13 +329,13 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                     return FormValidation.warning("Name or URL of the queue must be set.");
                 }
 
-//                if (StringUtils.isEmpty(queue.getAWSAccessKeyId())) {
-//                    return FormValidation.warning("AWS access key ID must be set.");
-//                }
-//
-//                if (StringUtils.isEmpty(queue.getAWSSecretKey())) {
-//                    return FormValidation.warning("AWS secret key must be set.");
-//                }
+                if (StringUtils.isBlank(queue.getAWSAccessKeyId())) {
+                    return FormValidation.warning("AWS access key ID must be set.");
+                }
+
+                if (StringUtils.isBlank(queue.getAWSSecretKey())) {
+                    return FormValidation.warning("AWS secret key must be set.");
+                }
 
                 final AmazonSQS client = queue.getSQSClient();
 

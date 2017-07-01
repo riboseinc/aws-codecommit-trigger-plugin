@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.model.matchers;
+package com.ribose.jenkins.awssqs.matchers.model;
 
 import hudson.model.AbstractProject;
 import io.relution.jenkins.awssqs.SQSTrigger;

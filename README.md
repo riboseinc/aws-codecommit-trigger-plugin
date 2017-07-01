@@ -3,7 +3,9 @@
 [![Build Status](http://img.shields.io/travis/riboseinc/aws-codecommit-trigger-plugin.svg?style=flat-square)](https://travis-ci.org/riboseinc/aws-codecommit-trigger-plugin)
 [![License](http://img.shields.io/:license-apache-blue.svg?style=flat-square)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-A Jenkins plugin that allows to uses Events from Amazon CodeCommit Repo sent to Amazon Simple Queue Service (SQS) as a build trigger but it not check out the Repo.
+A Jenkins plugin that allows to uses Events from Amazon CodeCommit Repo sent to Amazon Simple Queue Service (SQS) as a build trigger 
+
+**NOTE** This plugin not check out the Repo.
 
 Bellow are general steps to config your Amazon Services:
 

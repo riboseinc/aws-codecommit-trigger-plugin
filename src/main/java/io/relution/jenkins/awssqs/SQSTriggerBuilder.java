@@ -60,12 +60,14 @@ public class SQSTriggerBuilder implements Runnable {
         }
     }
 
+    //TODO review this condition
     private void buildIfChanged(final StreamTaskListener listener) {
         final PrintStream logger = listener.getLogger();
         final long now = System.currentTimeMillis();
 
         logger.format("Started on %s", this.toDateTime(now));
 
+        //TODO should we force the build ?
         final boolean hasChanges = this.job.getScm().getClass().isAssignableFrom(NullSCM.class) // always trigger Job if NoSCM found
             || this.job.poll(listener).hasChanges();
 
@@ -100,7 +102,7 @@ public class SQSTriggerBuilder implements Runnable {
 
         logger.println(triggerMsg);
 
-        //sometime a Job can be represent for 1+ SQS messages, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
+        //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         if (job.scheduleBuild(cause)) {
             logger.println("Job queued");
         } else {

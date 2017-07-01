@@ -45,6 +45,7 @@ public interface SQSQueueListener {
      * The method to be invoked when new messages arrive in the SQS queue this listener is
      * associated with.
      * @param messages The collection of {@link Message} instances that were posted to the queue.
+     * @return list of {@link Message} proceed
      */
-    void handleMessages(List<Message> messages);
+    List<Message> handleMessages(List<Message> messages);
 }

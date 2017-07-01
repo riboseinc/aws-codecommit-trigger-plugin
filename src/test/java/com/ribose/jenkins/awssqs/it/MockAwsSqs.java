@@ -34,7 +34,7 @@ public class MockAwsSqs {
     private static final MockAwsSqs instance = new MockAwsSqs();
 
     private final String sqsMessageTemplate;
-    private int port = 8001;
+    private int port = 8001;//TODO find free port
     private boolean started = false;
     private SQSService api;
     private AmazonSQSClient sqsClient;

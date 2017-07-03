@@ -24,7 +24,7 @@ import hudson.model.Cause;
 import hudson.scm.NullSCM;
 import hudson.util.StreamTaskListener;
 import io.relution.jenkins.awssqs.logging.Log;
-import io.relution.jenkins.awssqs.util.StringUtils;
+import plugins.jenkins.awssqs.utils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;

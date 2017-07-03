@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.matchers.model;
+package plugins.jenkins.awssqs.matchers.model;
 
 import hudson.model.AbstractProject;
 import io.relution.jenkins.awssqs.interfaces.Event;

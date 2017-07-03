@@ -22,11 +22,5 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Interface definition for factories that can create a {@link ThreadPoolExecutor}.
  */
-public interface ExecutorFactory {
-
-    /**
-     * Returns a new instance of a {@link ThreadPoolExecutor}.
-     * @return A new {@link ThreadPoolExecutor}.
-     */
-    public ThreadPoolExecutor createExecutor();
+public interface ExecutorFactory extends com.amazonaws.client.builder.ExecutorFactory {
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs;
+package plugins.jenkins.awssqs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

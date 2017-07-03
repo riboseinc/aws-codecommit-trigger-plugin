@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.matchers.model;
+package plugins.jenkins.awssqs.matchers.model;
 
 import hudson.model.AbstractProject;
 import hudson.plugins.git.BranchSpec;
@@ -42,7 +42,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         }
 
         SCM scm = job.getScm();
-        if (scm.getClass().isAssignableFrom(NullSCM.class)) {
+        if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
             Log.info("Job '%s' has no SCM config", job.getName());
             return false;
         }
@@ -128,7 +128,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     }
 
     private boolean matchesConfig(final Event event, final RemoteConfig config) {
-        for (final URIish uri : config.getURIs()) {
+        List<URIish> uris = config.getURIs();
+        for (final URIish uri : uris) {
             if (event.isMatch(uri)) {
                 return true;
             }

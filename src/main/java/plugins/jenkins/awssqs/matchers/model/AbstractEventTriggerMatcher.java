@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.matchers.model;
+package plugins.jenkins.awssqs.matchers.model;
 
 import io.relution.jenkins.awssqs.interfaces.EventTriggerMatcher;
 import org.apache.commons.collections.CollectionUtils;

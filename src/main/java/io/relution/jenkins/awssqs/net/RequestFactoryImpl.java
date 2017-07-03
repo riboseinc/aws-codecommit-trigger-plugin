@@ -25,7 +25,6 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO support com.amazonaws.services.sqs.buffered.QueueBufferConfig
 public class RequestFactoryImpl implements RequestFactory {
 
     @Override

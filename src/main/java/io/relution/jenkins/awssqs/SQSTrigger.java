@@ -53,7 +53,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.relution.jenkins.awssqs.interfaces.SQSQueueListener, Runnable {
+public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQueueListener, Runnable {
     private final String queueUuid;
     private final String subscribedBranches;
 
@@ -264,7 +264,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
     @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
 
-        public static final String KEY_SQS_QUEUES = "sqsQueues";
         private volatile List<io.relution.jenkins.awssqs.SQSTriggerQueue> sqsQueues;
 
         private volatile transient Map<String, io.relution.jenkins.awssqs.SQSTriggerQueue> sqsQueueMap;
@@ -299,10 +298,10 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
         }
 
         public ListBoxModel doFillQueueUuidItems() {
-            final List<io.relution.jenkins.awssqs.SQSTriggerQueue> queues = this.getSqsQueues();
+            final List<SQSTriggerQueue> queues = this.getSqsQueues();
             final ListBoxModel items = new ListBoxModel();
 
-            for (final io.relution.jenkins.awssqs.SQSTriggerQueue queue : queues) {
+            for (final SQSTriggerQueue queue : queues) {
                 items.add(queue.getName(), queue.getUuid());
             }
 
@@ -327,8 +326,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckSubscribedBranches(@QueryParameter String subscribedBranches) {
-            if (subscribedBranches == null || subscribedBranches.trim().length() == 0) {
+        public FormValidation doCheckSubscribedBranches(@QueryParameter final String subscribedBranches) {
+            if (StringUtils.isBlank(subscribedBranches)) {
                 return FormValidation.warning(Messages.warningSubscribedBranches());
             }
             return FormValidation.ok();
@@ -336,17 +335,18 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
 
         @Override
         public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
-            final Object sqsQueues = json.get(KEY_SQS_QUEUES);
+            final Object sqsQueues = json.get("sqsQueues");
 
-            this.sqsQueues = req.bindJSONToList(io.relution.jenkins.awssqs.SQSTriggerQueue.class, sqsQueues);
+            this.sqsQueues = req.bindJSONToList(SQSTriggerQueue.class, sqsQueues);
             this.initQueueMap();
+
             this.save();
 
             EventBroker.getInstance().post(new ConfigurationChangedEvent());
             return true;
         }
 
-        public List<io.relution.jenkins.awssqs.SQSTriggerQueue> getSqsQueues() {
+        public List<SQSTriggerQueue> getSqsQueues() {
             if (!this.isLoaded) {
                 this.load();
             }

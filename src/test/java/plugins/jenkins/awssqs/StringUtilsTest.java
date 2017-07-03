@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs;
+package plugins.jenkins.awssqs;
 
-import io.relution.jenkins.awssqs.util.StringUtils;
+import plugins.jenkins.awssqs.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.map.LinkedMap;

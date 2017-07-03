@@ -17,9 +17,9 @@
 
 package io.relution.jenkins.awssqs.model;
 
-import com.ribose.jenkins.awssqs.matchers.model.AndEventTriggerMatcher;
-import com.ribose.jenkins.awssqs.matchers.model.ScmJobEventTriggerMatcher;
-import com.ribose.jenkins.awssqs.matchers.model.SubscribeBranchEventTriggerMatcher;
+import plugins.jenkins.awssqs.matchers.model.AndEventTriggerMatcher;
+import plugins.jenkins.awssqs.matchers.model.ScmJobEventTriggerMatcher;
+import plugins.jenkins.awssqs.matchers.model.SubscribeBranchEventTriggerMatcher;
 import hudson.model.AbstractProject;
 import io.relution.jenkins.awssqs.interfaces.Event;
 import io.relution.jenkins.awssqs.interfaces.EventTriggerMatcher;
@@ -33,7 +33,7 @@ public class EventTriggerMatcherImpl implements EventTriggerMatcher {
 
     public EventTriggerMatcherImpl() {
         this.delegate = new AndEventTriggerMatcher(
-            new ScmJobEventTriggerMatcher(),//TODO use a flag to force to ignore this matcher
+            new ScmJobEventTriggerMatcher(),
             new SubscribeBranchEventTriggerMatcher()
         );
     }

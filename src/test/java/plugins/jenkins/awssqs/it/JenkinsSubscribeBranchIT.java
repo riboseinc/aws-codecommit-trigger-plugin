@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.it;
+package plugins.jenkins.awssqs.it;
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import hudson.Launcher;

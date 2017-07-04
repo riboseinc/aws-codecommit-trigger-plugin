@@ -22,16 +22,16 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
 import com.amazonaws.services.sqs.buffered.QueueBufferConfig;
 import com.google.inject.Inject;
 import hudson.ProxyConfiguration;
-import io.relution.jenkins.awssqs.interfaces.ExecutorFactory;
+import io.relution.jenkins.awssqs.interfaces.SQSExecutorFactory;
 import io.relution.jenkins.awssqs.interfaces.SQSFactory;
 import io.relution.jenkins.awssqs.interfaces.SQSQueue;
 import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitor;
+import io.relution.jenkins.awssqs.net.RequestFactory;
 import io.relution.jenkins.awssqs.net.SQSChannel;
 import io.relution.jenkins.awssqs.net.SQSChannelImpl;
 import io.relution.jenkins.awssqs.threading.SQSQueueMonitorImpl;
@@ -42,52 +42,24 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.concurrent.ExecutorService;
 
-//TODO fix deprecated functions
 public class SQSFactoryImpl implements SQSFactory {
 
-    private final io.relution.jenkins.awssqs.net.RequestFactory factory;
-    private final ExecutorFactory executorFactory;
+    private final RequestFactory factory;
+    private final SQSExecutorFactory SQSExecutorFactory;
 
     @Inject
-    public SQSFactoryImpl(final ExecutorFactory executorFactory, final io.relution.jenkins.awssqs.net.RequestFactory factory) {
-        this.executorFactory = executorFactory;
+    public SQSFactoryImpl(final SQSExecutorFactory SQSExecutorFactory, final RequestFactory factory) {
+        this.SQSExecutorFactory = SQSExecutorFactory;
         this.factory = factory;
     }
 
-//    @Override
-//    public AmazonSQS createSQS(final SQSQueue queue) {
-//        final ClientConfiguration clientConfiguration = this.getClientConfiguration(queue);
-//        boolean hasCredentials = isNotBlank(queue.getAWSAccessKeyId()) && isNotBlank(queue.getAWSSecretKey());
-//        io.relution.jenkins.awssqs.logging.Log.info("Creating AmazonSQS instance - hasCredentials='%s'", hasCredentials);
-//        final AmazonSQS sqs = hasCredentials ? new AmazonSQSClient(queue, clientConfiguration) : new AmazonSQSClient(clientConfiguration);
-//
-//        if (queue.getEndpoint() != null) {
-//            sqs.setEndpoint(queue.getEndpoint());
-//        }
-//
-//        return sqs;
-//    }
-
     @Override
-    public AmazonSQSAsync createSQSAsync(final SQSQueue queue) {
+    public AmazonSQS createSQSAsync(final SQSQueue queue) {
         ClientConfiguration clientConfiguration = this.getClientConfiguration(queue);
         AmazonSQSAsyncClientBuilder sqsAsyncBuilder = AmazonSQSAsyncClientBuilder.standard()
             .withClientConfiguration(clientConfiguration)
             .withCredentials(queue.hasCredentials() ? queue : DefaultAWSCredentialsProviderChain.getInstance())
-            .withExecutorFactory(this.executorFactory);
-
-
-
-
-//        boolean hasCredentials = isNotBlank(queue.getAWSAccessKeyId()) && isNotBlank(queue.getAWSSecretKey());
-//
-//        io.relution.jenkins.awssqs.logging.Log.info("Creating AmazonSQS instance - hasCredentials='%s'", hasCredentials);
-//
-//        final AmazonSQSAsyncClient sqsAsync = hasCredentials ? new AmazonSQSAsyncClient(queue, clientConfiguration, this.executor) : new AmazonSQSAsyncClient(clientConfiguration);
-//
-//        if (queue.getEndpoint() != null) {
-//            sqsAsync.setEndpoint(queue.getEndpoint());
-//        }
+            .withExecutorFactory(this.SQSExecutorFactory);
 
         final QueueBufferConfig queueBufferConfig = this.getQueueBufferConfig(queue);
         final AmazonSQSBufferedAsyncClient sqsBufferedAsync = new AmazonSQSBufferedAsyncClient(sqsAsyncBuilder.build(), queueBufferConfig);
@@ -97,12 +69,12 @@ public class SQSFactoryImpl implements SQSFactory {
 
 
     @Override
-    public AmazonSQSAsync createSQSAsync(String accessKey, String secretKey) {
+    public AmazonSQS createSQSAsync(String accessKey, String secretKey) {
         ClientConfiguration clientConfiguration = this.getClientConfiguration(null);
         AmazonSQSAsyncClientBuilder sqsAsyncBuilder = AmazonSQSAsyncClientBuilder.standard()
             .withClientConfiguration(clientConfiguration)
             .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
-            .withExecutorFactory(this.executorFactory);
+            .withExecutorFactory(this.SQSExecutorFactory);
 
         final QueueBufferConfig queueBufferConfig = this.getQueueBufferConfig(null);
         final AmazonSQSBufferedAsyncClient sqsBufferedAsync = new AmazonSQSBufferedAsyncClient(sqsAsyncBuilder.build(), queueBufferConfig);
@@ -110,10 +82,9 @@ public class SQSFactoryImpl implements SQSFactory {
         return sqsBufferedAsync;
     }
 
-//    @Override
     private SQSChannel createChannel(final SQSQueue queue) {
         final AmazonSQS sqs = this.createSQSAsync(queue);
-        return new io.relution.jenkins.awssqs.net.SQSChannelImpl(sqs, queue, this.factory);
+        return new SQSChannelImpl(sqs, queue, this.factory);
     }
 
     @Override

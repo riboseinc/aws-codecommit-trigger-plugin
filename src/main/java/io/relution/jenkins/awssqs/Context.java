@@ -23,12 +23,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 import io.relution.jenkins.awssqs.factories.MessageParserFactoryImpl;
+import io.relution.jenkins.awssqs.factories.SQSExecutorFactoryImpl;
 import io.relution.jenkins.awssqs.factories.SQSFactoryImpl;
 import io.relution.jenkins.awssqs.factories.ThreadFactoryImpl;
-import io.relution.jenkins.awssqs.interfaces.EventTriggerMatcher;
-import io.relution.jenkins.awssqs.interfaces.ExecutorProvider;
-import io.relution.jenkins.awssqs.interfaces.MessageParserFactory;
-import io.relution.jenkins.awssqs.interfaces.SQSQueueProvider;
+import io.relution.jenkins.awssqs.interfaces.*;
 import io.relution.jenkins.awssqs.model.EventTriggerMatcherImpl;
 import io.relution.jenkins.awssqs.model.SQSQueueProviderImpl;
 import io.relution.jenkins.awssqs.net.RequestFactory;
@@ -52,8 +50,8 @@ public class Context extends com.google.inject.AbstractModule {
                 .to(ThreadFactoryImpl.class)
                 .in(com.google.inject.Singleton.class);
 
-        this.bind(io.relution.jenkins.awssqs.interfaces.ExecutorFactory.class)
-                .to(io.relution.jenkins.awssqs.factories.ExecutorFactoryImpl.class)
+        this.bind(SQSExecutorFactory.class)
+                .to(SQSExecutorFactoryImpl.class)
                 .in(com.google.inject.Singleton.class);
 
         this.bind(ExecutorProvider.class)

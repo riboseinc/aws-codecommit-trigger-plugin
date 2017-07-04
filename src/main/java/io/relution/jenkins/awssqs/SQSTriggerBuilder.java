@@ -21,7 +21,6 @@ import com.amazonaws.services.sqs.model.Message;
 import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
-import hudson.scm.NullSCM;
 import hudson.util.StreamTaskListener;
 import io.relution.jenkins.awssqs.logging.Log;
 import plugins.jenkins.awssqs.utils.StringUtils;
@@ -67,9 +66,7 @@ public class SQSTriggerBuilder implements Runnable {
 
         logger.format("Started on %s", this.toDateTime(now));
 
-        //TODO should we force the build ?
-        final boolean hasChanges = this.job.getScm().getClass().isAssignableFrom(NullSCM.class) // always trigger Job if NoSCM found
-            || this.job.poll(listener).hasChanges();
+        final boolean hasChanges = this.job.poll(listener).hasChanges();
 
         if (hasChanges) {
             logger.println("Changes found");

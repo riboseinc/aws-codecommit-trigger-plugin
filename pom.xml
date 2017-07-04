@@ -22,7 +22,7 @@
         Services Simple Queue Service (AWS SQS) on a specified Queue.
     </description>
 
-    <!--scm>
+    <!--TODO scm>
         <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
         </developerConnection>

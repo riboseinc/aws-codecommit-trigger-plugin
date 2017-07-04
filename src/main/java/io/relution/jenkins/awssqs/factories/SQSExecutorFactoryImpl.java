@@ -17,12 +17,12 @@
 package io.relution.jenkins.awssqs.factories;
 
 import com.google.inject.Inject;
-import io.relution.jenkins.awssqs.interfaces.ExecutorFactory;
+import io.relution.jenkins.awssqs.interfaces.SQSExecutorFactory;
 
 import java.util.concurrent.*;
 
 
-public class ExecutorFactoryImpl implements ExecutorFactory {
+public class SQSExecutorFactoryImpl implements SQSExecutorFactory {
 
     /**
      * The number of threads to start by default. Cannot exceed the maximum number of threads.
@@ -38,7 +38,7 @@ public class ExecutorFactoryImpl implements ExecutorFactory {
     final ThreadFactory           threadFactory;
 
     @Inject
-    public ExecutorFactoryImpl(final ThreadFactory threadFactory) {
+    public SQSExecutorFactoryImpl(final ThreadFactory threadFactory) {
         this.threadFactory = threadFactory;
     }
 

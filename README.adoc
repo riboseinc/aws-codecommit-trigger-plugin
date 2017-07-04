@@ -1,9 +1,8 @@
 = AWS CodeCommit Trigger Plugin
 
-[link=https://travis-ci.org/riboseinc/aws-codecommit-trigger-plugin]
-image::http://img.shields.io/travis/riboseinc/aws-codecommit-trigger-plugin.svg?style=flat-square[Build Status]
-[link=http://www.apache.org/licenses/LICENSE-2.0.html]
-image::http://img.shields.io/:license-apache-blue.svg?style=flat-square[License]
+
+image:http://img.shields.io/travis/riboseinc/aws-codecommit-trigger-plugin.svg?style=flat-square[link=https://travis-ci.org/riboseinc/aws-codecommit-trigger-plugin]
+image:http://img.shields.io/:license-apache-blue.svg?style=flat-square[link=http://www.apache.org/licenses/LICENSE-2.0.html]
 
 
 == Introduction
@@ -51,11 +50,11 @@ General steps to config your Amazon Services:
 
 1. Go to `Jenkins > Manage Jenkins > Configure System` on your Jenkins
 
-2. Go to `Amazon Simple Queue Service`
+2. Go to `AWS Code Commit Trigger SQS Plugin`
 
 3. Configure a queue
 
-    * Enter the name of the queue you just created
+    * Select the name of the queue you just created (the list auto-loaded using your enter _Access key ID_ & _Secret key_)
     * Enter the _Access key ID_ of the Jenkins user on AWS
     * Enter the _Secret key_ of the Jenkins user on AWS
 
@@ -66,7 +65,7 @@ an error message make sure you entered the credentials correctly. If you
 still see errors double check the user, group and permissions you set up
 on Amazon Web Services.
 
-image::doc/images/plugin-queue-configuration-success.png["Jenkins configuration test"]
+image::doc/images/global-config.png["Jenkins configuration test"]
 
 
 == Jenkins Job Configuration
@@ -74,8 +73,7 @@ image::doc/images/plugin-queue-configuration-success.png["Jenkins configuration 
 1. Go to `Jenkins > $job`
 2. Click on `Configure`
 3. Scroll down to `Build Triggers`
-4. Check `Trigger build when a message is published to an Amazon SQS
-   queue` //TODO
+4. Check `Build when a Aws Code Commit SNS is published to an Amazon SQS queue` //TODO
 5. Select the queue you created previously
 
 For cost savings, the plugin does not start monitoring a queue until at
@@ -97,7 +95,7 @@ repository on CodeCommit should now trigger a build on Jenkins. If
 nothing happens, make sure the job has been set to use messages posted
 to SQS as a build trigger.
 
-image::doc/images/jenkins-build-triggers.png[Build trigger configuration]
+image::doc/images/job-triggers.png[Build trigger configuration]
 
 == Authors
 

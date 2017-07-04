@@ -16,11 +16,5 @@
 
 package io.relution.jenkins.awssqs.interfaces;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
-
-/**
- * Interface definition for factories that can create a {@link ThreadPoolExecutor}.
- */
-public interface ExecutorFactory extends com.amazonaws.client.builder.ExecutorFactory {
+public interface SQSExecutorFactory extends com.amazonaws.client.builder.ExecutorFactory {
 }

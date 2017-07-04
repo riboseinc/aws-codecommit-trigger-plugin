@@ -44,9 +44,9 @@ public interface SQSFactory {
      * @return A new instance of an {@link AmazonSQSAsync} that is suitable for asynchronous access
      * to the specified queue.
      */
-    AmazonSQSAsync createSQSAsync(final SQSQueue queue);
+    AmazonSQS createSQSAsync(final SQSQueue queue);
 
-    AmazonSQSAsync createSQSAsync(String accessKey, String secretKey);
+    AmazonSQS createSQSAsync(String accessKey, String secretKey);
 
     /**
      * Returns a new channel instance that can be used to communicate with the specified queue.

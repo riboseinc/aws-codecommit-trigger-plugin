@@ -20,16 +20,10 @@
     <f:invisibleEntry>
         <f:readOnlyTextbox field="uuid"/>
     </f:invisibleEntry>
-    <!--f:entry
-        title="${%Queue name or URL}"
-        field="nameOrUrl">
-        <f:textbox/>
-    </f:entry-->
 
     <f:entry title="${%SQS Queue}" field="url">
         <f:select />
         <f:description><b>Enter correct AWS Keys to auto-load SQS Queue List</b></f:description>
-        <!--<f:textbox autoCompleteField="queueUrl" />-->
     </f:entry>
     <f:entry title="${%Access Key}" field="accessKey">
         <f:textbox autocomplete="off"/>
@@ -64,7 +58,7 @@
 
         <f:entry title="${%Max. number of messages}" field="maxNumberOfMessages">
             <!--f:textbox default="10"/-->
-            <f:number default="10"/>
+            <f:textbox default="10"/>
         </f:entry>
     </f:advanced>
 </j:jelly>

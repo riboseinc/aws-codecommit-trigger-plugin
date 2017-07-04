@@ -22,7 +22,7 @@
     xmlns:l="/lib/layout"
     xmlns:t="/lib/hudson"
     xmlns:f="/lib/form">
-    <f:section title="${%Amazon Simple Queue Service} (SQS)">
+    <f:section title="${%AWS Code Commit Trigger SQS Plugin}">
         <f:nested>
             <table style="width:100%">
                 <f:block>

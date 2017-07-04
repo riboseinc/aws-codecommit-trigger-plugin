@@ -44,7 +44,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -54,7 +53,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.relution.jenkins.awssqs.interfaces.SQSQueueListener, Runnable {
+public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQueueListener, Runnable {
     private final String queueUuid;
     private final String subscribedBranches;
 
@@ -122,10 +121,14 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
     }
 
     @Override
-    public void handleMessages(final List<Message> messages) {
+    public List<Message> handleMessages(final List<Message> messages) {
+        List<Message> proceedMessages = new ArrayList<>();
         for (final Message message : messages) {
-            this.handleMessage(message);
+            if (this.handleMessage(message)) {
+                proceedMessages.add(message);
+            }
         }
+        return proceedMessages;
     }
 
     @Override
@@ -189,18 +192,23 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
         return this.executor;
     }
 
-    private void handleMessage(final Message message) {
+    private boolean handleMessage(final Message message) {
         Log.info("Message '%s' received...", message.getMessageId());
+
         final MessageParser parser = this.messageParserFactory.createParser(message);
         final EventTriggerMatcher matcher = this.getEventTriggerMatcher();
         final List<Event> events = parser.parseMessage(message);
+
         if (matcher.matches(events, this.job)) {
             Log.info("Event matched, executing job '%s'", this.job.getName());
             if (this.upcomingMessagesQueue.add(message)) {
                 Log.info("Job is being in queue?: %s",this.job.isInQueue());
                 this.execute();
+                return true;
             }
         }
+
+        return false;
     }
 
     private void execute() {
@@ -256,7 +264,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
     @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
 
-        public static final String KEY_SQS_QUEUES = "sqsQueues";
         private volatile List<io.relution.jenkins.awssqs.SQSTriggerQueue> sqsQueues;
 
         private volatile transient Map<String, io.relution.jenkins.awssqs.SQSTriggerQueue> sqsQueueMap;
@@ -291,10 +298,10 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
         }
 
         public ListBoxModel doFillQueueUuidItems() {
-            final List<io.relution.jenkins.awssqs.SQSTriggerQueue> queues = this.getSqsQueues();
+            final List<SQSTriggerQueue> queues = this.getSqsQueues();
             final ListBoxModel items = new ListBoxModel();
 
-            for (final io.relution.jenkins.awssqs.SQSTriggerQueue queue : queues) {
+            for (final SQSTriggerQueue queue : queues) {
                 items.add(queue.getName(), queue.getUuid());
             }
 
@@ -319,8 +326,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckSubscribedBranches(@QueryParameter String subscribedBranches) {
-            if (subscribedBranches == null || subscribedBranches.trim().length() == 0) {
+        public FormValidation doCheckSubscribedBranches(@QueryParameter final String subscribedBranches) {
+            if (StringUtils.isBlank(subscribedBranches)) {
                 return FormValidation.warning(Messages.warningSubscribedBranches());
             }
             return FormValidation.ok();
@@ -328,17 +335,18 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements io.rel
 
         @Override
         public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
-            final Object sqsQueues = json.get(KEY_SQS_QUEUES);
+            final Object sqsQueues = json.get("sqsQueues");
 
-            this.sqsQueues = req.bindJSONToList(io.relution.jenkins.awssqs.SQSTriggerQueue.class, sqsQueues);
+            this.sqsQueues = req.bindJSONToList(SQSTriggerQueue.class, sqsQueues);
             this.initQueueMap();
+
             this.save();
 
             EventBroker.getInstance().post(new ConfigurationChangedEvent());
             return true;
         }
 
-        public List<io.relution.jenkins.awssqs.SQSTriggerQueue> getSqsQueues() {
+        public List<SQSTriggerQueue> getSqsQueues() {
             if (!this.isLoaded) {
                 this.load();
             }

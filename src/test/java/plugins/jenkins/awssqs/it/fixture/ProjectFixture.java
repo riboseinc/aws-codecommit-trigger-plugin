@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.it;
+package plugins.jenkins.awssqs.it.fixture;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class ProjectFixture {
-    private static final Long TIMEOUT = 36_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
+    private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
     private String listenBranches;
     private String[] sendBranches;
     private Boolean shouldStarted;
     private Long timeout = TIMEOUT;
+    private String gitUrl = "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins";
 
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -65,6 +66,15 @@ public class ProjectFixture {
 
     public ProjectFixture setTimeout(Long timeout) {
         this.timeout = timeout;
+        return this;
+    }
+
+    public String getGitUrl() {
+        return gitUrl;
+    }
+
+    public ProjectFixture setGitUrl(String gitUrl) {
+        this.gitUrl = gitUrl;
         return this;
     }
 

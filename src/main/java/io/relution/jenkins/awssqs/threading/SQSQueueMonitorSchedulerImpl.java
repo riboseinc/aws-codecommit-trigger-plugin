@@ -18,7 +18,11 @@ package io.relution.jenkins.awssqs.threading;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-
+import io.relution.jenkins.awssqs.interfaces.*;
+import io.relution.jenkins.awssqs.logging.Log;
+import io.relution.jenkins.awssqs.model.events.ConfigurationChangedEvent;
+import io.relution.jenkins.awssqs.model.events.EventBroker;
+import io.relution.jenkins.awssqs.util.ThrowIf;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -27,22 +31,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
-import io.relution.jenkins.awssqs.interfaces.SQSFactory;
-import io.relution.jenkins.awssqs.interfaces.SQSQueue;
-import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitor;
-import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitorScheduler;
-import io.relution.jenkins.awssqs.interfaces.SQSQueueProvider;
-import io.relution.jenkins.awssqs.logging.Log;
-import io.relution.jenkins.awssqs.model.events.ConfigurationChangedEvent;
-import io.relution.jenkins.awssqs.model.events.EventBroker;
-import io.relution.jenkins.awssqs.util.ThrowIf;
-
 
 public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
 
-    private final ExecutorService              executor;
-    private final SQSQueueProvider             provider;
-    private final SQSFactory                   factory;
+    private final ExecutorService executor;
+    private final SQSQueueProvider provider;
+    private SQSFactory factory;
 
     private final Map<String, SQSQueueMonitor> monitors = new HashMap<>();
 
@@ -172,5 +166,9 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
             Log.severe(e, "Cannot compare queues, unknown error");
         }
         return true;
+    }
+
+    public synchronized void setFactory(SQSFactory factory) {
+        this.factory = factory;
     }
 }

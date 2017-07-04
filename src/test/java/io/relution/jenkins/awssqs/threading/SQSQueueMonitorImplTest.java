@@ -16,11 +16,11 @@
 
 package io.relution.jenkins.awssqs.threading;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.amazonaws.services.sqs.model.Message;
-
+import io.relution.jenkins.awssqs.interfaces.SQSQueue;
+import io.relution.jenkins.awssqs.interfaces.SQSQueueListener;
+import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitor;
+import io.relution.jenkins.awssqs.net.SQSChannel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,10 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import io.relution.jenkins.awssqs.interfaces.SQSQueue;
-import io.relution.jenkins.awssqs.interfaces.SQSQueueListener;
-import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitor;
-import io.relution.jenkins.awssqs.net.SQSChannel;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 public class SQSQueueMonitorImplTest {
@@ -173,8 +171,6 @@ public class SQSQueueMonitorImplTest {
         Mockito.verify(this.channel).getMessages();
         Mockito.verify(this.listener).handleMessages(this.messages);
         Mockito.verifyNoMoreInteractions(this.listener);
-        Mockito.verify(this.channel).deleteMessages(this.messages);
-        Mockito.verifyNoMoreInteractions(this.channel);
         Mockito.verify(this.executor, Mockito.times(2)).execute(this.monitor);
     }
 
@@ -191,7 +187,6 @@ public class SQSQueueMonitorImplTest {
 
         Mockito.verify(this.channel).getMessages();
         Mockito.verifyNoMoreInteractions(this.listener);
-        Mockito.verifyNoMoreInteractions(this.channel);
         Mockito.verify(this.executor, Mockito.times(2)).execute(this.monitor);
     }
 

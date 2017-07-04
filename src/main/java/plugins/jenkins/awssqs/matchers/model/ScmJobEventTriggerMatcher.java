@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.model.matchers;
+package plugins.jenkins.awssqs.matchers.model;
 
 import hudson.model.AbstractProject;
 import hudson.plugins.git.BranchSpec;
@@ -31,7 +31,7 @@ import org.jenkinsci.plugins.multiplescms.MultiSCM;
 
 import java.util.List;
 
-/** migrate scm match code from class {@link io.relution.jenkins.awssqs.model.EventTriggerMatcherImpl} but not used now */
+//TODO check to make sure CodeCommit repo
 public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
     @Override
@@ -42,8 +42,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         }
 
         SCM scm = job.getScm();
-        if (scm.getClass().isAssignableFrom(NullSCM.class)) {
-            Log.info("Event(s) did not match no scm job '%s'", job.getName());
+        if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
+            Log.info("Job '%s' has no SCM config", job.getName());
             return false;
         }
 
@@ -65,13 +65,10 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
         if (this.isGitScmAvailable() && this.matchesGitSCM(event, scm)) {
             return true;
-
         } else if (this.isMultiScmAvailable() && this.matchesMultiSCM(event, scm)) {
             return true;
-
         } else {
             return false;
-
         }
     }
 
@@ -131,7 +128,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     }
 
     private boolean matchesConfig(final Event event, final RemoteConfig config) {
-        for (final URIish uri : config.getURIs()) {
+        List<URIish> uris = config.getURIs();
+        for (final URIish uri : uris) {
             if (event.isMatch(uri)) {
                 return true;
             }

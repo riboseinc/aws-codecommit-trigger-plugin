@@ -17,13 +17,22 @@
 package io.relution.jenkins.awssqs.interfaces;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 
 
 /**
  * Interface definition for classes that represent the necessary configuration that is required to
  * access an Amazon SQS queue.
  */
-public interface SQSQueue extends AWSCredentials {
+public interface SQSQueue extends AWSCredentials, AWSCredentialsProvider {
+
+    int WAIT_TIME_SECONDS_DEFAULT = 20;
+    int WAIT_TIME_SECONDS_MIN = 1;
+    int WAIT_TIME_SECONDS_MAX = 20;
+
+    int MAX_NUMBER_OF_MESSAGES_DEFAULT = 10;
+    int MAX_NUMBER_OF_MESSAGES_MIN = 1;
+    int MAX_NUMBER_OF_MESSAGES_MAX = 10;
 
     /**
      * Returns the identifier used to uniquely identify the queue configuration.
@@ -47,7 +56,7 @@ public interface SQSQueue extends AWSCredentials {
      * Returns the endpoint of the queue the configuration is associated with.
      * @return The endpoint of a queue.
      */
-    String getEndpoint();
+//    String getEndpoint();
 
     /**
      * Returns the time, in seconds, requests should wait for new messages to arrive in the queue.
@@ -69,5 +78,7 @@ public interface SQSQueue extends AWSCredentials {
      * queue has been defined.
      * @return {@code true} if the configuration is valid; otherwise, {@code false}.
      */
-    boolean isValid();
+//    boolean isValid();
+
+    boolean hasCredentials();
 }

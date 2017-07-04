@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.it;
+package plugins.jenkins.awssqs.it.mock;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.Message;
 import io.findify.sqsmock.SQSService;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,19 +32,14 @@ public class MockAwsSqs {
 
     private static final MockAwsSqs instance = new MockAwsSqs();
 
-    private final String sqsMessageTemplate;
-    private int port = 8001;
+    private final String sqsMessageTemplate = MockResource.get().getSqsMessageTemplate();
+    private int port = 8001;//TODO find free port
     private boolean started = false;
     private SQSService api;
     private AmazonSQSClient sqsClient;
     private String sqsUrl;
 
     private MockAwsSqs() {
-        try {
-            this.sqsMessageTemplate = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("sqscc-msg.json.tpl"), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new IllegalStateException("Port " + this.port + " might not available", e);
-        }
     }
 
     public void shutdown() {
@@ -97,7 +91,6 @@ public class MockAwsSqs {
         }
     }
 
-
     public void clearMessages() {
         List<Message> messages = this.sqsClient.receiveMessage(this.sqsUrl).getMessages();
         for (Message message : messages) {
@@ -124,7 +117,7 @@ public class MockAwsSqs {
         return this.started;
     }
 
-    public AmazonSQSClient getSqsClient() {
+    public AmazonSQS getSqsClient() {
         return sqsClient;
     }
 

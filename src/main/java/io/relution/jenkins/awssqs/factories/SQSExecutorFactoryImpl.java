@@ -17,14 +17,12 @@
 package io.relution.jenkins.awssqs.factories;
 
 import com.google.inject.Inject;
+import io.relution.jenkins.awssqs.interfaces.SQSExecutorFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
-public class ExecutorFactoryImpl implements io.relution.jenkins.awssqs.interfaces.ExecutorFactory {
+public class SQSExecutorFactoryImpl implements SQSExecutorFactory {
 
     /**
      * The number of threads to start by default. Cannot exceed the maximum number of threads.
@@ -40,19 +38,33 @@ public class ExecutorFactoryImpl implements io.relution.jenkins.awssqs.interface
     final ThreadFactory           threadFactory;
 
     @Inject
-    public ExecutorFactoryImpl(final ThreadFactory threadFactory) {
+    public SQSExecutorFactoryImpl(final ThreadFactory threadFactory) {
         this.threadFactory = threadFactory;
     }
 
+//    @Override
+//    public ThreadPoolExecutor createExecutor() {
+//        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
+//                CORE_POOL_SIZE,
+//                MAXIMUM_POOL_SIZE,
+//                KEEP_ALIVE_TIME,
+//                KEEP_ALIVE_TIME_UNIT,
+//                new LinkedBlockingQueue<Runnable>(),
+//                this.threadFactory);
+//
+//        executor.allowCoreThreadTimeOut(false);
+//        return executor;
+//    }
+
     @Override
-    public ThreadPoolExecutor createExecutor() {
+    public ExecutorService newExecutor() {
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                CORE_POOL_SIZE,
-                MAXIMUM_POOL_SIZE,
-                KEEP_ALIVE_TIME,
-                KEEP_ALIVE_TIME_UNIT,
-                new LinkedBlockingQueue<Runnable>(),
-                this.threadFactory);
+            CORE_POOL_SIZE,
+            MAXIMUM_POOL_SIZE,
+            KEEP_ALIVE_TIME,
+            KEEP_ALIVE_TIME_UNIT,
+            new LinkedBlockingQueue<Runnable>(),
+            this.threadFactory);
 
         executor.allowCoreThreadTimeOut(false);
         return executor;

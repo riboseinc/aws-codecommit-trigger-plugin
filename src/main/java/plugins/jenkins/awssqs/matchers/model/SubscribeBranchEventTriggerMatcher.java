@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.model.matchers;
+package plugins.jenkins.awssqs.matchers.model;
 
 import hudson.model.AbstractProject;
 import io.relution.jenkins.awssqs.SQSTrigger;
 import io.relution.jenkins.awssqs.interfaces.Event;
 import io.relution.jenkins.awssqs.interfaces.EventTriggerMatcher;
 import io.relution.jenkins.awssqs.logging.Log;
-import io.relution.jenkins.awssqs.util.StringUtils;
+import plugins.jenkins.awssqs.utils.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;

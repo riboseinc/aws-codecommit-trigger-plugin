@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.it;
+package plugins.jenkins.awssqs.it;
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleProject;
+import hudson.plugins.git.GitSCM;
+import hudson.scm.SCM;
 import hudson.util.OneShotEvent;
+import io.relution.jenkins.awssqs.Context;
 import io.relution.jenkins.awssqs.SQSTrigger;
 import io.relution.jenkins.awssqs.SQSTriggerQueue;
+import io.relution.jenkins.awssqs.interfaces.SQSQueueMonitorScheduler;
+import io.relution.jenkins.awssqs.threading.SQSQueueMonitorSchedulerImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +39,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TestBuilder;
+import plugins.jenkins.awssqs.it.fixture.ProjectFixture;
+import plugins.jenkins.awssqs.it.mock.MockAwsSqs;
+import plugins.jenkins.awssqs.it.mock.MockResource;
+import plugins.jenkins.awssqs.it.mock.MockSQSFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -132,10 +141,13 @@ public class JenkinsSubscribeBranchIT {
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
     private MockAwsSqs mockAwsSqs;
-    private SQSTriggerQueue sqsQueueConfig;
+    private SQSTriggerQueue sqsQueue;
 
     private final ProjectFixture projectFixture;
     private final String name;
+
+    private final MockSQSFactory mockSQSFactory = MockSQSFactory.get();
+    private final SCM gitScm = new GitSCM(MockResource.get().getGitUrl());
 
     public JenkinsSubscribeBranchIT(String name, ProjectFixture projectFixture) {
         this.projectFixture = projectFixture;
@@ -157,13 +169,18 @@ public class JenkinsSubscribeBranchIT {
     public void before() throws Exception {
         this.mockAwsSqs = MockAwsSqs.get();
 
+        ((SQSQueueMonitorSchedulerImpl) Context.injector().getBinding(SQSQueueMonitorScheduler.class).getProvider().get()).setFactory(this.mockSQSFactory);
+
+        jenkinsRule.getInstance().getDescriptorByType(SQSTriggerQueue.DescriptorImpl.class).setFactory(this.mockSQSFactory);
+
         //TODO refactor not to use func HtmlForm.submit
         final HtmlForm configForm = jenkinsRule.createWebClient().goTo("configure").getFormByName("config");
-        configForm.getInputByName("_.nameOrUrl").setValueAttribute(this.mockAwsSqs.getSqsUrl());
+        configForm.getInputByName("_.url").setValueAttribute(this.mockAwsSqs.getSqsUrl());
+
         jenkinsRule.submit(configForm);
 
-        this.sqsQueueConfig = SQSTrigger.DescriptorImpl.get().getSqsQueues().get(0);
-        this.sqsQueueConfig.setFactory(new MockSQSFactory());
+        this.sqsQueue = SQSTrigger.DescriptorImpl.get().getSqsQueues().get(0);
+        this.sqsQueue.setFactory(this.mockSQSFactory);
     }
 
     @After
@@ -173,8 +190,9 @@ public class JenkinsSubscribeBranchIT {
 
     private OneShotEvent createFreestyleProject(String listenBranches) throws IOException {
         final FreeStyleProject project = jenkinsRule.createFreeStyleProject(UUID.randomUUID().toString());
+        project.setScm(this.gitScm);
 
-        final String uuid = this.sqsQueueConfig.getUuid();
+        final String uuid = this.sqsQueue.getUuid();
         final SQSTrigger trigger = new SQSTrigger(uuid, listenBranches);
         project.addTrigger(trigger);
 

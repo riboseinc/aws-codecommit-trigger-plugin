@@ -18,50 +18,51 @@ package io.relution.jenkins.awssqs.interfaces;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
+import io.relution.jenkins.awssqs.net.SQSChannel;
 
 import java.util.concurrent.ExecutorService;
-
-import io.relution.jenkins.awssqs.net.SQSChannel;
 
 
 /**
  * Interface definition for factories that can create {@link SQSQueueMonitor} instances and related
  * classes. The instances returned by a factory implementation can be used to monitor a particular
- * {@link io.relution.jenkins.awssqs.interfaces.SQSQueue} by polling the queue for new messages.
+ * {@link SQSQueue} by polling the queue for new messages.
  */
 public interface SQSFactory {
 
     /**
      * Returns a new Amazon SQS instance that can be used to access the specified queue.
-     * @param queue The {@link io.relution.jenkins.awssqs.interfaces.SQSQueue} for which to create a client.
+     * @param queue The {@link SQSQueue} for which to create a client.
      * @return A new instance of an {@link AmazonSQS} that is suitable for synchronous access to
      * the specified queue.
      */
-    AmazonSQS createSQS(final io.relution.jenkins.awssqs.interfaces.SQSQueue queue);
+//    AmazonSQS createSQS(final SQSQueue queue);
 
     /**
      * Returns a new Amazon SQS instance that can be used to access the specified queue.
-     * @param queue The {@link io.relution.jenkins.awssqs.interfaces.SQSQueue} for which to create a client.
+     * @param queue The {@link SQSQueue} for which to create a client.
      * @return A new instance of an {@link AmazonSQSAsync} that is suitable for asynchronous access
      * to the specified queue.
      */
-    AmazonSQSAsync createSQSAsync(final io.relution.jenkins.awssqs.interfaces.SQSQueue queue);
+    AmazonSQS createSQSAsync(final SQSQueue queue);
+
+    AmazonSQS createSQSAsync(String accessKey, String secretKey);
 
     /**
      * Returns a new channel instance that can be used to communicate with the specified queue.
-     * @param queue The {@link io.relution.jenkins.awssqs.interfaces.SQSQueue} for which to create the channel.
+     * @param queue The {@link SQSQueue} for which to create the channel.
      * @return A new {@link SQSChannel} for the specified queue.
      */
-    SQSChannel createChannel(final io.relution.jenkins.awssqs.interfaces.SQSQueue queue);
+//    SQSChannel createChannel(final SQSQueue queue);
 
     /**
      * Returns a new monitor instance that can be used to poll the specified queue for new
      * messages.
      * @param executor The {@link ExecutorService} used to execute the monitor.
-     * @param queue The {@link io.relution.jenkins.awssqs.interfaces.SQSQueue} for which to create a monitor.
+     * @param queue The {@link SQSQueue} for which to create a monitor.
      * @return A new {@link SQSQueueMonitor} instance suitable for monitoring the specified queue.
      */
-    SQSQueueMonitor createMonitor(final ExecutorService executor, final io.relution.jenkins.awssqs.interfaces.SQSQueue queue);
+    SQSQueueMonitor createMonitor(final ExecutorService executor, final SQSQueue queue);
 
     /**
      * Returns a new monitor instance that can be used to poll the specified queue for new
@@ -70,9 +71,9 @@ public interface SQSFactory {
      * The new monitor has the same listeners as the specified monitor. This should be used to
      * create a new monitor instance in case a queue was reconfigured.
      * @param monitor The monitor used to initialize internal fields of the new instance.
-     * @param queue The {@link io.relution.jenkins.awssqs.interfaces.SQSQueue} for which to create a monitor.
+     * @param queue The {@link SQSQueue} for which to create a monitor.
      * @return A new {@link SQSQueueMonitor} instance suitable for monitoring the specified queue,
      * that has the same listeners as the specified monitor.
      */
-    SQSQueueMonitor createMonitor(final SQSQueueMonitor monitor, final io.relution.jenkins.awssqs.interfaces.SQSQueue queue);
+    SQSQueueMonitor createMonitor(final SQSQueueMonitor monitor, final SQSQueue queue);
 }

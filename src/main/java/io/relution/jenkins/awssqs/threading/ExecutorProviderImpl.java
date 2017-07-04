@@ -17,11 +17,11 @@
 package io.relution.jenkins.awssqs.threading;
 
 import com.google.inject.Inject;
+import io.relution.jenkins.awssqs.interfaces.ExecutorProvider;
+import io.relution.jenkins.awssqs.interfaces.SQSExecutorFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import io.relution.jenkins.awssqs.interfaces.ExecutorProvider;
 
 
 public class ExecutorProviderImpl implements ExecutorProvider {
@@ -29,8 +29,8 @@ public class ExecutorProviderImpl implements ExecutorProvider {
     private final ThreadPoolExecutor executor;
 
     @Inject
-    public ExecutorProviderImpl(final io.relution.jenkins.awssqs.interfaces.ExecutorFactory factory) {
-        this.executor = factory.createExecutor();
+    public ExecutorProviderImpl(final SQSExecutorFactory factory) {
+        this.executor = (ThreadPoolExecutor) factory.newExecutor();
     }
 
     @Override

@@ -21,10 +21,9 @@ import com.amazonaws.services.sqs.model.Message;
 import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
-import hudson.scm.NullSCM;
 import hudson.util.StreamTaskListener;
 import io.relution.jenkins.awssqs.logging.Log;
-import io.relution.jenkins.awssqs.util.StringUtils;
+import plugins.jenkins.awssqs.utils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,14 +59,14 @@ public class SQSTriggerBuilder implements Runnable {
         }
     }
 
+    //TODO review this condition
     private void buildIfChanged(final StreamTaskListener listener) {
         final PrintStream logger = listener.getLogger();
         final long now = System.currentTimeMillis();
 
         logger.format("Started on %s", this.toDateTime(now));
 
-        final boolean hasChanges = this.job.getScm().getClass().isAssignableFrom(NullSCM.class) // always trigger Job if NoSCM found
-            || this.job.poll(listener).hasChanges();
+        final boolean hasChanges = this.job.poll(listener).hasChanges();
 
         if (hasChanges) {
             logger.println("Changes found");
@@ -100,7 +99,7 @@ public class SQSTriggerBuilder implements Runnable {
 
         logger.println(triggerMsg);
 
-        //sometime a Job can be represent for 1+ SQS messages, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
+        //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         if (job.scheduleBuild(cause)) {
             logger.println("Job queued");
         } else {

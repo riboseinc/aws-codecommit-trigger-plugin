@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.awssqs.it;
+package plugins.jenkins.awssqs.it.mock;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.GetQueueUrlResult;
+import com.amazonaws.services.sqs.model.*;
+
+import java.util.Collections;
 
 public class MockSQSClient extends AmazonSQSClient {
 
@@ -28,10 +30,21 @@ public class MockSQSClient extends AmazonSQSClient {
         super(credentials);
     }
 
+    @Override
     public GetQueueUrlResult getQueueUrl(String queueName) {
         GetQueueUrlResult result = new GetQueueUrlResult();
         result.setQueueUrl(queueUrl);
         return result;
+    }
+
+    @Override
+    public ListQueuesResult listQueues() {
+        return new ListQueuesResult().withQueueUrls(this.queueUrl);
+    }
+
+    @Override
+    public DeleteMessageBatchResult deleteMessageBatch(DeleteMessageBatchRequest request) {
+        return new DeleteMessageBatchResult().withSuccessful(Collections.<DeleteMessageBatchResultEntry>emptyList());
     }
 
     public String getQueueUrl() {

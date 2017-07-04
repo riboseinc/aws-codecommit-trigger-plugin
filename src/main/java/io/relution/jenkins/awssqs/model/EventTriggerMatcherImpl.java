@@ -17,12 +17,13 @@
 
 package io.relution.jenkins.awssqs.model;
 
+import plugins.jenkins.awssqs.matchers.model.AndEventTriggerMatcher;
+import plugins.jenkins.awssqs.matchers.model.ScmJobEventTriggerMatcher;
+import plugins.jenkins.awssqs.matchers.model.SubscribeBranchEventTriggerMatcher;
 import hudson.model.AbstractProject;
 import io.relution.jenkins.awssqs.interfaces.Event;
 import io.relution.jenkins.awssqs.interfaces.EventTriggerMatcher;
-import com.ribose.jenkins.awssqs.model.matchers.AndEventTriggerMatcher;
-import com.ribose.jenkins.awssqs.model.matchers.ScmJobEventTriggerMatcher;
-import com.ribose.jenkins.awssqs.model.matchers.SubscribeBranchEventTriggerMatcher;
+import io.relution.jenkins.awssqs.logging.Log;
 
 import java.util.List;
 
@@ -32,13 +33,15 @@ public class EventTriggerMatcherImpl implements EventTriggerMatcher {
 
     public EventTriggerMatcherImpl() {
         this.delegate = new AndEventTriggerMatcher(
-            new SubscribeBranchEventTriggerMatcher(),
-            new ScmJobEventTriggerMatcher()
+            new ScmJobEventTriggerMatcher(),
+            new SubscribeBranchEventTriggerMatcher()
         );
     }
 
     @Override
     public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
-        return this.delegate.matches(events, job);
+        boolean match = this.delegate.matches(events, job);
+        Log.info("Job '%s' matches='%s' event(s), ignore message if matches='false'", job.getName(), match);
+        return match;
     }
 }

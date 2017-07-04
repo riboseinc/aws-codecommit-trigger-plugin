@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.relution.jenkins.awssqs.util;
+package plugins.jenkins.awssqs.utils;
 
 
 import java.util.ArrayList;
@@ -29,6 +29,12 @@ import java.util.regex.Pattern;
  */
 public final class StringUtils {
 
+    public static final Pattern SQS_URL_PATTERN = Pattern
+        .compile("^(?:http(?:s)?://)?(?<endpoint>sqs\\..+?\\.amazonaws\\.com)/(?<id>.+?)/(?<name>.*)$");
+
+//    public static final Pattern CODECOMMIT_URL_PATTERN = Pattern
+//        .compile("^(?:http(?:s)?://)?git-codecommit\\.(?<region>.+?)\\.amazonaws\\.com/v1/repos/(?<name>.*)$");
+
     /**
      * Parse csv string and return list of trimmed strings
      *
@@ -36,16 +42,14 @@ public final class StringUtils {
      * @return list of trimmed strings
      */
     public static List<String> parseCsvString(final String str) {
-        if (str == null || str.trim().length() == 0) {
-            return Collections.emptyList();
-        }
-
-        List<String> strs = Arrays.asList(str.split("\\s*,\\s*"));
         List<String> result = new ArrayList<>();
-        for (String s : strs) {
-            String item = s.replaceAll("\"", "").replaceAll("'", "").trim();
-            if (item.length() > 0) {
-                result.add(item);
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(str)) {
+            List<String> strs = Arrays.asList(str.split("\\s*,\\s*"));
+            for (String s : strs) {
+                String item = s.replaceAll("\"", "").replaceAll("'", "").trim();
+                if (item.length() > 0) {
+                    result.add(item);
+                }
             }
         }
         return Collections.unmodifiableList(result);
@@ -54,14 +58,13 @@ public final class StringUtils {
     /**
      * Find and return value of uniqueKey in jsonString
      *
-     * @param jsonString json string, can be null
-     * @param uniqueKey string, unique key in jsonString
+     * @param jsonString json string, can not null
+     * @param uniqueKey unique key in jsonString, can not null
      * @return value of <code>jsonString.uniqueKey</code>, or <code>null</code>  if not found
      */
     public static String findByUniqueJsonKey(String jsonString, String uniqueKey) {
-        if (jsonString == null || jsonString.trim().length() == 0 || uniqueKey == null || uniqueKey.trim().length() == 0) {
-            return null;
-        }
+        assert jsonString != null;
+        assert uniqueKey != null;
 
         jsonString = jsonString.trim();
         uniqueKey = uniqueKey.trim();
@@ -69,22 +72,21 @@ public final class StringUtils {
         String regex = String.format("\"%s\"\\s*:\\s*[^\"]*\"([^\"]+)\"", uniqueKey);
         Pattern p = Pattern.compile(regex);
         Matcher matcher = p.matcher(jsonString);
+        String value = null;
         if (matcher.find() && matcher.groupCount() > 0) {
-            return matcher.group(1);
+            value = matcher.group(1);
         }
-        return null;
+        return value;
     }
 
     /**
      * Parse string containing wildcards to Java Regex string
      *
-     * @param str string containing wildcards, can be null
+     * @param str string containing wildcards, can not null
      * @return regex can be used in {@link String#matches(String)}, or <code>null</code>  if not found
      */
     public static String parseWildcard(String str) {
-        if (str == null || str.trim().length() == 0) {
-            return null;
-        }
+        assert str != null;
 
         str = str.trim();
         StringBuffer regexBuilder = new StringBuffer(str.length());
@@ -118,5 +120,39 @@ public final class StringUtils {
         }
         regexBuilder.append('$');
         return regexBuilder.toString();
+    }
+
+    /**
+     * Parse queueUrl to return the name of that queue
+     *
+     * @param queueUrl url of the queue, can not null
+     * @return the name of queue
+     */
+    public static String getSqsQueueName(final String queueUrl) {
+        assert queueUrl != null;
+
+        String name = null;
+        final Matcher sqsUrlMatcher = SQS_URL_PATTERN.matcher(queueUrl);
+        if (sqsUrlMatcher.matches()) {
+            name = sqsUrlMatcher.group("name");
+        }
+        return name;
+    }
+
+    /**
+     * Parse queueUrl to return the endpoint of that queue
+     *
+     * @param queueUrl url of the queue, can not null
+     * @return the endpoint of that queue
+     */
+    public static String getSqsEndpoint(final String queueUrl) {
+        assert queueUrl != null;
+
+        String name = null;
+        final Matcher sqsUrlMatcher = SQS_URL_PATTERN.matcher(queueUrl);
+        if (sqsUrlMatcher.matches()) {
+            name = sqsUrlMatcher.group("endpoint");
+        }
+        return name;
     }
 }

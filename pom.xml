@@ -18,8 +18,9 @@
 
     <name>AWS CodeCommit Trigger Plugin</name>
     <description>
-        This plugin triggers builds based on events received via Amazon Web
-        Services Simple Queue Service (AWS SQS) on a specified Queue.
+        This plugin triggers jobs on repo update events by AWS CodeCommit,
+        through the AWS Simple Queue Service (SQS) and Simple Notification
+        Service (SNS).
     </description>
 
     <!--TODO scm>
@@ -45,14 +46,9 @@
 
     <developers>
         <developer>
-            <id>mwaylabs</id>
-            <name>M-Way Solutions GmbH</name>
-            <email>jenkins.ios.bot@mwaysolutions.com</email>
-        </developer>
-        <developer>
-            <id>nickg</id>
-            <name>Nick Grealy</name>
-            <email>nickgrealy@gmail.com</email>
+            <id>ribose</id>
+            <name>Ribose Inc.</name>
+            <email>open.source@ribose.com</email>
         </developer>
     </developers>
 

@@ -108,5 +108,5 @@ https://www.ribose.com[Ribose Inc.]
 
 == License
 
-Full text: [Apache License](LICENSE)
+Full text: link:LICENSE[Apache License]
 

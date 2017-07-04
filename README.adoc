@@ -1,0 +1,112 @@
+= AWS CodeCommit Trigger Plugin
+
+[link=https://travis-ci.org/riboseinc/aws-codecommit-trigger-plugin]
+image::http://img.shields.io/travis/riboseinc/aws-codecommit-trigger-plugin.svg?style=flat-square[Build Status]
+[link=http://www.apache.org/licenses/LICENSE-2.0.html]
+image::http://img.shields.io/:license-apache-blue.svg?style=flat-square[License]
+
+
+== Introduction
+
+A Jenkins plugin that triggers jobs on repo update events by AWS
+CodeCommit, through the AWS Simple Queue Service (SQS) and Simple
+Notification Service (SNS).
+
+The advantage over the original
+https://github.com/jenkinsci/aws-sqs-plugin[AWS SQS Plugin] that this
+plugin allows subscribing to multiple branches using the same SQS queue,
+meaning that:
+
+* you no longer need to create a SQS queue per CodeCommit repo
+* an update to the `dev` branch will no longer trigger all jobs that
+  subscribe to that CodeCommit repo.
+
+The original https://github.com/jenkinsci/aws-sqs-plugin[AWS SQS Plugin]
+was written (and still maintained) by
+https://github.com/mpfeiffermway[Markus Pfeiffer] of M-Way Solutions
+GmbH.
+
+
+== Quick Setup With Terraform
+
+Use the
+https://github.com/riboseinc/tf-codecommit-sqs[tf-codecommit-sqs] module
+to create your CodeCommit repos created with provided linkage with SQS/SNS.
+
+
+== Manual Setup
+
+General steps to config your Amazon Services:
+
+1. Create a CodeCommit Repo
+2. Open the Repo, create Triggers that will connect to a webhook through
+   Amazon Simple Notification Service (SNS)
+3. Create SNS Topic subscribe to a Simple Queue Service (SQS) queue
+4. Open the SQS queue, do queue actions to subscribe it to SNS Topic
+5. Make sure the AWS Credentials used for this Plugin has Permission to
+   read/delete message from the SQS Queue.
+
+
+=== Jenkins System Configuration
+
+1. Go to `Jenkins > Manage Jenkins > Configure System` on your Jenkins
+
+2. Go to `Amazon Simple Queue Service`
+
+3. Configure a queue
+
+    * Enter the name of the queue you just created
+    * Enter the _Access key ID_ of the Jenkins user on AWS
+    * Enter the _Secret key_ of the Jenkins user on AWS
+
+4. Click on *Test access*
+
+You should see a success message as in the screenshot below. If you get
+an error message make sure you entered the credentials correctly. If you
+still see errors double check the user, group and permissions you set up
+on Amazon Web Services.
+
+image::doc/images/plugin-queue-configuration-success.png["Jenkins configuration test"]
+
+
+== Jenkins Job Configuration
+
+1. Go to `Jenkins > $job`
+2. Click on `Configure`
+3. Scroll down to `Build Triggers`
+4. Check `Trigger build when a message is published to an Amazon SQS
+   queue` //TODO
+5. Select the queue you created previously
+
+For cost savings, the plugin does not start monitoring a queue until at
+least one job has been configured to listen to messages from a queue.
+
+You can use the same queue for multiple jobs or you can create a new
+queue for each job. Keep in mind that monitoring multiple queues will
+increase the amount of requests your Jenkins will have to send to AWS.
+
+Normally you would use the same queue and topic for multiple jobs, but
+for billing purposes it may be easier to use multiple queues, especially
+if you're running builds on behalf of a customer.
+
+
+== Test your setup
+
+If you've set up everything correctly pushing a change to the Git
+repository on CodeCommit should now trigger a build on Jenkins. If
+nothing happens, make sure the job has been set to use messages posted
+to SQS as a build trigger.
+
+image::doc/images/jenkins-build-triggers.png[Build trigger configuration]
+
+== Authors
+
+AWS CodeCommit Trigger Plugin is provided by
+https://www.ribose.com[Ribose Inc.]
+(GitHub page: https://github.com/riboseinc[Ribose Inc.])
+
+
+== License
+
+Full text: link:LICENSE[Apache License]
+

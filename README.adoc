@@ -54,7 +54,7 @@ General steps to config your Amazon Services:
 
 3. Configure a queue
 
-    * Select the name of the queue you just created (the list auto-loaded using your enter _Access key ID_ & _Secret key_)
+    * Select the name of the queue you just created (the list auto-loaded using _Access key ID_ & _Secret key_)
     * Enter the _Access key ID_ of the Jenkins user on AWS
     * Enter the _Secret key_ of the Jenkins user on AWS
 
@@ -96,6 +96,16 @@ nothing happens, make sure the job has been set to use messages posted
 to SQS as a build trigger.
 
 image::doc/images/job-triggers.png[Build trigger configuration]
+
+== Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Write your code **and tests**
+4. Ensure all tests still pass (`mvn clean verify -Pit`)
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin my-new-feature`)
+7. Create new pull request
 
 == Authors
 

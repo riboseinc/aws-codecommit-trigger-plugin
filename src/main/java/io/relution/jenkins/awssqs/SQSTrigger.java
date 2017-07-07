@@ -22,8 +22,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
-import hudson.Util;
-import hudson.console.AnnotatedLargeText;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
@@ -38,22 +36,17 @@ import io.relution.jenkins.awssqs.logging.Log;
 import io.relution.jenkins.awssqs.model.events.ConfigurationChangedEvent;
 import io.relution.jenkins.awssqs.model.events.EventBroker;
 import net.sf.json.JSONObject;
-import org.apache.commons.jelly.XMLOutput;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQueueListener, Runnable {
+public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQueueListener {
     private final String queueUuid;
     private final String subscribedBranches;
 
@@ -63,7 +56,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     private transient EventTriggerMatcher eventTriggerMatcher;
 
     private transient ExecutorService executor;
-    private transient Queue<Message> upcomingMessagesQueue;
 
     @DataBoundConstructor
     public SQSTrigger(final String queueUuid, final String subscribedBranches) {
@@ -71,12 +63,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         this.subscribedBranches = subscribedBranches;
     }
 
-    public File getLogFile() {
-        if (this.job == null) {
-            return null;
-        } else {
-            return new File(this.job.getRootDir(), "sqs-polling.log");
-        }
+    public Collection<? extends Action> getProjectActions() {
+        return Arrays.asList(new SQSTriggerActivityAction(this.job));
     }
 
     @Override
@@ -95,12 +83,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     }
 
     @Override
-    public void run() {
-        final SQSTriggerBuilder builder = new SQSTriggerBuilder(this, this.job);
-        builder.run();
-    }
-
-    @Override
     public void stop() {
         super.stop();
 
@@ -113,11 +95,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
                 SQSTrigger.this.getScheduler().unregister(SQSTrigger.this);
             }
         });
-    }
-
-    @Override
-    public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new SQSTriggerPollingAction());
     }
 
     @Override
@@ -180,9 +157,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     @Inject
     public void setExecutorService(final ExecutorService executor) {
         this.executor = executor;
-
-        // init associated queue and list used to process message
-        this.upcomingMessagesQueue = new ConcurrentLinkedQueue<>();
     }
 
     public ExecutorService getExecutorService() {
@@ -201,64 +175,29 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
 
         if (matcher.matches(events, this.job)) {
             Log.info("Event matched, executing job '%s'", this.job.getName());
-            if (this.upcomingMessagesQueue.add(message)) {
-                Log.info("Job is being in queue?: %s",this.job.isInQueue());
-                this.execute();
-                return true;
-            }
+            Log.info("Job is being in queue?: %s", this.job.isInQueue());
+            this.execute(message);
+            return true;
         }
 
         return false;
     }
 
-    private void execute() {
+    private void execute(final Message message) {
         if (this.job == null) {
             Log.severe("Unexpected error Job is Null");
             return;
         }
 
         Log.info("SQS event triggered build of %s", this.job.getFullDisplayName());
-        this.executor.execute(this);
-    }
+        this.executor.execute(new Runnable() {
 
-    public Queue<Message> getUpcomingMessagesQueue() {
-        return upcomingMessagesQueue;
-    }
-
-    public final class SQSTriggerPollingAction implements Action {
-
-        public AbstractProject<?, ?> getOwner() {
-            return SQSTrigger.this.job;
-        }
-
-        @Override
-        public String getIconFileName() {
-            return "clipboard.png";
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "SQS Activity Log";
-        }
-
-        @Override
-        public String getUrlName() {
-            return "SQSActivityLog";
-        }
-
-        public String getLog() throws IOException {
-            return Util.loadFile(SQSTrigger.this.getLogFile());
-        }
-
-        public void writeLogTo(final XMLOutput out) throws IOException {
-            final AnnotatedLargeText<?> log = new AnnotatedLargeText<SQSTriggerPollingAction>(
-                    SQSTrigger.this.getLogFile(),
-                    Charset.defaultCharset(),
-                    true,
-                    this);
-
-            log.writeHtmlTo(0, out.asWriter());
-        }
+            @Override
+            public void run() {
+                final SQSTriggerBuilder builder = new SQSTriggerBuilder(SQSTrigger.this, SQSTrigger.this.job, message);
+                builder.run();
+            }
+        });
     }
 
     @Extension

@@ -34,22 +34,6 @@
     </f:entry>
 
     <f:validateButton title="${%Test access}" with="url,accessKey,secretKey" method="validate"/>
-    <!--<f:entry>-->
-            <!--<div style="float:right">-->
-                <!--<script>-->
-                    <!--function updateSelectUrlListBox(selectUrlId) {//TODO hacky method-->
-                        <!--var select = document.getElementsBySelector(selectUrlId)[0];-->
-                        <!--updateListBox(select, select.getAttribute('fillUrl'));-->
-                    <!--}-->
-                <!--</script>-->
-                <!--<input type="button" value="${%Load Queues}" class="yui-button" onclick="updateSelectUrlListBox('.${descriptor.selectUrlId}')" />-->
-                <!--<input type="button" value="${%Test access}" class="yui-button" onclick="validateButton('${descriptor.descriptorFullUrl}/validate','accessKey,secretKey', this)" />-->
-            <!--</div>-->
-            <!--<div style="display:none;">-->
-                <!--<img src="${imagesURL}/spinner.gif" />-->
-            <!--</div>-->
-            <!--<div />-->
-    <!--</f:entry>-->
 
     <f:advanced title="${%Advanced}">
         <f:entry title="${%Request wait time [s]}" field="waitTimeSeconds">

@@ -54,8 +54,11 @@ public class SQSTriggerBuilder implements Runnable {
         }
 
         try {
-            final String sqsLogPath = this.job.getAction(SQSTriggerActivityAction.class).getSqsLogPath();
-            StreamTaskListener listener = new StreamTaskListener(new File(sqsLogPath), true, Charset.forName("UTF-8"));
+            StreamTaskListener listener = new StreamTaskListener(
+                this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile(),
+                true,
+                Charset.forName("UTF-8")
+            );
             listener.getLogger().format("\nProcessing message %s\n", messageId);
             this.buildIfChanged(listener);
         } catch (final IOException e) {

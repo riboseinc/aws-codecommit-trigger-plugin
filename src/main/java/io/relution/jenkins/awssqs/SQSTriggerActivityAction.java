@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
-public class SQSTriggerActivityAction implements Action, Serializable  {
+public class SQSTriggerActivityAction implements Action, Serializable {
 
     private final transient Job job;
     private final transient String sqsLogPath;
@@ -52,7 +52,7 @@ public class SQSTriggerActivityAction implements Action, Serializable  {
         StaplerRequest request = Stapler.getCurrentRequest();
         StaplerResponse response = Stapler.getCurrentResponse();
         FileInputStream is = FileUtils.openInputStream(this.sqsLogFile);
-        response.serveFile(request, is, 0L, 60000L, this.sqsLogFile.length() , SQS_LOG_NAME);
+        response.serveFile(request, is, 0L, 60000L, this.sqsLogFile.length(), SQS_LOG_NAME);
     }
 
     public boolean isBig() {
@@ -77,4 +77,7 @@ public class SQSTriggerActivityAction implements Action, Serializable  {
         return FormValidation.ok("Done. Please refresh the page.");
     }
 
+    public File getSqsLogFile() {
+        return sqsLogFile;
+    }
 }

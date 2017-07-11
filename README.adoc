@@ -25,6 +25,9 @@ was written (and still maintained) by
 https://github.com/mpfeiffermway[Markus Pfeiffer] of M-Way Solutions
 GmbH.
 
+Our Jenkins Wiki Page is located here:
+https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin
+
 
 == Quick Setup With Terraform
 

@@ -13,7 +13,7 @@
     <groupId>com.ribose</groupId>
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-beta</version>
     <packaging>hpi</packaging>
 
     <name>AWS CodeCommit Trigger Plugin</name>

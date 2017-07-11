@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.ribose</groupId>
-    <!--url>https://wiki.jenkins-ci.org/display/JENKINS/AWS+SQS+Plugin</url-->
+    <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
     <artifactId>aws-codecommit-trigger</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
@@ -46,8 +46,13 @@
 
     <developers>
         <developer>
-            <id>ribose</id>
-            <name>Ribose Inc.</name>
+            <id>ronaldtse</id>
+            <name>Ronald Tse</name>
+            <email>open.source@ribose.com</email>
+        </developer>
+        <developer>
+            <id>phuonghqh</id>
+            <name>Phuong Huynh</name>
             <email>open.source@ribose.com</email>
         </developer>
     </developers>

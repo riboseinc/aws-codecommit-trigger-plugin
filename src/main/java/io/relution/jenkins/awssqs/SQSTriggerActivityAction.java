@@ -12,13 +12,12 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 
-public class SQSTriggerActivityAction implements Action, Serializable {
+public class SQSTriggerActivityAction implements Action {
 
     private final transient Job job;
     private final transient String sqsLogPath;
-    private final File sqsLogFile;
+    private final transient File sqsLogFile;
 
     private static final String SQS_LOG_NAME = "sqs-activity.log";
     private static final Long DEFAULT_BIG_SIZE = 10L;

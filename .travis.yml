@@ -5,6 +5,3 @@ jdk:
   - oraclejdk7
 
 language: java
-
-script:
-  - mvn clean verify -Pit

@@ -153,14 +153,31 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <releaseProfiles>it</releaseProfiles><!-- run integration tests -->
+                    <releaseProfiles>release-profile</releaseProfiles><
+                </configuration>
+            </plugin-->
+
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <enableSshAgent>true</enableSshAgent>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushReleases>true</pushReleases>
+                    <flowInitContext>
+                        <masterBranchName>release</masterBranchName>
+                        <developBranchName>master</developBranchName>
+                        <versionTagPrefix>v@</versionTagPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                    </flowInitContext>
                 </configuration>
             </plugin>
         </plugins>
@@ -170,6 +187,12 @@
         <profile>
             <!-- for running integration test if needed, disabled by default -->
             <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

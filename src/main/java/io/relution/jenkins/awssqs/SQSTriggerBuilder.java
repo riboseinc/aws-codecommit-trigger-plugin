@@ -25,9 +25,8 @@ import hudson.util.StreamTaskListener;
 import io.relution.jenkins.awssqs.logging.Log;
 import plugins.jenkins.awssqs.utils.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -35,24 +34,32 @@ import java.util.Date;
 public class SQSTriggerBuilder implements Runnable {
 
     private final SQSTrigger trigger;
-    private final AbstractProject<?, ?> job;
+    private final AbstractProject job;
     private final DateFormat formatter = DateFormat.getDateTimeInstance();
+    private final Message message;
+    private final String messageId;
 
-    public SQSTriggerBuilder(final SQSTrigger trigger, final AbstractProject<?, ?> job) {
+    public SQSTriggerBuilder(final SQSTrigger trigger, final AbstractProject job, final Message message) {
         this.trigger = trigger;
         this.job = job;
+        this.message = message;
+        this.messageId = StringUtils.findByUniqueJsonKey(message.getBody(), "MessageId");
     }
 
     @Override
-    public void run() {
+    public void run() {//TODO dont delete message if any error happen, @see io.relution.jenkins.awssqs.net.SQSChannel.deleteMessages()
         if (this.job == null) {
             Log.severe("Unexpected error, 'job' object was null!");
             return;
         }
 
-        final File log = this.trigger.getLogFile();
-
-        try (final StreamTaskListener listener = new StreamTaskListener(log)) {
+        try {
+            StreamTaskListener listener = new StreamTaskListener(
+                this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile(),
+                true,
+                Charset.forName("UTF-8")
+            );
+            listener.getLogger().format("\nProcessing message %s\n", messageId);
             this.buildIfChanged(listener);
         } catch (final IOException e) {
             io.relution.jenkins.awssqs.logging.Log.severe(e, "Failed to record SCM polling");
@@ -80,12 +87,6 @@ public class SQSTriggerBuilder implements Runnable {
     }
 
     private void build(final PrintStream logger, final long now) {
-        Message message = this.trigger.getUpcomingMessagesQueue().poll();
-        if (message == null) {
-            Log.severe("Unexpected error, 'message' object unable taken from queue!");
-            return;
-        }
-
         String messageId = StringUtils.findByUniqueJsonKey(message.getBody(), "MessageId");
         this.startJob(logger, messageId, now);
     }

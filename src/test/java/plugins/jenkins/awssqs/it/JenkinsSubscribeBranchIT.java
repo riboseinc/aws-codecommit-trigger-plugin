@@ -194,7 +194,6 @@ public class JenkinsSubscribeBranchIT {
 
         final String uuid = this.sqsQueue.getUuid();
         final SQSTrigger trigger = new SQSTrigger(uuid, listenBranches);
-        project.addTrigger(trigger);
 
         final OneShotEvent buildStarted = new OneShotEvent();
         project.getBuildersList().add(new TestBuilder() {
@@ -208,6 +207,7 @@ public class JenkinsSubscribeBranchIT {
         });
 
         trigger.start(project, false);
+        project.addTrigger(trigger);
         return buildStarted;
     }
 }

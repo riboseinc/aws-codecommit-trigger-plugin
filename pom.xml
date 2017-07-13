@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
     <packaging>hpi</packaging>
 
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
@@ -172,7 +172,9 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushReleases>true</pushReleases>
                     <flowInitContext>
-                        <versionTagPrefix>v@</versionTagPrefix>
+                        <masterBranchName>release</masterBranchName>
+                        <developBranchName>master</developBranchName>
+                        <versionTagPrefix>v</versionTagPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                     </flowInitContext>
                 </configuration>

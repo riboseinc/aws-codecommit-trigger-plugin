@@ -172,7 +172,9 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushReleases>true</pushReleases>
                     <flowInitContext>
-                        <versionTagPrefix>v@</versionTagPrefix>
+                        <masterBranchName>release</masterBranchName>
+                        <developBranchName>master</developBranchName>
+                        <versionTagPrefix>v</versionTagPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                     </flowInitContext>
                 </configuration>

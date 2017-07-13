@@ -131,11 +131,6 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
     @Override
     public String getUrl() {
-//        if (this.url == null) {
-//            final AmazonSQS client = this.getSQSClient();
-//            final GetQueueUrlResult result = client.getQueueUrl(this.name);
-//            this.url = result.getQueueUrl();
-//        }
         return this.url;
     }
 

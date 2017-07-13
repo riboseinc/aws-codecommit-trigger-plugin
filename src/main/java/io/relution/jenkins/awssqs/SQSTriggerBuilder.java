@@ -59,7 +59,7 @@ public class SQSTriggerBuilder implements Runnable {
                 true,
                 Charset.forName("UTF-8")
             );
-            listener.getLogger().format("\nProcessing message %s\n", messageId);
+            listener.getLogger().format("%nProcessing message %s%n", messageId);
             this.buildIfChanged(listener);
         } catch (final IOException e) {
             io.relution.jenkins.awssqs.logging.Log.severe(e, "Failed to record SCM polling");

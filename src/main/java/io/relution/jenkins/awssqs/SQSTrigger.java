@@ -64,7 +64,10 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     }
 
     public Collection<? extends Action> getProjectActions() {
-        return Arrays.asList(new SQSTriggerActivityAction(this.job));
+        if (this.job != null) {
+            return Arrays.asList(new SQSTriggerActivityAction(this.job));
+        }
+        return Collections.emptyList();
     }
 
     @Override

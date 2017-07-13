@@ -164,6 +164,7 @@
                         <developBranchName>master</developBranchName>
                         <versionTagPrefix>v</versionTagPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <squash>true</squash>
                     </flowInitContext>
                 </configuration>
             </plugin>

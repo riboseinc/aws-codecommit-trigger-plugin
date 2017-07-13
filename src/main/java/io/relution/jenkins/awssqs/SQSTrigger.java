@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import plugins.jenkins.awssqs.exception.UnexpectedException;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -193,12 +194,21 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         }
 
         Log.info("SQS event triggered build of %s", this.job.getFullDisplayName());
+
+        final SQSTriggerActivityAction activity = SQSTrigger.this.job.getAction(SQSTriggerActivityAction.class);
+        activity.logInfo("Submit new thread to handle message '%s' for job '%s'", message.getMessageId(), job.getName());
+
         this.executor.execute(new Runnable() {
 
             @Override
             public void run() {
-                final SQSTriggerBuilder builder = new SQSTriggerBuilder(SQSTrigger.this, SQSTrigger.this.job, message);
-                builder.run();
+                try {
+                    new SQSTriggerBuilder(SQSTrigger.this.job, message).run();
+                } catch (Exception e) {
+                    UnexpectedException error = new UnexpectedException(e);
+                    activity.logError(error);
+                    throw error;
+                }
             }
         });
     }

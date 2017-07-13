@@ -23,11 +23,10 @@
     </description>
 
     <scm>
-        <connection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-        <url>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</url>
+        <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
-
 
     <properties>
         <jenkins.version>1.651.2</jenkins.version>
@@ -175,6 +174,12 @@
         <profile>
             <!-- for running integration test if needed, disabled by default -->
             <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

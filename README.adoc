@@ -28,6 +28,8 @@ GmbH.
 Our Jenkins Wiki Page is located here:
 https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin
 
+Use https://issues.jenkins-ci.org[JIRA] to report issues / feature requests
+
 
 == Quick Setup With Terraform
 
@@ -109,6 +111,7 @@ image::doc/images/job-triggers.png[Build trigger configuration]
 5. Commit your changes (`git commit -am 'Add some feature'`)
 6. Push to the branch (`git push origin my-new-feature`)
 7. Create new pull request
+
 
 == Authors
 

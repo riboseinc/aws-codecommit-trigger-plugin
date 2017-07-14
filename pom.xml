@@ -159,6 +159,7 @@
                     <enableSshAgent>true</enableSshAgent>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushReleases>true</pushReleases>
+                    <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
                     <flowInitContext>
                         <masterBranchName>release</masterBranchName>
                         <developBranchName>master</developBranchName>

@@ -239,11 +239,11 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         public FormValidation doValidate(@QueryParameter final String url, @QueryParameter final String accessKey, @QueryParameter final Secret secretKey) throws IOException, ServletException {
             try {
                 if (StringUtils.isBlank(accessKey)) {
-                    return FormValidation.warning("AWS access key ID must be set.");
+                    return FormValidation.warning("AWS Access Key ID must be set.");
                 }
 
                 if (StringUtils.isBlank(secretKey.getPlainText())) {
-                    return FormValidation.warning("AWS secret key must be set.");
+                    return FormValidation.warning("AWS Secret Key must be set.");
                 }
 
                 AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText());
@@ -254,7 +254,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                     }
                 }
 
-                return FormValidation.error("Failed to access to SQS");
+                return FormValidation.error("Failed to access SQS");
             } catch (final AmazonServiceException ase) {
                 return FormValidation.error(ase, ase.getMessage());
             } catch (final Exception ex) {

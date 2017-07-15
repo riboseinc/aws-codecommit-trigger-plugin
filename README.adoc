@@ -49,11 +49,11 @@ General steps to config your Amazon Services:
    read/delete message from the SQS Queue.
 
 
-=== Jenkins System Configuration
+== Jenkins System Configuration
 
 1. Go to `Jenkins > Manage Jenkins > Configure System` on your Jenkins
 
-2. Go to `AWS Code Commit Trigger SQS Plugin`
+2. Go to `AWS CodeCommit Trigger SQS Plugin`
 
 3. Configure a queue
 
@@ -76,7 +76,7 @@ image::doc/images/global-config.png["Jenkins configuration test"]
 1. Go to `Jenkins > $job`
 2. Click on `Configure`
 3. Scroll down to `Build Triggers`
-4. Check `Build when a Aws Code Commit SNS is published to an Amazon SQS queue` //TODO
+4. Check `Build when a matching AWS CodeCommit SNS message is published to the configured Amazon SQS queue`
 5. Select the queue you created previously
 
 For cost savings, the plugin does not start monitoring a queue until at

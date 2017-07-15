@@ -22,7 +22,7 @@ import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.util.StreamTaskListener;
-import io.relution.jenkins.awssqs.logging.Log;
+import plugins.jenkins.awssqs.exception.UnexpectedException;
 import plugins.jenkins.awssqs.utils.StringUtils;
 
 import java.io.*;
@@ -33,42 +33,37 @@ import java.util.Date;
 
 public class SQSTriggerBuilder implements Runnable {
 
-    private final SQSTrigger trigger;
     private final AbstractProject job;
     private final DateFormat formatter = DateFormat.getDateTimeInstance();
-    private final Message message;
-    private final String messageId;
 
-    public SQSTriggerBuilder(final SQSTrigger trigger, final AbstractProject job, final Message message) {
-        this.trigger = trigger;
+    private final String messageId;
+    private final PrintStream logger;
+    private final StreamTaskListener listener;
+
+    public SQSTriggerBuilder(final AbstractProject job, final Message message) throws IOException {
+        if (job == null) {
+            throw new UnexpectedException("Unexpected error, 'job' object was null!");
+        }
+
         this.job = job;
-        this.message = message;
         this.messageId = StringUtils.findByUniqueJsonKey(message.getBody(), "MessageId");
+
+        this.listener = new StreamTaskListener(
+            this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile(),
+            true,
+            Charset.forName("UTF-8")
+        );
+        this.logger = this.listener.getLogger();
     }
 
     @Override
-    public void run() {//TODO dont delete message if any error happen, @see io.relution.jenkins.awssqs.net.SQSChannel.deleteMessages()
-        if (this.job == null) {
-            Log.severe("Unexpected error, 'job' object was null!");
-            return;
-        }
-
-        try {
-            StreamTaskListener listener = new StreamTaskListener(
-                this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile(),
-                true,
-                Charset.forName("UTF-8")
-            );
-            listener.getLogger().format("%nProcessing message %s%n", messageId);
-            this.buildIfChanged(listener);
-        } catch (final IOException e) {
-            io.relution.jenkins.awssqs.logging.Log.severe(e, "Failed to record SCM polling");
-        }
+    public void run() {
+        logger.format("%nRunning Job '%s' for Message '%s'%n", job.getName(), messageId);
+        this.buildIfChanged();
     }
 
     //TODO review this condition
-    private void buildIfChanged(final StreamTaskListener listener) {
-        final PrintStream logger = listener.getLogger();
+    private void buildIfChanged() {
         final long now = System.currentTimeMillis();
 
         logger.format("Started on %s", this.toDateTime(now));
@@ -77,28 +72,16 @@ public class SQSTriggerBuilder implements Runnable {
 
         if (hasChanges) {
             logger.println("Changes found");
-            this.build(logger, now);
+            this.startJob(now);
         } else {
             logger.println("No changes");
-            Log.info("Ignore the build since no changes found for job SCM '%s'", job.getName());
         }
 
-        logger.println("Done. Took " + this.toTimeSpan(now));
+        logger.println("[INFO] Done. Took " + this.toTimeSpan(now));
     }
 
-    private void build(final PrintStream logger, final long now) {
-        String messageId = StringUtils.findByUniqueJsonKey(message.getBody(), "MessageId");
-        this.startJob(logger, messageId, now);
-    }
-
-    private void startJob(final PrintStream logger, String messageId, final long now) {
-        String triggerMsg = String.format("Triggering Job for SQS Message [%s] on [%s]", messageId, this.toDateTime(now));
-        Log.warning(triggerMsg);
-
-        // setup default cause...
-        Cause cause = new Cause.RemoteCause("SQS trigger", triggerMsg);
-
-        logger.println(triggerMsg);
+    private void startJob(final long now) {
+        Cause cause = new Cause.RemoteCause("SQS trigger", String.format("Triggering Job for SQS Message [%s] on [%s]", messageId, this.toDateTime(now)));
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         if (job.scheduleBuild(cause)) {
@@ -107,8 +90,7 @@ public class SQSTriggerBuilder implements Runnable {
             logger.println("Job NOT queued - it was determined that this job has been queued already.");
         }
 
-        Log.info("Job '%s' is queued? or is building?: %s , %s", job.getName(), job.isInQueue(), job.isBuilding());
-
+        logger.format("Job '%s' is queued? or is building?: %s , %s%n", job.getName(), job.isInQueue(), job.isBuilding());
         logger.println("Triggering job [COMPLETED]");
     }
 

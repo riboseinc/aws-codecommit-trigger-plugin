@@ -1,4 +1,5 @@
 <!--
+   Copyright 2017 Ribose Inc. <https://www.ribose.com>
    Copyright 2016 M-Way Solutions GmbH
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +17,5 @@
 <!-- This view is used to render the installed plugins page. -->
 <?jelly escape-by-default='true'?>
 <div>
-	This plugin triggers builds on all events received via Amazon Web
-	Services Simple Queue Service (AWS SQS) on a specified Queue.
+This plugin triggers builds on CodeCommit branch update events by monitoring messages on AWS SQS queues.
 </div>

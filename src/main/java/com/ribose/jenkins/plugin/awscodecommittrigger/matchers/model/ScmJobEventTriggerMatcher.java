@@ -16,6 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractProject;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
@@ -137,6 +138,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return false;
     }
 
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private boolean isMultiScmAvailable() {
         final Jenkins jenkins = Jenkins.getInstance();
 
@@ -147,6 +149,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return jenkins.getPlugin("multiple-scms") != null;
     }
 
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private boolean isGitScmAvailable() {
         final Jenkins jenkins = Jenkins.getInstance();
 

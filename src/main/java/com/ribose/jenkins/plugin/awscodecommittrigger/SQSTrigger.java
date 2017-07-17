@@ -233,11 +233,6 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         }
 
         @Override
-        public String getId() {
-            return "org.jenkinsci.plugins.awscodecommittrigger." + clazz.getSimpleName();
-        }
-
-        @Override
         public synchronized void load() {
             super.load();
             this.initQueueMap();

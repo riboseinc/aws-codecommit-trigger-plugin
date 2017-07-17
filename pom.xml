@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5-beta-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
@@ -152,21 +152,20 @@
             </plugin>
 
             <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
+                <groupId>com.github.phuonghuynh</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.6.3</version>
                 <configuration>
-                    <enableSshAgent>true</enableSshAgent>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <pushReleases>true</pushReleases>
-                    <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
-                    <flowInitContext>
-                        <masterBranchName>release</masterBranchName>
-                        <developBranchName>master</developBranchName>
-                        <versionTagPrefix>v</versionTagPrefix>
+                    <gitFlowConfig>
+                        <developmentBranch>master</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
-                        <squash>true</squash>
-                    </flowInitContext>
+                        <versionTagPrefix>v</versionTagPrefix>
+                    </gitFlowConfig>
+                    <releaseRebase>true</releaseRebase>
+                    <keepBranch>true</keepBranch>
+                    <releaseFinish>
+                        <preProductionMergeGoals>clean install deploy -Pit</preProductionMergeGoals>
+                    </releaseFinish>
                 </configuration>
             </plugin>
         </plugins>
@@ -176,12 +175,6 @@
         <profile>
             <!-- for running integration test if needed, disabled by default -->
             <id>it</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>

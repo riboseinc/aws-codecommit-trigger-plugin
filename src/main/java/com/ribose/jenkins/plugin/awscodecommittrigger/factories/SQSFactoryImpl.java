@@ -26,16 +26,17 @@ import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
 import com.amazonaws.services.sqs.buffered.QueueBufferConfig;
 import com.google.inject.Inject;
+import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSExecutorFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
-import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannel;
-import hudson.ProxyConfiguration;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSExecutorFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactory;
+import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannel;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannelImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorImpl;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 
@@ -102,6 +103,7 @@ public class SQSFactoryImpl implements SQSFactory {
     }
 
     //@param queue might be null
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private ClientConfiguration getClientConfiguration(final SQSQueue queue) {
         ClientConfiguration config = PredefinedClientConfigurations.defaultConfig();
 

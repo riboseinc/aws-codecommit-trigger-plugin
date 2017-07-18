@@ -8,8 +8,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -27,22 +30,24 @@ public class MultiProjectFixturesIT extends AbstractJenkinsIT {
 
     @Parameterized.Parameters(name = "{0}")
     public static List<Object[]> fixtures() {
+
+        List<ProjectFixture> withoutWildcardProjects = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            String branch = String.format("%s_%s", i, UUID.randomUUID().toString());
+            withoutWildcardProjects.add(
+                new ProjectFixture()
+                    .setSendBranches("refs/heads/" + branch)
+                    .setSubscribedBranches(branch)
+                    .setShouldStarted(Boolean.TRUE)
+            );
+        }
+
+
         return Arrays.asList(new Object[][]{
-            {
-                "should_not_missing_any_projects",
-                Arrays.asList(
-                    new ProjectFixture()
-                        .setSendBranches("refs/heads/foo")
-                        .setSubscribedBranches("foo")
-                        .setShouldStarted(Boolean.FALSE),
-                    new ProjectFixture()
-                        .setSendBranches("refs/heads/bar")
-                        .setSubscribedBranches("bar")
-                        .setShouldStarted(Boolean.TRUE)
-                )
-            }
+            {"should_trigger_branches_without_wildcard", withoutWildcardProjects}
         });
     }
+
 
     @Test
     public void shouldPassProjectFixtures() throws Exception {
@@ -51,22 +56,23 @@ public class MultiProjectFixturesIT extends AbstractJenkinsIT {
             this.mockAwsSqs.send(projectFixture.getSendBranches());
         }
 
-        ExecutorService threadPool = Executors.newFixedThreadPool(this.projectFixtures.size());
+        ExecutorService threadPool = Executors.newCachedThreadPool();// newFixedThreadPool(Math.min(this.projectFixtures.size(), 4));
 
-        for (final ProjectFixture projectFixture : this.projectFixtures) {
-            logger.log(Level.FINEST, "[FIXTURE] {0}", projectFixture);
+        for (final ProjectFixture fixture : this.projectFixtures) {
+            logger.log(Level.FINEST, "[FIXTURE] {0}", fixture);
+
             threadPool.submit(new Runnable() {
 
                 @Override
                 public void run() {
                     try {
-                        MultiProjectFixturesIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", projectFixture.getSubscribedBranches());
-                        OneShotEvent buildEvent = MultiProjectFixturesIT.this.submitGitScmProject(projectFixture.getSubscribedBranches());
-                        buildEvent.block(projectFixture.getTimeout());
-                        Assertions.assertThat(buildEvent.isSignaled()).isEqualTo(projectFixture.getShouldStarted());
-                        MultiProjectFixturesIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", projectFixture.getSubscribedBranches());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        MultiProjectFixturesIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
+                        OneShotEvent buildEvent = MultiProjectFixturesIT.this.submitGitScmProject(fixture.getSubscribedBranches());
+                        buildEvent.block(fixture.getTimeout() * MultiProjectFixturesIT.this.projectFixtures.size());
+                        Assertions.assertThat(fixture.getSubscribedBranches() + buildEvent.isSignaled()).isEqualTo(fixture.getSubscribedBranches() + fixture.getShouldStarted());
+                        MultiProjectFixturesIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());
+                    } catch (AssertionError | IOException | InterruptedException e) {
+                        throw new AssertionError(e);
                     }
                 }
             });

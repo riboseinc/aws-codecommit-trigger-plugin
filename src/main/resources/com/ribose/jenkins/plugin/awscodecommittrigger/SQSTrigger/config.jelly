@@ -17,9 +17,21 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <j:if test="${instance.getScmRepoUrls().size() > 0}">
+        <f:block>
+            <span>This build will be triggered when Git SCM repos is updated, reload the page to update the list below</span>
+            <ul>
+                <j:forEach var="scmRepoUrl" items="${instance.getScmRepoUrls()}">
+                    <li>${scmRepoUrl}</li>
+                </j:forEach>
+            </ul>
+        </f:block>
+    </j:if>
+
     <f:entry title="${%SQS queue to monitor}" field="queueUuid">
         <f:select/>
     </f:entry>
+
     <f:entry title="${%Subscribed branches}" field="subscribedBranches"
              description="ex: (blank for 'any', like '*'), development, master, *feature, feature/**">
         <f:textbox default="master"/>

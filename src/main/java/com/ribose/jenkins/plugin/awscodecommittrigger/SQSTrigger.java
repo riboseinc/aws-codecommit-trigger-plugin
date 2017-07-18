@@ -26,6 +26,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.EventBroker;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.AbstractProject;
@@ -218,7 +219,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         });
     }
 
-    @SuppressWarnings("NP_NULL_ON_SOME_PATH")
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     public List<String> getScmRepoUrls() {
         if (this.scmRepoUrls == null) {
             this.scmRepoUrls = new ArrayList<>();

@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
@@ -176,20 +176,19 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.phuonghuynh</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.6.3</version>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
                 <configuration>
-                    <gitFlowConfig>
-                        <developmentBranch>master</developmentBranch>
-                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                    <enableSshAgent>true</enableSshAgent>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushReleases>true</pushReleases>
+                    <flowInitContext>
+                        <masterBranchName>release</masterBranchName>
+                        <developBranchName>master</developBranchName>
                         <versionTagPrefix>v</versionTagPrefix>
-                    </gitFlowConfig>
-                    <releaseRebase>true</releaseRebase>
-                    <keepBranch>true</keepBranch>
-                    <releaseFinish>
-                        <preProductionMergeGoals>clean install deploy -Pit</preProductionMergeGoals>
-                    </releaseFinish>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                    </flowInitContext>
                 </configuration>
             </plugin>
         </plugins>

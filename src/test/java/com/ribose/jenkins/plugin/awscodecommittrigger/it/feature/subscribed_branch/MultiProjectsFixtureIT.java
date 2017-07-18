@@ -20,7 +20,7 @@ import java.util.logging.Level;
 
 
 @RunWith(Parameterized.class)
-public class MultiProjectFixturesIT extends AbstractJenkinsIT {
+public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
 
     @Parameterized.Parameter
     public String name;
@@ -66,11 +66,11 @@ public class MultiProjectFixturesIT extends AbstractJenkinsIT {
                 @Override
                 public void run() {
                     try {
-                        MultiProjectFixturesIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
-                        OneShotEvent buildEvent = MultiProjectFixturesIT.this.submitGitScmProject(fixture.getSubscribedBranches());
-                        buildEvent.block(fixture.getTimeout() * MultiProjectFixturesIT.this.projectFixtures.size());
+                        MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
+                        OneShotEvent buildEvent = MultiProjectsFixtureIT.this.submitGitScmProject(fixture.getSubscribedBranches());
+                        buildEvent.block(fixture.getTimeout() * MultiProjectsFixtureIT.this.projectFixtures.size());
                         Assertions.assertThat(fixture.getSubscribedBranches() + buildEvent.isSignaled()).isEqualTo(fixture.getSubscribedBranches() + fixture.getShouldStarted());
-                        MultiProjectFixturesIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());
+                        MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());
                     } catch (AssertionError | IOException | InterruptedException e) {
                         throw new AssertionError(e);
                     }

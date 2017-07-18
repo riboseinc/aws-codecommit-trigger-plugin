@@ -31,6 +31,8 @@ import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
+import hudson.plugins.git.GitSCM;
+import hudson.scm.SCM;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
@@ -38,6 +40,8 @@ import hudson.util.ListBoxModel;
 import hudson.util.SequentialExecutionQueue;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -212,6 +216,25 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
             }
         });
     }
+
+    public List<String> getScmRepoUrls() {
+        List<String> urls = new ArrayList<>();
+
+        SCM scm = this.job.getScm();
+        if (scm instanceof GitSCM) {
+            final GitSCM git = (GitSCM) this.job.getScm();
+            List<RemoteConfig> repos = git.getRepositories();
+
+            for (RemoteConfig repo : repos) {
+                List<URIish> uris = repo.getURIs();
+                for (URIish uri : uris) {
+                    urls.add(uri.toASCIIString());
+                }
+            }
+        }
+        return urls;
+    }
+
 
     @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {

@@ -19,7 +19,7 @@
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <j:if test="${instance.getScmRepoUrls().size() > 0}">
         <f:block>
-            <span>This build will be triggered when the Git SCM repos bellow is updated (reload the page to update)</span>
+            <span>This build will be triggered when Git SCM repos is updated, reload the page to update the list below</span>
             <ul>
                 <j:forEach var="scmRepoUrl" items="${instance.getScmRepoUrls()}">
                     <li>${scmRepoUrl}</li>

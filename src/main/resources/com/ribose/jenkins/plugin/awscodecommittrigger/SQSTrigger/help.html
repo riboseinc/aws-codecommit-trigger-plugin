@@ -1,10 +1,15 @@
 <div>
-    Configure Jenkins to monitor an Amazon SQS queue for messages. Jenkins will start a new build
-    if a message is posted to the queue.
-    <p/>
-    Available queues can be configured in the <a href="/jenkins/configure">System Configuration</a> of
-    Jenkins.
-    <p/>
-    Further documentation is available in the
-    <a href="https://github.com/riboseinc/aws-codecommit-trigger-plugin">AWS SQS Plugin</a> on GitHub.
+    Configure Jenkins to monitor an Amazon SQS queue for CodeCommit SNS messages. Jenkins will start a new build if (<b>AND</b> if):
+
+    <ul>
+        <li>message is posted to the queue</li>
+        <li>message match against any repo links configured in SCM section (Git supported only)</li>
+    </ul>
+
+
+    <p>
+        Available queues can be configured in the <a href="/jenkins/configure">System Configuration</a> of Jenkins.
+    </p>
+
+    <p>Further documentation is available in the <a href="https://github.com/jenkinsci/aws-codecommit-trigger-plugin">GitHub</a></p>
 </div>

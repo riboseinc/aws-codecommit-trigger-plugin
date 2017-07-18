@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.7</version>
+    <version>1.8-beta-1</version>
     <packaging>hpi</packaging>
 
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
@@ -183,6 +183,7 @@
                     <enableSshAgent>true</enableSshAgent>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushReleases>true</pushReleases>
+                    <useReleaseProfile>true</useReleaseProfile>
                     <flowInitContext>
                         <masterBranchName>release</masterBranchName>
                         <developBranchName>master</developBranchName>
@@ -198,6 +199,12 @@
         <profile>
             <!-- for running integration test if needed, disabled by default -->
             <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

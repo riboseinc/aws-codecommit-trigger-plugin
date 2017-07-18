@@ -26,11 +26,14 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.EventBroker;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
+import hudson.plugins.git.GitSCM;
+import hudson.scm.SCM;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
@@ -38,6 +41,8 @@ import hudson.util.ListBoxModel;
 import hudson.util.SequentialExecutionQueue;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -57,6 +62,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     private transient EventTriggerMatcher eventTriggerMatcher;
 
     private transient ExecutorService executor;
+    private transient List<String> scmRepoUrls;
 
     @DataBoundConstructor
     public SQSTrigger(final String queueUuid, final String subscribedBranches) {
@@ -212,6 +218,29 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
             }
         });
     }
+
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
+    public List<String> getScmRepoUrls() {
+        if (this.scmRepoUrls == null) {
+            this.scmRepoUrls = new ArrayList<>();
+
+            SCM scm = this.job.getScm();
+            if (scm instanceof GitSCM) {
+                final GitSCM git = (GitSCM) this.job.getScm();
+                List<RemoteConfig> repos = git.getRepositories();
+
+                for (RemoteConfig repo : repos) {
+                    List<URIish> uris = repo.getURIs();
+                    for (URIish uri : uris) {
+                        this.scmRepoUrls.add(uri.toASCIIString());
+                    }
+                }
+            }
+        }
+
+        return this.scmRepoUrls;
+    }
+
 
     @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {

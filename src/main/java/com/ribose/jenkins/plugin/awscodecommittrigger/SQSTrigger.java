@@ -61,6 +61,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     private transient EventTriggerMatcher eventTriggerMatcher;
 
     private transient ExecutorService executor;
+    private transient List<String> scmRepoUrls;
 
     @DataBoundConstructor
     public SQSTrigger(final String queueUuid, final String subscribedBranches) {
@@ -218,21 +219,24 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     }
 
     public List<String> getScmRepoUrls() {
-        List<String> urls = new ArrayList<>();
+        if (this.scmRepoUrls == null) {
+            this.scmRepoUrls = new ArrayList<>();
 
-        SCM scm = this.job.getScm();
-        if (scm instanceof GitSCM) {
-            final GitSCM git = (GitSCM) this.job.getScm();
-            List<RemoteConfig> repos = git.getRepositories();
+            SCM scm = this.job.getScm();
+            if (scm instanceof GitSCM) {
+                final GitSCM git = (GitSCM) this.job.getScm();
+                List<RemoteConfig> repos = git.getRepositories();
 
-            for (RemoteConfig repo : repos) {
-                List<URIish> uris = repo.getURIs();
-                for (URIish uri : uris) {
-                    urls.add(uri.toASCIIString());
+                for (RemoteConfig repo : repos) {
+                    List<URIish> uris = repo.getURIs();
+                    for (URIish uri : uris) {
+                        this.scmRepoUrls.add(uri.toASCIIString());
+                    }
                 }
             }
         }
-        return urls;
+
+        return this.scmRepoUrls;
     }
 
 

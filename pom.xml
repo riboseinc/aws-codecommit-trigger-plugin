@@ -183,6 +183,7 @@
                     <enableSshAgent>true</enableSshAgent>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushReleases>true</pushReleases>
+                    <useReleaseProfile>true</useReleaseProfile>
                     <flowInitContext>
                         <masterBranchName>release</masterBranchName>
                         <developBranchName>master</developBranchName>
@@ -198,6 +199,12 @@
         <profile>
             <!-- for running integration test if needed, disabled by default -->
             <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

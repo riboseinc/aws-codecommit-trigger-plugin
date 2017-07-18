@@ -218,6 +218,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         });
     }
 
+    @SuppressWarnings("NP_NULL_ON_SOME_PATH")
     public List<String> getScmRepoUrls() {
         if (this.scmRepoUrls == null) {
             this.scmRepoUrls = new ArrayList<>();

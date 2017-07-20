@@ -4,6 +4,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import hudson.util.OneShotEvent;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 
+@Ignore
 @RunWith(Parameterized.class)
 public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
 
@@ -48,7 +50,6 @@ public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
         });
     }
 
-
     @Test
     public void shouldPassProjectFixtures() throws Exception {
         logger.log(Level.INFO, "[RUN] " + this.name);
@@ -69,9 +70,9 @@ public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
                         MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
                         OneShotEvent buildEvent = MultiProjectsFixtureIT.this.submitGitScmProject(fixture.getSubscribedBranches());
                         buildEvent.block(fixture.getTimeout() * MultiProjectsFixtureIT.this.projectFixtures.size());
-                        Assertions.assertThat(fixture.getSubscribedBranches() + buildEvent.isSignaled()).isEqualTo(fixture.getSubscribedBranches() + fixture.getShouldStarted());
+                        fixture.setEvent(buildEvent);
                         MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());
-                    } catch (AssertionError | IOException | InterruptedException e) {
+                    } catch (IOException | InterruptedException e) {
                         throw new AssertionError(e);
                     }
                 }
@@ -79,7 +80,13 @@ public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
         }
 
         threadPool.shutdown();
-        threadPool.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+        threadPool.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+
+        for (ProjectFixture fixture : this.projectFixtures) {
+            logger.log(Level.INFO, "asserting fixture: {0}", fixture);
+            Assertions.assertThat(fixture.getEvent()).isNotNull();
+            Assertions.assertThat(fixture.getEvent().isSignaled()).isEqualTo(fixture.getShouldStarted());
+        }
 
         logger.log(Level.INFO, "[DONE] " + this.name);
     }

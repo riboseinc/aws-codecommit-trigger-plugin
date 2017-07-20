@@ -19,13 +19,14 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.transport.URIish;
 
 
 public class CodeCommitEvent implements Event {
 
-    private final static String HOST = "codecommit.%s.amazonaws.com";
-//    private final static String PATH = "/v1/repos/%s";
+    private final static String HOST = "git-codecommit.%s.amazonaws.com";
+    private final static String PATH = "/v1/repos/%s";
 //    private final static String PATH = "(%s)";
 
     private final String        host;
@@ -38,8 +39,8 @@ public class CodeCommitEvent implements Event {
         final String[] tokens = arn.split(":", 6);
 
         this.host = String.format(HOST, tokens[3]);
-        this.path = tokens[5];
-//        this.path = String.format(PATH, tokens[5]);
+//        this.path = tokens[5];
+        this.path = String.format(PATH, tokens[5]);
 
         final String name = reference.getName();
         this.branch = name
@@ -75,13 +76,13 @@ public class CodeCommitEvent implements Event {
             return false;
         }
 
-        if (!uri.getHost().endsWith(this.host)) {
-            Log.info("[%s] host %s not endsWith %s", CodeCommitEvent.class.getSimpleName(), uri.getHost(), this.host);
+        if (!StringUtils.equals(this.host, uri.getHost())) {
+            Log.info("[%s] host %s not equals %s", CodeCommitEvent.class.getSimpleName(), uri.getHost(), this.host);
             return false;
         }
 
-        if (!uri.getPath().endsWith(this.path)) {
-            Log.info("[%s] path %s not endsWith %s", CodeCommitEvent.class.getSimpleName(), uri.getPath(), this.path);
+        if (!StringUtils.equals(this.path, uri.getPath())) {
+            Log.info("[%s] path %s not equals %s", CodeCommitEvent.class.getSimpleName(), uri.getPath(), this.path);
             return false;
         }
 

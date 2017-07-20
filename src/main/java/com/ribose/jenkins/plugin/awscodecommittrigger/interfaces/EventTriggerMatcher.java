@@ -36,9 +36,4 @@ public interface EventTriggerMatcher {
      * {@code false}.
      */
     boolean matches(List<Event> events, AbstractProject<?, ?> job);
-
-    /**
-     * @see io.relution.jenkins.awssqs.model.entities.codecommit.ExecuteJenkinsJobEvent
-     **/
-//  boolean matches(List<ExecuteJenkinsJobEvent> events, AbstractProject<?, ?> job);
 }

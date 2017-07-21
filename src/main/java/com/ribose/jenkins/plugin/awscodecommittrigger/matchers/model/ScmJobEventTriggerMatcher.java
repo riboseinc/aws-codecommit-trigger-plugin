@@ -98,7 +98,6 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -116,7 +115,15 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         if (!eventBranch.startsWith("*/")) {
             eventBranch = "*/" + eventBranch;//required by BranchSpec
         }
-        return branch.matches(eventBranch);
+
+        boolean branchMatch = branch.matches(eventBranch);
+        if (!branchMatch) {
+            branchMatch = branch.matches(event.getOriginalBranch());
+            Log.info("[%s] Try BranchSpec match: %s originalBranch: %s", ScmJobEventTriggerMatcher.class.getSimpleName(), branchMatch, event.getOriginalBranch());
+        }
+
+        Log.info("[%s] BranchSpec match: %s, event: %s, branch: %s", ScmJobEventTriggerMatcher.class.getSimpleName(), branchMatch, event.getBranch(), branch.getName());
+        return branchMatch;
     }
 
     private boolean matchesConfigs(final Event event, final List<RemoteConfig> configs) {
@@ -135,6 +142,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
                 return true;
             }
         }
+
         return false;
     }
 

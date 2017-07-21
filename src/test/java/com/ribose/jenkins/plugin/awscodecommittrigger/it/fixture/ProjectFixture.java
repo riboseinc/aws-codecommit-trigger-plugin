@@ -19,7 +19,10 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.util.OneShotEvent;
+
+import java.io.IOException;
 
 public class ProjectFixture {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
@@ -29,6 +32,7 @@ public class ProjectFixture {
     private Boolean shouldStarted;
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
+    private String sqsMessage;
 
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -77,6 +81,23 @@ public class ProjectFixture {
     public OneShotEvent setEvent(OneShotEvent event) {
         this.event = event;
         return event;
+    }
+
+    public String getSqsMessage() {
+        return sqsMessage;
+    }
+
+    public ProjectFixture withSqsMessage(Class clzz, String filename) {
+        try {
+            this.sqsMessage = org.apache.commons.io.IOUtils.toString(clzz.getResourceAsStream(filename));
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        return this;
+    }
+
+    public String getScmUrl() {
+        return StringUtils.findByUniqueJsonKey(this.sqsMessage, "__gitUrl__");
     }
 
     @Override

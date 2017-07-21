@@ -132,4 +132,13 @@ public class StringUtilsTest {
         Assertions.assertThat("foo").doesNotMatch(pattern);
         Assertions.assertThat("bar").doesNotMatch(pattern);
     }
+
+    @Test
+    public void testGetRepoName() {
+        Pattern pattern = Pattern.compile("(test)");
+        Matcher matcher = pattern.matcher("/v1/repos/test");
+        while (matcher.find()) {
+            System.out.println(matcher.group());
+        }
+    }
 }

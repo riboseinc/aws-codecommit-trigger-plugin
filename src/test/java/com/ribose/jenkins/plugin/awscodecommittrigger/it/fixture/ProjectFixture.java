@@ -19,6 +19,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import hudson.util.OneShotEvent;
 
 public class ProjectFixture {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
@@ -27,6 +28,7 @@ public class ProjectFixture {
     private String[] sendBranches;
     private Boolean shouldStarted;
     private Long timeout = TIMEOUT;
+    private OneShotEvent event;
 
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -66,6 +68,15 @@ public class ProjectFixture {
     public ProjectFixture setTimeout(Long timeout) {
         this.timeout = timeout;
         return this;
+    }
+
+    public OneShotEvent getEvent() {
+        return event;
+    }
+
+    public OneShotEvent setEvent(OneShotEvent event) {
+        this.event = event;
+        return event;
     }
 
     @Override

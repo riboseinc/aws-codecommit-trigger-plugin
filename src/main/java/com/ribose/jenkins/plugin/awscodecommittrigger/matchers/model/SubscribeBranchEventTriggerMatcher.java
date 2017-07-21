@@ -49,13 +49,13 @@ public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
             final String pattern = StringUtils.parseWildcard(branch);
             for (Event event : events) {
                 if (event.getBranch().matches(pattern)) {
-                    Log.info("Job '%s': event matches by branch '%s'", job.getName(), branch);
+                    Log.info("[%s] Job '%s': event matches by branch '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(), job.getName(), branch);
                     return true;
                 }
             }
         }
 
-        Log.info("Event(s) did not match job '%s' ",  job.getName());
+        Log.info("[%s] Event(s) did not match job '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(),  job.getName());
         return false;
     }
 }

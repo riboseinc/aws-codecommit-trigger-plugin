@@ -50,12 +50,12 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
         for (Event event : events) {
             if (this.matches(event, scm)) {
-                Log.info("Job '%s' matches event.", job.getName());
+                Log.info("[%s] Job '%s' matches event.", ScmJobEventTriggerMatcher.class.getSimpleName(), job.getName());
                 return true;
             }
         }
 
-        Log.info("Event(s) did not match job '%s' ",  job.getName());
+        Log.info("[%s] Event(s) did not match job '%s' ", ScmJobEventTriggerMatcher.class.getSimpleName(), job.getName());
         return false;
     }
 

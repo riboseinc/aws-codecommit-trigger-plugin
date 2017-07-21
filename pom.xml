@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.10-SNAPSHOT</version>
+    <version>1.11-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>

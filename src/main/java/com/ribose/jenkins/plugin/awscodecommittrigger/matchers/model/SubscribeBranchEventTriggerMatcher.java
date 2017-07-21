@@ -46,9 +46,16 @@ public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
         }
 
         for (String branch : branches) {
-            final String pattern = StringUtils.parseWildcard(branch);
+            String pattern = StringUtils.parseWildcard(branch);
             for (Event event : events) {
-                if (event.getBranch().matches(pattern)) {
+                boolean match = event.getBranch().matches(pattern);
+                if (!match) {
+                    pattern = StringUtils.parseWildcard(branch);
+                    match = event.getOriginalBranch().matches(pattern);
+                    Log.info("[%s] Job '%s': event matches by original branch '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(), job.getName(), event.getOriginalBranch());
+                }
+
+                if (match) {
                     Log.info("[%s] Job '%s': event matches by branch '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(), job.getName(), branch);
                     return true;
                 }

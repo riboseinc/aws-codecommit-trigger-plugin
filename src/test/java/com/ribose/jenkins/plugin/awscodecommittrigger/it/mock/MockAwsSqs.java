@@ -109,6 +109,10 @@ public class MockAwsSqs {
         }
     }
 
+    public void sendMessage(String message) {
+        this.sqsClient.sendMessage(this.sqsUrl, message);
+    }
+
     public int getPort() {
         return this.port;
     }

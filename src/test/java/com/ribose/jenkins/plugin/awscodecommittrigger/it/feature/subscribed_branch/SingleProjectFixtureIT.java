@@ -121,7 +121,7 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
         logger.log(Level.INFO, "[RUN] {0}", this.name);
         logger.log(Level.FINEST, "[FIXTURE] {0}", this.projectFixture);
         this.mockAwsSqs.send(this.projectFixture.getSendBranches());
-        OneShotEvent buildStarted = submitGitScmProject(this.projectFixture.getSubscribedBranches());
+        OneShotEvent buildStarted = submitGitScmProject(this.getScm(), this.projectFixture.getSubscribedBranches());
         buildStarted.block(this.projectFixture.getTimeout());
         Assertions.assertThat(buildStarted.isSignaled()).isEqualTo(this.projectFixture.getShouldStarted());
         logger.log(Level.INFO, "[DONE] {0}", this.name);

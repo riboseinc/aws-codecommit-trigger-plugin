@@ -44,7 +44,6 @@ public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
             );
         }
 
-
         return Arrays.asList(new Object[][]{
             {"should_trigger_branches_without_wildcard", withoutWildcardProjects}
         });
@@ -68,7 +67,7 @@ public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
                 public void run() {
                     try {
                         MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
-                        OneShotEvent buildEvent = MultiProjectsFixtureIT.this.submitGitScmProject(fixture.getSubscribedBranches());
+                        OneShotEvent buildEvent = MultiProjectsFixtureIT.this.submitGitScmProject(MultiProjectsFixtureIT.this.getScm(), fixture.getSubscribedBranches());
                         buildEvent.block(fixture.getTimeout() * MultiProjectsFixtureIT.this.projectFixtures.size());
                         fixture.setEvent(buildEvent);
                         MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());

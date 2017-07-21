@@ -27,12 +27,11 @@ public class CodeCommitEvent implements Event {
 
     private final static String HOST = "git-codecommit.%s.amazonaws.com";
     private final static String PATH = "/v1/repos/%s";
-//    private final static String PATH = "(%s)";
 
-    private final String        host;
-    private final String        path;
-
-    private final String        branch;
+    private final String host;
+    private final String path;
+    private final String branch;
+    private final String originalBranch;
 
     public CodeCommitEvent(final Record record, final Reference reference) {
         final String arn = record.getEventSourceARN();
@@ -42,8 +41,8 @@ public class CodeCommitEvent implements Event {
 //        this.path = tokens[5];
         this.path = String.format(PATH, tokens[5]);
 
-        final String name = reference.getName();
-        this.branch = name
+        this.originalBranch = reference.getName();
+        this.branch = this.originalBranch
             .replaceFirst("refs/heads/", "")
             .replaceFirst("refs/remotes/", "")
             .replaceFirst("remotes/", "")
@@ -68,6 +67,11 @@ public class CodeCommitEvent implements Event {
     @Override
     public String getBranch() {
         return this.branch;
+    }
+
+    @Override
+    public String getOriginalBranch() {
+        return originalBranch;
     }
 
     @Override

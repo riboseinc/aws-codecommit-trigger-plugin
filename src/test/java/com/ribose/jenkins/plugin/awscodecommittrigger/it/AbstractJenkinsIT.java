@@ -37,7 +37,7 @@ public abstract class AbstractJenkinsIT {
     protected SQSTriggerQueue sqsQueue;
 
     protected final MockSQSFactory mockSQSFactory = MockSQSFactory.get();
-    protected final SCM gitScm = new GitSCM(MockResource.get().getGitUrl());
+//    protected SCM gitScm = new GitSCM(MockResource.get().getGitUrl());
 
     @Before
     public void before() throws Exception {
@@ -62,9 +62,13 @@ public abstract class AbstractJenkinsIT {
         this.mockAwsSqs.shutdown();
     }
 
-    protected OneShotEvent submitGitScmProject(String subscribedBranches) throws IOException {
+    public SCM getScm() {
+        return new GitSCM(MockResource.get().getGitUrl());
+    }
+
+    protected OneShotEvent submitGitScmProject(SCM scm, String subscribedBranches) throws IOException {
         final FreeStyleProject project = jenkinsRule.createFreeStyleProject(UUID.randomUUID().toString());
-        project.setScm(this.gitScm);
+        project.setScm(scm);
 
         final String uuid = this.sqsQueue.getUuid();
         final SQSTrigger trigger = new SQSTrigger(uuid, subscribedBranches);

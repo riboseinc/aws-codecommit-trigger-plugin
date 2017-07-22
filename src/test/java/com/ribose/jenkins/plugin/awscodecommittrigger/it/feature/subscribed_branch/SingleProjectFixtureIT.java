@@ -50,6 +50,13 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
                     .setShouldStarted(Boolean.TRUE)
             },
             {
+                "should_trigger_branches_without_wildcard",
+                new ProjectFixture()//without wildcard
+                    .setSendBranches("refs/heads/foo")
+                    .setSubscribedBranches("refs/heads/foo")
+                    .setShouldStarted(Boolean.TRUE)
+            },
+            {
                 "should_not_trigger_prefix_wildcard_branches",
                 new ProjectFixture()//prefix wildcard
                     .setSendBranches("refs/heads/foo-bar", "refs/heads/bar/foo", "refs/heads/foo/bar")

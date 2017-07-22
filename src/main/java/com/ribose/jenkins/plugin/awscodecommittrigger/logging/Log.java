@@ -19,22 +19,36 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.logging;
 import hudson.model.Job;
 import org.apache.commons.lang3.ClassUtils;
 
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 
 public class Log {
 
-    public static Log get(Class clazz) {
-        return new Log(clazz);
-    }
-
+    private StreamHandler streamHandler;
     private Logger logger;
     private Class clazz;
 
     private Log(Class clazz) {
         this.clazz = clazz;
         this.logger = Logger.getLogger(this.clazz.getName());
+    }
+
+    private Log(Class clazz, PrintStream logstream) {
+        this(clazz);
+        this.streamHandler = new StreamHandler(logstream, new SimpleFormatter());
+        this.logger.addHandler(streamHandler);
+    }
+
+    public static Log get(Class clazz) {
+        return new Log(clazz);
+    }
+
+    public static Log get(Class clazz, PrintStream logstream) {
+        return new Log(clazz, logstream);
     }
 
     public void error(final String message, final Object... args) {
@@ -75,8 +89,7 @@ public class Log {
         String msg = format(message, args);
         if (level == Level.CONFIG) {
             msg = "[DEBUG] " + msg;
-        }
-        else if (level == Level.SEVERE) {
+        } else if (level == Level.SEVERE) {
             msg = "[ERROR] " + msg;
         }
         this.logger.log(level, msg);
@@ -84,5 +97,9 @@ public class Log {
 
     private String prependJobName(final Job job, String message) {
         return String.format("[job-%s] %s", job.getName(), message);
+    }
+
+    public StreamHandler getStreamHandler() {
+        return streamHandler;
     }
 }

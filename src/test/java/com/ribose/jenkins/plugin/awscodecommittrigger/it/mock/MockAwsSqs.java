@@ -68,7 +68,7 @@ public class MockAwsSqs {
         this.started = true;
     }
 
-    public static MockAwsSqs get() {
+    public synchronized static MockAwsSqs get() {
         if (!instance.started) {
             try {
                 instance.start();

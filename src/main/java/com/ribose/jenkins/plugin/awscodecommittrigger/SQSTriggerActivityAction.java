@@ -13,8 +13,6 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.logging.Level;
 
 public class SQSTriggerActivityAction implements Action {
 
@@ -83,21 +81,5 @@ public class SQSTriggerActivityAction implements Action {
 
     public File getSqsLogFile() {
         return sqsLogFile;
-    }
-
-    public void logError(Exception error) {
-        write(Level.SEVERE, error.toString());
-    }
-
-    public void logInfo(String format, Object... args) {
-        write(Level.INFO, format, args);
-    }
-
-    private void write(Level level, String format, Object... args) {
-        try {
-            FileUtils.write(getSqsLogFile(), "[" + level.getName() + "] " + String.format(format, args), Charset.forName("UTF-8"), true);
-        } catch (IOException e) {
-            log.error("Unable write to Activity Log, error: %s", e);
-        }
     }
 }

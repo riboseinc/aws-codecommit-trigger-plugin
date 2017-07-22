@@ -19,7 +19,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
 
     private ProjectFixture fixture = new ProjectFixture()
         .withSqsMessage(JenkinsIT.class, "us-east-1.json")
-        .setSubscribedBranches("master")
+        .setSubscribedBranches("refs/heads/master")
         .setShouldStarted(Boolean.TRUE);
 
     public SCM getScm() {

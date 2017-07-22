@@ -18,17 +18,15 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.services.sqs.model.Message;
-import hudson.Util;
+import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.util.StreamTaskListener;
-import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
-import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
-import java.util.Date;
 
 
 public class SQSTriggerBuilder implements Runnable {
@@ -36,71 +34,40 @@ public class SQSTriggerBuilder implements Runnable {
     private final AbstractProject job;
     private final DateFormat formatter = DateFormat.getDateTimeInstance();
 
-    private final String messageId;
-    private final PrintStream logger;
+    private final Log log;
     private final StreamTaskListener listener;
+    private final Message message;
 
     public SQSTriggerBuilder(final AbstractProject job, final Message message) throws IOException {
-        if (job == null) {
-            throw new UnexpectedException("Unexpected error, 'job' object was null!");
-        }
-
         this.job = job;
-        this.messageId = StringUtils.findByUniqueJsonKey(message.getBody(), "MessageId");
+        this.message = message;
 
-        this.listener = new StreamTaskListener(
-            this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile(),
-            true,
-            Charset.forName("UTF-8")
-        );
-        this.logger = this.listener.getLogger();
+        File sqsLogFile = this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile();
+        this.listener = new StreamTaskListener(sqsLogFile, true, Charset.forName("UTF-8"));
+        this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger());
+
+        this.log.info("Try to trigger the build, message: %s", this.job, this.message.getBody());
     }
 
     @Override
     public void run() {
-        logger.format("%nRunning Job '%s' for Message '%s'%n", job.getName(), messageId);
-        this.buildIfChanged();
-    }
-
-    //TODO review this condition
-    private void buildIfChanged() {
-        final long now = System.currentTimeMillis();
-
-        logger.format("Started on %s", this.toDateTime(now));
-
         final boolean hasChanges = this.job.poll(listener).hasChanges();
+        this.log.info("Any code changes found in SCM? %s", this.job, hasChanges);
 
         if (hasChanges) {
-            logger.println("Changes found");
-            this.startJob(now);
-        } else {
-            logger.println("No changes");
+            this.startJob();
         }
-
-        logger.println("[INFO] Done. Took " + this.toTimeSpan(now));
+        else {
+            log.info("Cancel the build since no change found", this.job);
+        }
     }
 
-    private void startJob(final long now) {
-        Cause cause = new Cause.RemoteCause("SQS trigger", String.format("Triggering Job for SQS Message [%s] on [%s]", messageId, this.toDateTime(now)));
+    private void startJob() {
+        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %s", message));
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
-        if (job.scheduleBuild(cause)) {
-            logger.println("Job queued");
-        } else {
-            logger.println("Job NOT queued - it was determined that this job has been queued already.");
-        }
-
-        logger.format("Job '%s' is queued? or is building?: %s , %s%n", job.getName(), job.isInQueue(), job.isBuilding());
-        logger.println("Triggering job [COMPLETED]");
-    }
-
-    private String toDateTime(final long timestamp) {
-        final Date date = new Date(timestamp);
-        return this.formatter.format(date);
-    }
-
-    private String toTimeSpan(final long timestamp) {
-        final long now = System.currentTimeMillis();
-        return Util.getTimeSpanString(now - timestamp);
+        boolean scheduled = job.scheduleBuild(cause);
+        this.log.info("Finally! The build is scheduled? %s", this.job, scheduled);
+        this.log.getStreamHandler().flush();
     }
 }

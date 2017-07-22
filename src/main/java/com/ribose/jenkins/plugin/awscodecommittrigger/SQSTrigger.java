@@ -80,6 +80,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     }
 
     @Override
+    @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
     public void start(final AbstractProject<?, ?> project, final boolean newInstance) {
         super.start(project, newInstance);
 
@@ -87,6 +88,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         descriptor.queue.execute(new Runnable() {
 
             @Override
+            @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 boolean succeed = SQSTrigger.this.getScheduler().register(SQSTrigger.this);
                 log.info("Register trigger %s", SQSTrigger.this.job, succeed);
@@ -102,6 +104,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         descriptor.queue.execute(new Runnable() {
 
             @Override
+            @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 boolean succeed = SQSTrigger.this.getScheduler().unregister(SQSTrigger.this);
                 log.info("Unregister trigger %s", SQSTrigger.this.job, succeed);
@@ -178,8 +181,9 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         return this.executor;
     }
 
+    @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
     private boolean handleMessage(final Message message) {
-        log.info("Parse and do match against events, message body: %s", this.job, message.getBody());
+        log.info("Parse and do match against events, message: %s", this.job, message.getBody());
 
         final MessageParser parser = this.messageParserFactory.createParser(message);
         final EventTriggerMatcher matcher = this.getEventTriggerMatcher();
@@ -194,20 +198,17 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         return false;
     }
 
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
+    @SuppressFBWarnings({"NP_NULL_ON_SOME_PATH", "NP_NULL_PARAM_DEREF"})
     private void execute(final Message message) {
-        final SQSTriggerActivityAction activity = SQSTrigger.this.job.getAction(SQSTriggerActivityAction.class);
-        activity.logInfo("Submit new thread to handle message '%s' for job '%s'", message.getMessageId(), job.getName());
-
         this.executor.execute(new Runnable() {
 
             @Override
+            @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 try {
                     new SQSTriggerBuilder(SQSTrigger.this.job, message).run();
                 } catch (Exception e) {
                     UnexpectedException error = new UnexpectedException(e);
-                    activity.logError(error);
                     throw error;
                 }
             }

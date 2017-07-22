@@ -16,59 +16,73 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.logging;
 
+import hudson.model.Job;
+import org.apache.commons.lang3.ClassUtils;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class Log {
 
-    private static final Logger LOGGER;
-
-    static {
-        LOGGER = Logger.getLogger(Log.class.getName());
+    public static Log get(Class clazz) {
+        return new Log(clazz);
     }
 
-    private static String format(final String message, final Object... args) {
-        final String formatted = String.format(message, args);
-        final long id = Thread.currentThread().getId();
-        return String.format("%06X %s", id, formatted);
+    private Logger logger;
+    private Class clazz;
+
+    private Log(Class clazz) {
+        this.clazz = clazz;
+        this.logger = Logger.getLogger(this.clazz.getName());
     }
 
-    private static void write(final Level level, final String message, final Object... args) {
-        final String msg = format(message, args);
-        LOGGER.log(level, msg);
-    }
-
-    private static void write(final Level level, final Throwable thrown, final String message, final Object... args) {
-        final String msg = format(message, args);
-        LOGGER.log(level, msg, thrown);
-    }
-
-    public static void finest(final String message, final Object... args) {
-        write(Level.FINEST, message, args);
-    }
-
-    public static void finer(final String message, final Object... args) {
-        write(Level.FINER, message, args);
-    }
-
-    public static void fine(final String message, final Object... args) {
-        write(Level.FINE, message, args);
-    }
-
-    public static void info(final String message, final Object... args) {
-        write(Level.INFO, message, args);
-    }
-
-    public static void warning(final String message, final Object... args) {
-        write(Level.WARNING, message, args);
-    }
-
-    public static void severe(final String message, final Object... args) {
+    public void error(final String message, final Object... args) {
         write(Level.SEVERE, message, args);
     }
 
-    public static void severe(final Throwable thrown, final String message, final Object... args) {
-        write(Level.SEVERE, thrown, message, args);
+    public void error(String message, final Job job, final Object... args) {
+        write(Level.SEVERE, prependJobName(job, message), args);
+    }
+
+    public void info(final String message, final Object... args) {
+        write(Level.INFO, message, args);
+    }
+
+    public void info(String message, final Job job, final Object... args) {
+        write(Level.INFO, prependJobName(job, message), args);
+    }
+
+    public void debug(final String message, final Object... args) {
+        write(Level.CONFIG, message, args);
+    }
+
+    public void debug(String message, final Job job, final Object... args) {
+        write(Level.CONFIG, prependJobName(job, message), args);
+    }
+
+    public void warning(final String message, final Object... args) {
+        write(Level.WARNING, message, args);
+    }
+
+    private String format(final String message, final Object... args) {
+        final String formatted = String.format(message, args);
+        final long id = Thread.currentThread().getId();
+        return String.format("[%s][thread-%06X] %s", ClassUtils.getAbbreviatedName(this.clazz, 1), id, formatted);
+    }
+
+    private void write(final Level level, final String message, final Object... args) {
+        String msg = format(message, args);
+        if (level == Level.CONFIG) {
+            msg = "[DEBUG] " + msg;
+        }
+        else if (level == Level.SEVERE) {
+            msg = "[ERROR] " + msg;
+        }
+        this.logger.log(level, msg);
+    }
+
+    private String prependJobName(final Job job, String message) {
+        return String.format("[job-%s] %s", job.getName(), message);
     }
 }

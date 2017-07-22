@@ -53,6 +53,8 @@ import java.util.concurrent.Executors;
 
 
 public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQueueListener {
+    private static final Log log = Log.get(SQSTrigger.class);
+
     private final String queueUuid;
     private final String subscribedBranches;
 
@@ -86,8 +88,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
 
             @Override
             public void run() {
-                Log.info("Start trigger for project %s", project);
-                SQSTrigger.this.getScheduler().register(SQSTrigger.this);
+                boolean succeed = SQSTrigger.this.getScheduler().register(SQSTrigger.this);
+                log.info("Register trigger %s", SQSTrigger.this.job, succeed);
             }
         });
     }
@@ -101,8 +103,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
 
             @Override
             public void run() {
-                Log.info("Stop trigger (%s)", this);
-                SQSTrigger.this.getScheduler().unregister(SQSTrigger.this);
+                boolean succeed = SQSTrigger.this.getScheduler().unregister(SQSTrigger.this);
+                log.info("Unregister trigger %s", SQSTrigger.this.job, succeed);
             }
         });
     }
@@ -177,15 +179,14 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
     }
 
     private boolean handleMessage(final Message message) {
-        Log.info("Message '%s' received...", message.getMessageId());
+        log.info("Parse and do match against events, message body: %s", this.job, message.getBody());
 
         final MessageParser parser = this.messageParserFactory.createParser(message);
         final EventTriggerMatcher matcher = this.getEventTriggerMatcher();
         final List<Event> events = parser.parseMessage(message);
 
         if (matcher.matches(events, this.job)) {
-            Log.info("Event matched, executing job '%s'", this.job.getName());
-            Log.info("Job is being in queue?: %s", this.job.isInQueue());
+            log.info("Hurray! Execute it", this.job);
             this.execute(message);
             return true;
         }
@@ -193,14 +194,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         return false;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     private void execute(final Message message) {
-        if (this.job == null) {
-            Log.severe("Unexpected error Job is Null");
-            return;
-        }
-
-        Log.info("SQS event triggered build of %s", this.job.getFullDisplayName());
-
         final SQSTriggerActivityAction activity = SQSTrigger.this.job.getAction(SQSTriggerActivityAction.class);
         activity.logInfo("Submit new thread to handle message '%s' for job '%s'", message.getMessageId(), job.getName());
 

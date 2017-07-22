@@ -101,4 +101,44 @@ public class MessageBody {
     public String getUnsubscribeURL() {
         return this.unsubscribeURL;
     }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public void setTopicArn(String topicArn) {
+        this.topicArn = topicArn;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setSignatureVersion(String signatureVersion) {
+        this.signatureVersion = signatureVersion;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public void setSigningCertURL(String signingCertURL) {
+        this.signingCertURL = signingCertURL;
+    }
+
+    public void setUnsubscribeURL(String unsubscribeURL) {
+        this.unsubscribeURL = unsubscribeURL;
+    }
 }

@@ -20,10 +20,13 @@ import hudson.model.AbstractProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.util.List;
 
 public class OrEventTriggerMatcher extends AbstractEventTriggerMatcher {
+
+    private static final Log log = Log.get(OrEventTriggerMatcher.class);
 
     public OrEventTriggerMatcher(EventTriggerMatcher... matchers) {
         super(matchers);
@@ -32,12 +35,13 @@ public class OrEventTriggerMatcher extends AbstractEventTriggerMatcher {
     @Override
     public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
         for (EventTriggerMatcher matcher : matchers) {
-            Log.info("Job '%s': test if any event match by matcher '%s'...", job.getName(), matcher.getClass().getSimpleName());
+            log.info("Test if any event not match using %s", ClassUtils.getAbbreviatedName(matcher.getClass(), 1));
             if (matcher.matches(events, job)) {
                 return true;
             }
         }
-        Log.info("Job '%s': event(s) not match all matchers defined in '%s'.", job.getName(), this.getClass().getSimpleName());
+
+        log.info("OK! At least one event matched");
         return false;
     }
 }

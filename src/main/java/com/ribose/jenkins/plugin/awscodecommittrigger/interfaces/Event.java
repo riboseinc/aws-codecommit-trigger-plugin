@@ -49,8 +49,6 @@ public interface Event {
      */
     String getBranch();
 
-    String getOriginalBranch();
-
     /**
      * Returns a value indicating whether the specified URI matches the events host and path
      * information.
@@ -58,4 +56,6 @@ public interface Event {
      * @return {@code true} if the event matches the specified URI; otherwise, {@code false}.
      */
     boolean isMatch(URIish uri);
+
+    String getArn();
 }

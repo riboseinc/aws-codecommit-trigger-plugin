@@ -18,6 +18,8 @@ import java.util.logging.Level;
 
 public class SQSTriggerActivityAction implements Action {
 
+    private static final Log log = Log.get(SQSTriggerActivityAction.class);
+
     private final transient Job job;
     private final transient String sqsLogPath;
     private final transient File sqsLogFile;
@@ -58,7 +60,7 @@ public class SQSTriggerActivityAction implements Action {
     }
 
     public boolean isBig() {
-        long sizeInMB = this.sqsLogFile.length() / 1048576L; //in MB
+        long sizeInMB = this.sqsLogFile.length() / 1048576L; // 1048576 B = 1 MB
         return sizeInMB > DEFAULT_BIG_SIZE;
     }
 
@@ -95,7 +97,7 @@ public class SQSTriggerActivityAction implements Action {
         try {
             FileUtils.write(getSqsLogFile(), "[" + level.getName() + "] " + String.format(format, args), Charset.forName("UTF-8"), true);
         } catch (IOException e) {
-            Log.severe(e, "Unable write to Activity Log");
+            log.error("Unable write to Activity Log, error: %s", e);
         }
     }
 }

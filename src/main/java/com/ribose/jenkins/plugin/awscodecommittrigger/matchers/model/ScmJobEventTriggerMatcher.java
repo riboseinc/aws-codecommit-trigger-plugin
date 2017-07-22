@@ -16,15 +16,14 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.AbstractProject;
-import hudson.plugins.git.BranchSpec;
-import hudson.plugins.git.GitSCM;
-import hudson.scm.NullSCM;
-import hudson.scm.SCM;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.model.AbstractProject;
+import hudson.plugins.git.GitSCM;
+import hudson.scm.NullSCM;
+import hudson.scm.SCM;
 import jenkins.model.Jenkins;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -32,30 +31,27 @@ import org.jenkinsci.plugins.multiplescms.MultiSCM;
 
 import java.util.List;
 
-//TODO check to make sure CodeCommit repo
+
 public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
+
+    private static final Log log = Log.get(ScmJobEventTriggerMatcher.class);
 
     @Override
     public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
-        if (events == null || job == null) {
-            Log.severe("Unexpected error, Jobs is null");
-            return false;
-        }
-
         SCM scm = job.getScm();
         if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
-            Log.info("Job '%s' has no SCM config", job.getName());
+            log.info("NullSCM detected", job);
             return false;
         }
 
         for (Event event : events) {
             if (this.matches(event, scm)) {
-                Log.info("[%s] Job '%s' matches event.", ScmJobEventTriggerMatcher.class.getSimpleName(), job.getName());
+                log.info("Hurray! Event %s matched SCM ", job, event.getArn(), scm.getKey());
                 return true;
             }
         }
 
-        Log.info("[%s] Event(s) did not match job '%s' ", ScmJobEventTriggerMatcher.class.getSimpleName(), job.getName());
+        log.info("Found no event matched", job);
         return false;
     }
 
@@ -80,9 +76,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
         final GitSCM git = (GitSCM) scmProvider;
         final List<RemoteConfig> configs = git.getRepositories();
-        final List<BranchSpec> branches = git.getBranches();
 
-        return this.matchesConfigs(event, configs) && this.matchesBranches(event, branches);
+        return this.matchesConfigs(event, configs);
     }
 
     private boolean matchesMultiSCM(final Event event, final SCM scmProvider) {
@@ -101,31 +96,6 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return false;
     }
 
-    private boolean matchesBranches(final Event event, final List<BranchSpec> branches) {
-        for (final BranchSpec branch : branches) {
-            if (this.matchesBranch(event, branch)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean matchesBranch(final Event event, final BranchSpec branch) {
-        String eventBranch = event.getBranch();
-        if (!eventBranch.startsWith("*/")) {
-            eventBranch = "*/" + eventBranch;//required by BranchSpec
-        }
-
-        boolean branchMatch = branch.matches(eventBranch);
-        if (!branchMatch) {
-            branchMatch = branch.matches(event.getOriginalBranch());
-            Log.info("[%s] Try BranchSpec match: %s originalBranch: %s", ScmJobEventTriggerMatcher.class.getSimpleName(), branchMatch, event.getOriginalBranch());
-        }
-
-        Log.info("[%s] BranchSpec match: %s, event: %s, branch: %s", ScmJobEventTriggerMatcher.class.getSimpleName(), branchMatch, event.getBranch(), branch.getName());
-        return branchMatch;
-    }
-
     private boolean matchesConfigs(final Event event, final List<RemoteConfig> configs) {
         for (final RemoteConfig config : configs) {
             if (this.matchesConfig(event, config)) {
@@ -139,10 +109,12 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         List<URIish> uris = config.getURIs();
         for (final URIish uri : uris) {
             if (event.isMatch(uri)) {
+                log.debug("Event %s matched uri %s", event.getArn(), uri);
                 return true;
             }
         }
 
+        log.debug("Found no event matched config: ", event.getArn(), config.getName());
         return false;
     }
 
@@ -154,7 +126,9 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
-        return jenkins.getPlugin("multiple-scms") != null;
+        boolean rs = jenkins.getPlugin("multiple-scms") != null;
+        log.debug("Multiple-SCMs plugin found: %s", rs);
+        return rs;
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
@@ -165,6 +139,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
-        return jenkins.getPlugin("git") != null;
+        boolean rs = jenkins.getPlugin("git") != null;
+        log.debug("Git plugin found: %s", rs);
+        return rs;
     }
 }

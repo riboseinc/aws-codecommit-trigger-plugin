@@ -46,6 +46,8 @@ import java.util.concurrent.ExecutorService;
 
 public class SQSFactoryImpl implements SQSFactory {
 
+    private static final Log log = Log.get(SQSFactoryImpl.class);
+
     private final RequestFactory factory;
     private final SQSExecutorFactory SQSExecutorFactory;
 
@@ -128,10 +130,7 @@ public class SQSFactoryImpl implements SQSFactory {
                 config.setProxyPassword(proxyConfig.getPassword());
             }
 
-            Log.info(
-                "Proxy settings for SQS: %s:%s",
-                config.getProxyHost(),
-                config.getProxyPort());
+            log.info("Proxy settings for SQS: %s:%s", config.getProxyHost(), config.getProxyPort());
         }
         return config;
     }

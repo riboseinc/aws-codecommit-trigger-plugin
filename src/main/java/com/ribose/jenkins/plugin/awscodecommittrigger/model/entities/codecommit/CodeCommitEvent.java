@@ -25,28 +25,24 @@ import org.eclipse.jgit.transport.URIish;
 
 public class CodeCommitEvent implements Event {
 
+    private static final Log log = Log.get(CodeCommitEvent.class);
+
     private final static String HOST = "git-codecommit.%s.amazonaws.com";
     private final static String PATH = "/v1/repos/%s";
 
     private final String host;
     private final String path;
     private final String branch;
-    private final String originalBranch;
+    private final String arn;
 
     public CodeCommitEvent(final Record record, final Reference reference) {
-        final String arn = record.getEventSourceARN();
-        final String[] tokens = arn.split(":", 6);
+        this.arn = record.getEventSourceARN();
 
+        final String[] tokens = arn.split(":", 6);
         this.host = String.format(HOST, tokens[3]);
-//        this.path = tokens[5];
         this.path = String.format(PATH, tokens[5]);
 
-        this.originalBranch = reference.getName();
-        this.branch = this.originalBranch
-            .replaceFirst("refs/heads/", "")
-            .replaceFirst("refs/remotes/", "")
-            .replaceFirst("remotes/", "")
-            .replaceFirst("refs/tags/", "");
+        this.branch = reference.getName();
     }
 
     @Override
@@ -70,26 +66,27 @@ public class CodeCommitEvent implements Event {
     }
 
     @Override
-    public String getOriginalBranch() {
-        return originalBranch;
-    }
-
-    @Override
     public boolean isMatch(final URIish uri) {
         if (uri == null) {
             return false;
         }
 
         if (!StringUtils.equals(this.host, uri.getHost())) {
-            Log.info("[%s] host %s not equals %s", CodeCommitEvent.class.getSimpleName(), uri.getHost(), this.host);
+            log.debug("Event %s not match host %s", this.getArn(), uri.getHost());
             return false;
         }
 
         if (!StringUtils.equals(this.path, uri.getPath())) {
-            Log.info("[%s] path %s not equals %s", CodeCommitEvent.class.getSimpleName(), uri.getPath(), this.path);
+            log.debug("Event %s not match path %s", this.getArn(), uri.getPath());
             return false;
         }
 
+        log.debug("Event %s match uri %s", this.getArn(), uri);
         return true;
     }
+
+    public String getArn() {
+        return arn;
+    }
+
 }

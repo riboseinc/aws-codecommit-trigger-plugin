@@ -22,7 +22,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.EventBroker;
-import com.ribose.jenkins.plugin.awscodecommittrigger.util.ThrowIf;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -33,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 
 
 public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
+    private static final Log log = Log.get(SQSQueueMonitorSchedulerImpl.class);
 
     private final ExecutorService executor;
     private final SQSQueueProvider provider;
@@ -51,14 +51,12 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
 
     @Override
     public boolean register(final SQSQueueListener listener) {
-        ThrowIf.isNull(listener, "listener");
-
-        Log.info("Register SQS listener");
+        log.info("Register SQS listener");
         final String uuid = listener.getQueueUuid();
         final SQSQueue queue = this.provider.getSqsQueue(uuid);
 
         if (queue == null) {
-            Log.warning("No queue for {%s}, aborted", uuid);
+            log.warning("No queue for {%s}, aborted", uuid);
             return false;
         }
 
@@ -72,22 +70,22 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
             return false;
         }
 
-        Log.info("Unregister SQS listener");
+        log.info("Unregister SQS listener");
         final String uuid = listener.getQueueUuid();
         final SQSQueueMonitor monitor = this.monitors.get(uuid);
 
         if (monitor == null) {
-            Log.warning("No monitor for {%s}, aborted", uuid);
+            log.warning("No monitor for {%s}, aborted", uuid);
             return false;
         }
 
-        Log.info("Remove listener from monitor for {%s}", uuid);
+        log.info("Remove listener from monitor for {%s}", uuid);
         if (monitor.remove(listener)) {
             monitor.shutDown();
         }
 
         if (monitor.isShutDown()) {
-            Log.info("Monitor is shut down, remove monitor for {%s}", uuid);
+            log.debug("Monitor is shut down, remove monitor for {%s}", uuid);
             this.monitors.remove(uuid);
         }
 
@@ -109,12 +107,12 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         SQSQueueMonitor monitor = this.monitors.get(uuid);
 
         if (monitor == null) {
-            Log.info("No monitor exists, creating new monitor for %s", queue);
+            log.info("No monitor exists, creating new monitor for %s", queue);
             monitor = this.factory.createMonitor(this.executor, queue);
             this.monitors.put(uuid, monitor);
         }
 
-        Log.info("Add listener to monitor for %s", queue);
+        log.debug("Add listener to monitor for %s", queue.getUrl());
         monitor.add(listener);
     }
 
@@ -124,11 +122,11 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         final SQSQueue queue = this.provider.getSqsQueue(uuid);
 
         if (queue == null) {
-            Log.info("Queue {%s} removed, shut down monitor", uuid);
+            log.info("Queue {%s} removed, shut down monitor", uuid);
             monitor.shutDown();
             entries.remove();
         } else if (monitor.isShutDown() || this.hasQueueChanged(monitor, queue)) {
-            Log.info("Queue {%s} changed or monitor stopped, create new monitor", uuid);
+            log.info("Queue {%s} changed or monitor stopped, create new monitor", uuid);
             monitor = this.factory.createMonitor(monitor, queue);
             entry.setValue(monitor).shutDown();
             this.executor.execute(monitor);
@@ -160,10 +158,8 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
             }
 
             return false;
-        } catch (final com.amazonaws.AmazonServiceException e) {
-            Log.warning("Cannot compare queues: %s", e.getMessage());
-        } catch (final Exception e) {
-            Log.severe(e, "Cannot compare queues, unknown error");
+        } catch (Exception e) {
+            log.warning("Cannot compare queues: %s, error: %s", e.getMessage(), e);
         }
         return true;
     }

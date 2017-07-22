@@ -23,7 +23,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueListene
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannel;
-import com.ribose.jenkins.plugin.awscodecommittrigger.util.ThrowIf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,43 +32,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
-    private final static String          ERROR_WRONG_QUEUE = "The specified listener is associated with another queue.";
-
-    private final ExecutorService        executor;
+    private final static Log log = Log.get(SQSQueueMonitorImpl.class);
+    private final ExecutorService executor;
 
     private final SQSQueue queue;
     private final SQSChannel channel;
 
-    private final Object                 listenersLock     = new Object();
+    private final Object listenersLock = new Object();
     private final List<SQSQueueListener> listeners;
 
-    private final AtomicBoolean          isRunning         = new AtomicBoolean();
-    private volatile boolean             isShutDown;
+    private final AtomicBoolean isRunning = new AtomicBoolean();
+    private volatile boolean isShutDown;
 
     public SQSQueueMonitorImpl(final ExecutorService executor, final SQSQueue queue, final SQSChannel channel) {
-        ThrowIf.isNull(executor, "executor");
-        ThrowIf.isNull(channel, "channel");
-
         this.executor = executor;
-
         this.queue = queue;
         this.channel = channel;
-
         this.listeners = new ArrayList<>();
     }
 
-    private SQSQueueMonitorImpl(final ExecutorService executor,
-            final SQSQueue queue,
-            final SQSChannel channel,
-            final List<SQSQueueListener> listeners) {
-        ThrowIf.isNull(executor, "executor");
-        ThrowIf.isNull(channel, "channel");
-
+    private SQSQueueMonitorImpl(final ExecutorService executor, final SQSQueue queue, final SQSChannel channel, final List<SQSQueueListener> listeners) {
         this.executor = executor;
-
         this.queue = queue;
         this.channel = channel;
-
         this.listeners = listeners;
     }
 
@@ -82,8 +67,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
     @Override
     public boolean add(final SQSQueueListener listener) {
-        ThrowIf.isNull(listener, "listener");
-        ThrowIf.notEqual(listener.getQueueUuid(), this.channel.getQueueUuid(), ERROR_WRONG_QUEUE);
+        assert listener.getQueueUuid().equals(this.channel.getQueueUuid());
 
         synchronized (this.listenersLock) {
             if (this.listeners.add(listener) && this.listeners.size() == 1) {
@@ -118,24 +102,18 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
             }
 
             if (!this.isRunning.compareAndSet(false, true)) {
-                Log.warning("Monitor for %s already started", this.channel);
+                log.warning("Monitor for %s already started", this.queue.getUrl());
                 return;
             }
 
-            Log.fine("Start synchronous monitor for %s", this.channel);
+            log.info("Start monitor for %s", this.queue.getUrl());
             this.processMessages();
-        } catch (final com.amazonaws.services.sqs.model.QueueDoesNotExistException e) {
-            Log.warning("Queue %s does not exist, monitor stopped", this.channel);
-            this.isShutDown = true;
-        } catch (final com.amazonaws.AmazonServiceException e) {
-            Log.warning("Service error for queue %s, monitor stopped", this.channel);
-            this.isShutDown = true;
-        } catch (final Exception e) {
-            Log.severe(e, "Unknown error, monitor for queue %s stopped", this.channel);
+        } catch (Exception e) {
+            log.warning("Monitor for %s stopped, error: %s", this.queue.getUrl(), e);
             this.isShutDown = true;
         } finally {
             if (!this.isRunning.compareAndSet(true, false)) {
-                Log.warning("Monitor for %s already stopped", this.channel);
+                log.warning("Monitor for %s already stopped", this.queue.getUrl());
             }
             this.execute();
         }
@@ -143,7 +121,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
     @Override
     public void shutDown() {
-        Log.info("Shut down monitor for %s", this.channel);
+        log.info("Shut down monitor for %s", this.channel);
         this.isShutDown = true;
     }
 
@@ -175,7 +153,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
         final List<Message> messages = this.channel.getMessages();
         List<Message> proceedMessages = notifyListeners(messages);
-        Log.fine("Received %s messages, proceed %s messages", messages.size(), proceedMessages.size());
+        log.info("Received %d messages, proceed %d messages", messages.size(), proceedMessages.size());
         this.channel.deleteMessages(proceedMessages);
     }
 
@@ -183,16 +161,12 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
         List<Message> proceedMessages = new ArrayList<>();
 
         if (!messages.isEmpty()) {
-            Log.info("Received %d message(s) from %s", messages.size(), this.channel);
             final List<SQSQueueListener> listeners = this.getListeners();
-
             for (final SQSQueueListener listener : listeners) {
                 List<Message> msgs = listener.handleMessages(messages);
                 proceedMessages.addAll(msgs);
                 messages.removeAll(msgs);
             }
-        } else {
-            Log.fine("Received no messages from %s", this.channel);
         }
 
         return proceedMessages;

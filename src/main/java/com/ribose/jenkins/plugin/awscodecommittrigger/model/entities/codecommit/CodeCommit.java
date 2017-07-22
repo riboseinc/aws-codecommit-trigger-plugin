@@ -26,9 +26,13 @@ public class CodeCommit {
 
     @Expose
     @SerializedName("references")
-    List<Reference> references;
+    private List<Reference> references;
 
     public List<Reference> getReferences() {
         return this.references;
+    }
+
+    public void setReferences(List<Reference> references) {
+        this.references = references;
     }
 }

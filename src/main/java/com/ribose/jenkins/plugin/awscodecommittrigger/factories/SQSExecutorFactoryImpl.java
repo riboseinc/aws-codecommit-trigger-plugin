@@ -42,20 +42,6 @@ public class SQSExecutorFactoryImpl implements SQSExecutorFactory {
         this.threadFactory = threadFactory;
     }
 
-//    @Override
-//    public ThreadPoolExecutor createExecutor() {
-//        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-//                CORE_POOL_SIZE,
-//                MAXIMUM_POOL_SIZE,
-//                KEEP_ALIVE_TIME,
-//                KEEP_ALIVE_TIME_UNIT,
-//                new LinkedBlockingQueue<Runnable>(),
-//                this.threadFactory);
-//
-//        executor.allowCoreThreadTimeOut(false);
-//        return executor;
-//    }
-
     @Override
     public ExecutorService newExecutor() {
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(

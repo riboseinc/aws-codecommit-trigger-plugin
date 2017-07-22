@@ -37,7 +37,6 @@ public abstract class AbstractJenkinsIT {
     protected SQSTriggerQueue sqsQueue;
 
     protected final MockSQSFactory mockSQSFactory = MockSQSFactory.get();
-//    protected SCM gitScm = new GitSCM(MockResource.get().getGitUrl());
 
     @Before
     public void before() throws Exception {

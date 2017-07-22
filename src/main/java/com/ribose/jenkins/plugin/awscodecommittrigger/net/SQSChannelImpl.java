@@ -16,40 +16,32 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.net;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchResult;
-import com.amazonaws.services.sqs.model.Message;
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
-import com.amazonaws.services.sqs.model.ReceiveMessageResult;
-
+import com.amazonaws.services.sqs.model.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
-import com.ribose.jenkins.plugin.awscodecommittrigger.model.constants.ErrorCode;
-import com.ribose.jenkins.plugin.awscodecommittrigger.util.ErrorType;
-import com.ribose.jenkins.plugin.awscodecommittrigger.util.ThrowIf;
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class SQSChannelImpl implements SQSChannel {
 
-    private final AmazonSQS      sqs;
+    private static final Log log = Log.get(SQSChannelImpl.class);
+
+    private final AmazonSQS sqs;
     private final SQSQueue queue;
     private final RequestFactory factory;
 
     /**
      * Number of requests that were sent (for logging)
      */
-    private int                  requestCount;
+    private final AtomicInteger requestCount = new AtomicInteger(0);
 
     public SQSChannelImpl(final AmazonSQS sqs, final SQSQueue queue, final RequestFactory factory) {
-        ThrowIf.isNull(sqs, "sqs");
-        ThrowIf.isNull(queue, "queue");
-        ThrowIf.isNull(factory, "factory");
-
         this.sqs = sqs;
         this.queue = queue;
         this.factory = factory;
@@ -57,36 +49,30 @@ public class SQSChannelImpl implements SQSChannel {
 
     @Override
     public List<Message> getMessages() {
+        log.info("Poll for messages");
+
+        List<Message> messages = Collections.emptyList();
+
         try {
-            this.logRequestCount();
+            log.debug("Requests count %d for %s", this.requestCount.incrementAndGet(), this.queue);
 
             final ReceiveMessageRequest request = this.factory.createReceiveMessageRequest(this.queue);
             final ReceiveMessageResult result = this.sqs.receiveMessage(request);
-
-            if (result == null) {
-                return Collections.emptyList();
+            log.debug("Send request to receive messages from queue %s", this.queue);
+            if (result != null) {
+                messages = result.getMessages();
             }
-
-            return result.getMessages();
-
-        } catch (final com.amazonaws.services.sqs.model.QueueDoesNotExistException e) {
-            Log.warning("Failed to send receive message request for %s, queue does not exist", this.queue);
+        } catch (AmazonServiceException e) {
+            log.error("Poll request error", e);
             throw e;
-
-        } catch (final com.amazonaws.AmazonServiceException e) {
-            if (ErrorType.is(e, ErrorCode.INVALID_CLIENT_TOKEN_ID, HttpStatus.SC_FORBIDDEN)) {
-                Log.warning("Failed to send receive message request for %s, %s", this.queue, e.getMessage());
-                throw e;
-            }
-
-            Log.severe(e, "Failed to send receive message request for %s", this.queue);
         }
-        return Collections.emptyList();
+
+        return messages;
     }
 
     @Override
     public void deleteMessages(final List<Message> messages) {
-        if (messages == null || messages.size() == 0) {
+        if (CollectionUtils.isEmpty(messages)) {
             return;
         }
 
@@ -98,7 +84,7 @@ public class SQSChannelImpl implements SQSChannel {
 
         final List<?> failed = result.getFailed();
         final List<?> success = result.getSuccessful();
-        Log.info("Deleted %d message(s) (%d failed) from %s", success.size(), failed.size(), this.queue);
+        log.info("Delete %d message(s) (%d failed) from %s", success.size(), failed.size(), this.queue);
     }
 
     @Override
@@ -106,25 +92,13 @@ public class SQSChannelImpl implements SQSChannel {
         return this.queue.getUuid();
     }
 
-    @Override
-    public String toString() {
-        return this.queue.toString();
-    }
-
-    private void logRequestCount() {
-        this.requestCount++;
-        Log.fine("Send receive message request #%d for %s", this.requestCount, this.queue);
-    }
-
     private DeleteMessageBatchResult deleteMessageBatch(final List<Message> messages) {
         try {
             final DeleteMessageBatchRequest request = this.factory.createDeleteMessageBatchRequest(this.queue, messages);
-            Log.info("Send delete request for %d message(s) to %s", messages.size(), this.queue);
+            log.debug("Send request to delete messages from queue %s", this.queue);
             return this.sqs.deleteMessageBatch(request);
-
-        } catch (final com.amazonaws.AmazonServiceException e) {
-            Log.severe(e, "Delete from %s failed", this.queue);
-
+        } catch (AmazonServiceException e) {
+            log.warning("Unable delete messages from queue %s, error: %s", this.queue, e);
         }
         return null;
     }

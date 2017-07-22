@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.map.LinkedMap;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -140,5 +141,10 @@ public class StringUtilsTest {
         while (matcher.find()) {
             System.out.println(matcher.group());
         }
+    }
+
+    @Test
+    public void testShortClassName() {
+        System.out.println(ClassUtils.getAbbreviatedName(StringUtilsTest.class, 1));
     }
 }

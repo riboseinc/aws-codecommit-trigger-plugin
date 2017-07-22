@@ -16,53 +16,42 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model;
 
-import hudson.model.AbstractProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
+import hudson.model.AbstractProject;
+import hudson.plugins.git.BranchSpec;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
 
 public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
 
+    private static final Log log = Log.get(ScmJobEventTriggerMatcher.class);
+
     @Override
     public boolean matches(final List<Event> events, final AbstractProject<?, ?> job) {
-        if (events == null || job == null) {
-            return false;
-        }
-
         SQSTrigger trigger = job.getTrigger(SQSTrigger.class);
-        if (trigger == null) {
-            Log.info("Job '%s': Trigger is not an instance of class SQSTrigger.", job.getName());
-            return false;
-        }
-
         List<String> branches = StringUtils.parseCsvString(trigger.getSubscribedBranches());
         if (branches.size() == 0) {
-            branches = Arrays.asList("**");// default is any branches
+            log.debug("Subscribe Branch is empty, using default value `**`", job);
+            branches = Collections.singletonList("**");// default is any branches
         }
 
         for (String branch : branches) {
-            String pattern = StringUtils.parseWildcard(branch);
+            BranchSpec branchSpec = new BranchSpec(branch);
             for (Event event : events) {
-                boolean match = event.getBranch().matches(pattern);
-                if (!match) {
-                    pattern = StringUtils.parseWildcard(branch);
-                    match = event.getOriginalBranch().matches(pattern);
-                    Log.info("[%s] Job '%s': event matches by original branch '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(), job.getName(), event.getOriginalBranch());
-                }
-
-                if (match) {
-                    Log.info("[%s] Job '%s': event matches by branch '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(), job.getName(), branch);
+                if (branchSpec.matches(event.getBranch())) {
+                    log.info("Hurray! Event %s matches branch %s", job, event.getArn(), branchSpec.toString());
                     return true;
                 }
             }
         }
 
-        Log.info("[%s] Event(s) did not match job '%s'", SubscribeBranchEventTriggerMatcher.class.getSimpleName(),  job.getName());
+        log.info("Found no event matched", job);
         return false;
     }
 }

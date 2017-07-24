@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.map.LinkedMap;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -64,7 +65,7 @@ public class StringUtilsTest {
 
     @Test
     public void testFindByUniqueJsonKey() throws IOException {
-        String sqsResponse = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("sqscc-msg.json"), StandardCharsets.UTF_8);
+        String sqsResponse = IOUtils.toString(StringUtils.getResource(StringUtilsTest.class, "sqsmsg.json"), StandardCharsets.UTF_8);
         String messageId = StringUtils.findByUniqueJsonKey(sqsResponse, "MessageId");
         String timestamp = StringUtils.findByUniqueJsonKey(sqsResponse, "Timestamp");
         String topicArn = StringUtils.findByUniqueJsonKey(sqsResponse, "TopicArn");
@@ -140,5 +141,10 @@ public class StringUtilsTest {
         while (matcher.find()) {
             System.out.println(matcher.group());
         }
+    }
+
+    @Test
+    public void testShortClassName() {
+        Assertions.assertThat(ClassUtils.getAbbreviatedName(StringUtilsTest.class, 1).length()).isLessThan(StringUtilsTest.class.getName().length());
     }
 }

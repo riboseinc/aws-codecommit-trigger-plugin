@@ -37,4 +37,8 @@ public class Records implements Iterable<Record> {
     public int size() {
         return this.records.size();
     }
+
+    public void setRecords(List<Record> records) {
+        this.records = records;
+    }
 }

@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.plugin.awscodecommittrigger.model;
+package com.ribose.jenkins.plugin.awscodecommittrigger.matchers;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
-import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model.AndEventTriggerMatcher;
-import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model.ScmJobEventTriggerMatcher;
-import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model.SubscribeBranchEventTriggerMatcher;
+import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl.ScmJobEventTriggerMatcher;
+import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl.SubscribeBranchEventTriggerMatcher;
 import hudson.model.AbstractProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 
 import java.util.List;
 
 public class EventTriggerMatcherImpl implements EventTriggerMatcher {
+
+    private static final Log log = Log.get(EventTriggerMatcherImpl.class);
 
     private final EventTriggerMatcher delegate;
 
@@ -41,7 +42,7 @@ public class EventTriggerMatcherImpl implements EventTriggerMatcher {
     @Override
     public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
         boolean match = this.delegate.matches(events, job);
-        Log.info("Job '%s' matches='%s' event(s), ignore message if matches='false'", job.getName(), match);
+        log.info("Finally, events match status is %s", job, match);
         return match;
     }
 }

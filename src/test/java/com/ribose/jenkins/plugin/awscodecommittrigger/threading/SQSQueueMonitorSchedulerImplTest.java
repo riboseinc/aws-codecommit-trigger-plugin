@@ -16,12 +16,8 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.threading;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.times;
-
+import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,21 +26,17 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.concurrent.ExecutorService;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueListener;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitorScheduler;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 
 
 public class SQSQueueMonitorSchedulerImplTest {
 
-    private static final String      UUID_A = "uuid-a";
-    private static final String      UUID_B = "uuid-b";
+    private static final String UUID_A = "uuid-a";
+    private static final String UUID_B = "uuid-b";
 
     @Mock
-    private ExecutorService          executor;
+    private ExecutorService executor;
 
     @Mock
     private SQSQueueProvider provider;
@@ -56,22 +48,22 @@ public class SQSQueueMonitorSchedulerImplTest {
     private SQSQueueMonitor monitorA;
 
     @Mock
-    private SQSQueueMonitor          monitorB;
+    private SQSQueueMonitor monitorB;
 
     @Mock
     private SQSQueueListener listenerA1;
 
     @Mock
-    private SQSQueueListener         listenerA2;
+    private SQSQueueListener listenerA2;
 
     @Mock
-    private SQSQueueListener         listenerB1;
+    private SQSQueueListener listenerB1;
 
     @Mock
     private SQSQueue queueA;
 
     @Mock
-    private SQSQueue                 queueB;
+    private SQSQueue queueB;
 
     private SQSQueueMonitorScheduler scheduler;
 
@@ -109,18 +101,6 @@ public class SQSQueueMonitorSchedulerImplTest {
         Mockito.when(this.provider.getSqsQueue(UUID_B)).thenReturn(this.queueB);
 
         this.scheduler = new SQSQueueMonitorSchedulerImpl(this.executor, this.provider, this.factory);
-    }
-
-    @Test
-    public void shouldThrowIfRegisterNullListener() {
-        assertThatThrownBy(new ThrowingCallable() {
-
-            @Override
-            public void call() throws Throwable {
-                SQSQueueMonitorSchedulerImplTest.this.scheduler.register(null);
-            }
-
-        }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

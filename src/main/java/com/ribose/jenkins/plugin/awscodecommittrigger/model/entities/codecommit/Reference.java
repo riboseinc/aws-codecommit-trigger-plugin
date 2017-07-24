@@ -37,4 +37,12 @@ public class Reference {
     public String getName() {
         return this.reference;
     }
+
+    public void setCommit(String commit) {
+        this.commit = commit;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 }

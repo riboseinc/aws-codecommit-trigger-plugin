@@ -24,7 +24,7 @@ public class Record {
 
     @Expose
     @SerializedName("awsRegion")
-    private String     awsRegion;
+    private String awsRegion;
 
     @Expose
     @SerializedName("codecommit")
@@ -32,47 +32,47 @@ public class Record {
 
     @Expose
     @SerializedName("eventId")
-    private String     eventId;
+    private String eventId;
 
     @Expose
     @SerializedName("eventName")
-    private String     eventName;
+    private String eventName;
 
     @Expose
     @SerializedName("eventPartNumber")
-    private int        eventPartNumber;
+    private int eventPartNumber;
 
     @Expose
     @SerializedName("eventSource")
-    private String     eventSource;
+    private String eventSource;
 
     @Expose
     @SerializedName("eventSourceARN")
-    private String     eventSourceARN;
+    private String eventSourceARN;
 
     @Expose
     @SerializedName("eventTime")
-    private String     eventTime;
+    private String eventTime;
 
     @Expose
     @SerializedName("eventTotalParts")
-    private int        eventTotalParts;
+    private int eventTotalParts;
 
     @Expose
     @SerializedName("eventTriggerConfigId")
-    private String     eventTriggerConfigId;
+    private String eventTriggerConfigId;
 
     @Expose
     @SerializedName("eventTriggerName")
-    private String     eventTriggerName;
+    private String eventTriggerName;
 
     @Expose
     @SerializedName("eventVersion")
-    private String     eventVersion;
+    private String eventVersion;
 
     @Expose
     @SerializedName("userIdentityARN")
-    private String     userIdentityARN;
+    private String userIdentityARN;
 
     public String getAwsRegion() {
         return this.awsRegion;
@@ -124,5 +124,57 @@ public class Record {
 
     public String getUserIdentityARN() {
         return this.userIdentityARN;
+    }
+
+    public void setAwsRegion(String awsRegion) {
+        this.awsRegion = awsRegion;
+    }
+
+    public void setCodeCommit(CodeCommit codeCommit) {
+        this.codeCommit = codeCommit;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public void setEventPartNumber(int eventPartNumber) {
+        this.eventPartNumber = eventPartNumber;
+    }
+
+    public void setEventSource(String eventSource) {
+        this.eventSource = eventSource;
+    }
+
+    public void setEventSourceARN(String eventSourceARN) {
+        this.eventSourceARN = eventSourceARN;
+    }
+
+    public void setEventTime(String eventTime) {
+        this.eventTime = eventTime;
+    }
+
+    public void setEventTotalParts(int eventTotalParts) {
+        this.eventTotalParts = eventTotalParts;
+    }
+
+    public void setEventTriggerConfigId(String eventTriggerConfigId) {
+        this.eventTriggerConfigId = eventTriggerConfigId;
+    }
+
+    public void setEventTriggerName(String eventTriggerName) {
+        this.eventTriggerName = eventTriggerName;
+    }
+
+    public void setEventVersion(String eventVersion) {
+        this.eventVersion = eventVersion;
+    }
+
+    public void setUserIdentityARN(String userIdentityARN) {
+        this.userIdentityARN = userIdentityARN;
     }
 }

@@ -18,13 +18,18 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_bra
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
-import hudson.util.OneShotEvent;
-import org.assertj.core.api.Assertions;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
+import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
+import hudson.plugins.git.GitSCM;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,7 +42,19 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
     public String name;
 
     @Parameterized.Parameter(1)
-    public ProjectFixture projectFixture;
+    public ProjectFixture fixture;
+
+    private static final GitSCM SCM;
+    private static final String SqsMessageTemplate;
+
+    static {
+        try {
+            SqsMessageTemplate =  IOUtils.toString(StringUtils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
+            SCM = MockGitSCM.fromSqsMessage(SqsMessageTemplate);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     @Parameters(name = "{0}")
     public static List<Object[]> fixtures() {
@@ -47,6 +64,13 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
                 new ProjectFixture()//without wildcard
                     .setSendBranches("refs/heads/foo")
                     .setSubscribedBranches("foo")
+                    .setShouldStarted(Boolean.TRUE)
+            },
+            {
+                "should_trigger_branches_without_wildcard",
+                new ProjectFixture()//without wildcard
+                    .setSendBranches("refs/heads/foo")
+                    .setSubscribedBranches("refs/heads/foo")
                     .setShouldStarted(Boolean.TRUE)
             },
             {
@@ -116,14 +140,16 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
         });
     }
 
+    @Before
+    public void beforeRun() throws Exception {
+        this.mockAwsSqs.setSqsMessageTemplate(SqsMessageTemplate);
+    }
+
     @Test
-    public void shouldPassProjectFixture() throws Exception {
+    public void shouldPassFixture() throws Exception {
         logger.log(Level.INFO, "[RUN] {0}", this.name);
-        logger.log(Level.FINEST, "[FIXTURE] {0}", this.projectFixture);
-        this.mockAwsSqs.send(this.projectFixture.getSendBranches());
-        OneShotEvent buildStarted = submitGitScmProject(this.getScm(), this.projectFixture.getSubscribedBranches());
-        buildStarted.block(this.projectFixture.getTimeout());
-        Assertions.assertThat(buildStarted.isSignaled()).isEqualTo(this.projectFixture.getShouldStarted());
+        this.mockAwsSqs.send(this.fixture.getSendBranches());
+        this.submitAndAssertFixture(SCM, this.fixture);
         logger.log(Level.INFO, "[DONE] {0}", this.name);
     }
 }

@@ -5,17 +5,17 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.Context;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitorScheduler;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockAwsSqs;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockResource;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockSQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorSchedulerImpl;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleProject;
-import hudson.plugins.git.GitSCM;
 import hudson.scm.SCM;
 import hudson.util.OneShotEvent;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,7 +37,6 @@ public abstract class AbstractJenkinsIT {
     protected SQSTriggerQueue sqsQueue;
 
     protected final MockSQSFactory mockSQSFactory = MockSQSFactory.get();
-//    protected SCM gitScm = new GitSCM(MockResource.get().getGitUrl());
 
     @Before
     public void before() throws Exception {
@@ -59,33 +58,37 @@ public abstract class AbstractJenkinsIT {
 
     @After
     public void after() {
+        this.mockAwsSqs.clearMessages();
         this.mockAwsSqs.shutdown();
     }
 
-    public SCM getScm() {
-        return new GitSCM(MockResource.get().getGitUrl());
-    }
-
-    protected OneShotEvent submitGitScmProject(SCM scm, String subscribedBranches) throws IOException {
-        final FreeStyleProject project = jenkinsRule.createFreeStyleProject(UUID.randomUUID().toString());
+    protected OneShotEvent submitJenkinsProject(SCM scm, String subscribedBranches) throws IOException {
+        final FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, UUID.randomUUID().toString());
         project.setScm(scm);
 
         final String uuid = this.sqsQueue.getUuid();
         final SQSTrigger trigger = new SQSTrigger(uuid, subscribedBranches);
 
-        final OneShotEvent buildEvent = new OneShotEvent();
+        final OneShotEvent event = new OneShotEvent();
         project.getBuildersList().add(new TestBuilder() {
 
             @Override
             public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-                buildEvent.signal();
+                event.signal();
                 trigger.stop();
                 return true;
             }
         });
+        project.setQuietPeriod(0);
 
         trigger.start(project, false);
         project.addTrigger(trigger);
-        return buildEvent;
+        return event;
+    }
+
+    protected void submitAndAssertFixture(SCM scm, ProjectFixture fixture) throws InterruptedException, IOException {
+        OneShotEvent event = this.submitJenkinsProject(scm, fixture.getSubscribedBranches());
+        event.block(fixture.getTimeout());
+        Assertions.assertThat(event.isSignaled()).isEqualTo(fixture.getShouldStarted());
     }
 }

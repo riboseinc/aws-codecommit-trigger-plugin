@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> implements SQSQueue {
+    private static final Log log = Log.get(SQSTriggerQueue.class);
 
     private final String uuid;
     private final String accessKey;
@@ -78,7 +79,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             MAX_NUMBER_OF_MESSAGES_MAX,
             MAX_NUMBER_OF_MESSAGES_DEFAULT);
 
-        Log.info("Create new SQSTriggerQueue(%s, %s)", this.uuid, this.url);
+        log.debug("Create new SQSTriggerQueue(%s, %s)", this.uuid, this.url);
     }
 
     public AmazonSQS getSQSClient() {
@@ -200,7 +201,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
     @Override
     public void refresh() {
-        Log.info("no-op method");
+        log.info("no-op method");
     }
 
     @Extension

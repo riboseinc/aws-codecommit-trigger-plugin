@@ -46,6 +46,8 @@ import java.util.concurrent.ExecutorService;
 
 public class SQSFactoryImpl implements SQSFactory {
 
+    private static final Log log = Log.get(SQSFactoryImpl.class);
+
     private final RequestFactory factory;
     private final SQSExecutorFactory SQSExecutorFactory;
 
@@ -93,7 +95,8 @@ public class SQSFactoryImpl implements SQSFactory {
     public SQSQueueMonitor createMonitor(final ExecutorService executor, final SQSQueue queue) {
         final AmazonSQS sqs = this.createSQSAsync(queue);
         final SQSChannel channel = new SQSChannelImpl(sqs, queue, this.factory);
-        return new SQSQueueMonitorImpl(executor, queue, channel);
+        SQSQueueMonitor monitor = new SQSQueueMonitorImpl(executor, queue, channel);
+        return monitor;
     }
 
     @Override
@@ -128,10 +131,7 @@ public class SQSFactoryImpl implements SQSFactory {
                 config.setProxyPassword(proxyConfig.getPassword());
             }
 
-            Log.info(
-                "Proxy settings for SQS: %s:%s",
-                config.getProxyHost(),
-                config.getProxyPort());
+            log.info("Proxy settings for SQS: %s:%s", config.getProxyHost(), config.getProxyPort());
         }
         return config;
     }

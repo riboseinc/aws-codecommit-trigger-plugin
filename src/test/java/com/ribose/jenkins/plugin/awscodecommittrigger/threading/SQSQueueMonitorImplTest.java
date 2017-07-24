@@ -21,7 +21,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueListener;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannel;
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -34,16 +33,15 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 public class SQSQueueMonitorImplTest {
 
-    private static final String UUID_A   = "uuid-a";
-    private static final String UUID_B   = "uuid-b";
+    private static final String UUID_A = "uuid-a";
+    private static final String UUID_B = "uuid-b";
 
     @Mock
-    private ExecutorService     executor;
+    private ExecutorService executor;
 
     @Mock
     private SQSQueue queue;
@@ -74,18 +72,6 @@ public class SQSQueueMonitorImplTest {
     }
 
     @Test
-    public void shouldThrowIfRegisterNullListener() {
-        assertThatThrownBy(new ThrowingCallable() {
-
-            @Override
-            public void call() throws Throwable {
-                SQSQueueMonitorImplTest.this.monitor.add(null);
-            }
-
-        }).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     public void shouldNotThrowIfUnregisterNullListener() {
         assertThat(this.monitor.remove(null)).isFalse();
         assertThat(this.monitor.isShutDown()).isFalse();
@@ -95,21 +81,6 @@ public class SQSQueueMonitorImplTest {
     public void shouldNotThrowIfUnregisterUnknown() {
         assertThat(this.monitor.remove(this.listener)).isFalse();
         assertThat(this.monitor.isShutDown()).isFalse();
-    }
-
-    @Test
-    public void shouldThrowIfWrongQueue() {
-        Mockito.when(this.listener.getQueueUuid()).thenReturn(UUID_A);
-        Mockito.when(this.channel.getQueueUuid()).thenReturn(UUID_B);
-
-        assertThatThrownBy(new ThrowingCallable() {
-
-            @Override
-            public void call() throws Throwable {
-                SQSQueueMonitorImplTest.this.monitor.add(SQSQueueMonitorImplTest.this.listener);
-            }
-
-        }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

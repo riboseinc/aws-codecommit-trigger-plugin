@@ -18,11 +18,10 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_bra
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.plugins.git.GitSCM;
-import hudson.util.OneShotEvent;
 import org.apache.commons.io.IOUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +42,7 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
     public String name;
 
     @Parameterized.Parameter(1)
-    public ProjectFixture projectFixture;
+    public ProjectFixture fixture;
 
     private static final GitSCM SCM;
     private static final String SqsMessageTemplate;
@@ -51,7 +50,7 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
     static {
         try {
             SqsMessageTemplate =  IOUtils.toString(StringUtils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
-            SCM = new GitSCM(StringUtils.findByUniqueJsonKey(SqsMessageTemplate, "__gitUrl__"));
+            SCM = MockGitSCM.fromSqsMessage(SqsMessageTemplate);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -147,13 +146,10 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
     }
 
     @Test
-    public void shouldPassProjectFixture() throws Exception {
+    public void shouldPassFixture() throws Exception {
         logger.log(Level.INFO, "[RUN] {0}", this.name);
-        logger.log(Level.FINEST, "[FIXTURE] {0}", this.projectFixture);
-        this.mockAwsSqs.send(this.projectFixture.getSendBranches());
-        OneShotEvent buildStarted = submitGitScmProject(SCM, this.projectFixture.getSubscribedBranches());
-        buildStarted.block(this.projectFixture.getTimeout());
-        Assertions.assertThat(buildStarted.isSignaled()).isEqualTo(this.projectFixture.getShouldStarted());
+        this.mockAwsSqs.send(this.fixture.getSendBranches());
+        this.submitAndAssertFixture(SCM, this.fixture);
         logger.log(Level.INFO, "[DONE] {0}", this.name);
     }
 }

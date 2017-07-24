@@ -30,7 +30,7 @@ import java.util.List;
 
 public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
 
-    private static final Log log = Log.get(ScmJobEventTriggerMatcher.class);
+    private static final Log log = Log.get(SubscribeBranchEventTriggerMatcher.class);
 
     @Override
     public boolean matches(final List<Event> events, final AbstractProject<?, ?> job) {

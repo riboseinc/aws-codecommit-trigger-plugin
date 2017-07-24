@@ -2,11 +2,10 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._30;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.plugins.git.GitSCM;
-import hudson.util.OneShotEvent;
 import org.apache.commons.io.IOUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
@@ -25,18 +24,14 @@ public class JenkinsIT extends AbstractJenkinsIT {
             .setSqsMessage(IOUtils.toString(StringUtils.getResource(JenkinsIT.class, "us-east-1.json"), StandardCharsets.UTF_8))
             .setSubscribedBranches("refs/heads/master")
             .setShouldStarted(Boolean.TRUE);
-        this.scm = new GitSCM(this.fixture.getScmUrl());
+        this.scm = MockGitSCM.fromSqsMessage(this.fixture.getSqsMessage());
     }
 
     @Test
     public void shouldPassIt() throws IOException, InterruptedException {
         logger.log(Level.INFO, "[RUN] integration test for issue #30");
-
         this.mockAwsSqs.sendMessage(this.fixture.getSqsMessage());
-        OneShotEvent event = this.submitGitScmProject(this.scm, fixture.getSubscribedBranches());
-        event.block(this.fixture.getTimeout());
-        Assertions.assertThat(event.isSignaled()).isEqualTo(this.fixture.getShouldStarted());
-
+        this.submitAndAssertFixture(this.scm, fixture);
         logger.log(Level.INFO, "[DONE]");
     }
 }

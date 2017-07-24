@@ -1,6 +1,6 @@
 {
     "Type" : "Notification",
-    "MessageId" : "${MessageId}",
+    "MessageId" : "1f094d1f-cc33-556b-a471-1ca3e3a1170cs",
     "TopicArn" : "arn:aws:sns:us-west-2:239062223385:testjenkins-topic",
     "Subject" : "UPDATE: AWS CodeCommit us-west-2 push: testjenkins",
     "Message" : "{\"Records\":[{\"awsRegion\":\"us-east-1\",\"codecommit\":{\"references\":[{\"commit\":\"5a7e8d8e172405ad70e0046c341c833004f9e204\",\"ref\":\"refs/heads/master\"}]},\"customData\":\"\",\"eventId\":\"fb99da86-4f69-429f-8666-31cb646b1b3d\",\"eventName\":\"ReferenceChanges\",\"eventPartNumber\":1,\"eventSource\":\"aws:codecommit\",\"eventSourceARN\":\"arn:aws:codecommit:us-east-1:MYAWSACCOUNT:MYREPONAME\",\"eventTime\":\"2017-07-21T02:54:17.751+0000\",\"eventTotalParts\":1,\"eventTriggerConfigId\":\"e47f9b31-1347-436c-af84-f0bd89e8fdaf\",\"eventTriggerName\":\"notifications\",\"eventVersion\":\"1.0\",\"userIdentityARN\":\"arn:aws:iam::MYAWSACCOUNT:user/MYACCOUNT\"}]}",

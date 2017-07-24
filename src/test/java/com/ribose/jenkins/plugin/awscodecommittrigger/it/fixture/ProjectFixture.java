@@ -19,7 +19,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.util.OneShotEvent;
 
 public class ProjectFixture {
@@ -88,11 +87,6 @@ public class ProjectFixture {
     public ProjectFixture setSqsMessage(String sqsMessage) {
         this.sqsMessage = sqsMessage;
         return this;
-    }
-
-    public String getScmUrl() {
-        assert this.sqsMessage != null;
-        return StringUtils.findByUniqueJsonKey(this.sqsMessage, "__gitUrl__");
     }
 
     @Override

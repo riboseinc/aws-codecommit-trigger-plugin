@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.MessageBody;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Record;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Records;
+import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class GsonParserTest {
 
     @Test
     public void testParseSampleSqsResponse() throws IOException {
-        String sqsResponse = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("sqscc-msg.json"), StandardCharsets.UTF_8);
+        String sqsResponse = IOUtils.toString(StringUtils.getResource(GsonParserTest.class, "sqsmsg.json"), StandardCharsets.UTF_8);
         Assertions.assertThat(sqsResponse).isNotNull().isNotEmpty();
 
         MessageBody messageBody = gson.fromJson(sqsResponse, MessageBody.class);

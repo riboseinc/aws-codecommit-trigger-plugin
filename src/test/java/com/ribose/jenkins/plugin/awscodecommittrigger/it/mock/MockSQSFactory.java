@@ -18,7 +18,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Context;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSExecutorFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;
@@ -35,8 +34,8 @@ public class MockSQSFactory implements SQSFactory {
     @Inject
     private RequestFactory factory;
 
-    @Inject
-    private SQSExecutorFactory SQSExecutorFactory;
+//    @Inject
+//    private SQSExecutorFactory SQSExecutorFactory;
 
     private final static MockSQSFactory instance = new MockSQSFactory();
 

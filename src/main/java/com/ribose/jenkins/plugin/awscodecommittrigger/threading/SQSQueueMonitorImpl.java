@@ -106,7 +106,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
                 return;
             }
 
-            log.info("Start monitor for %s", this.queue.getUrl());
+            log.debug("Start monitor for %s", this.queue.getUrl());
             this.processMessages();
         } catch (Exception e) {
             log.warning("Monitor for %s stopped, error: %s", this.queue.getUrl(), e);
@@ -153,7 +153,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
         final List<Message> messages = this.channel.getMessages();
         List<Message> proceedMessages = notifyListeners(messages);
-        log.info("Received %d messages, proceed %d messages", messages.size(), proceedMessages.size());
+        log.debug("Received %d messages, proceed %d messages", messages.size(), proceedMessages.size());
         this.channel.deleteMessages(proceedMessages);
     }
 

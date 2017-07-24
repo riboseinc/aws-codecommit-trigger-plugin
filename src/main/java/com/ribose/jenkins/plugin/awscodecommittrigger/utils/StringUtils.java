@@ -17,6 +17,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,7 +60,7 @@ public final class StringUtils {
      * Find and return value of uniqueKey in jsonString
      *
      * @param jsonString json string, can not null
-     * @param uniqueKey unique key in jsonString, can not null
+     * @param uniqueKey  unique key in jsonString, can not null
      * @return value of <code>jsonString.uniqueKey</code>, or <code>null</code>  if not found
      */
     public static String findByUniqueJsonKey(String jsonString, String uniqueKey) {
@@ -93,14 +94,13 @@ public final class StringUtils {
         regexBuilder.append('^');
         for (int i = 0, is = str.length(); i < is; i++) {
             char c = str.charAt(i);
-            switch(c) {
+            switch (c) {
                 case '*':
                     char nc = i + 1 < str.length() ? str.charAt(i + 1) : 0;
                     if (nc == '*') {//detect '**'
                         i++;// move i to next
                         regexBuilder.append(".*");
-                    }
-                    else {
+                    } else {
                         regexBuilder.append("[^/]*");
                     }
                     break;
@@ -108,8 +108,16 @@ public final class StringUtils {
                     regexBuilder.append(".");
                     break;
                 // escape special regexp-characters
-                case '(': case ')': case '[': case ']': case '$':
-                case '^': case '.': case '{': case '}': case '|':
+                case '(':
+                case ')':
+                case '[':
+                case ']':
+                case '$':
+                case '^':
+                case '.':
+                case '{':
+                case '}':
+                case '|':
                 case '\\':
                     regexBuilder.append("\\").append(c);
                     break;
@@ -154,5 +162,13 @@ public final class StringUtils {
             name = sqsUrlMatcher.group("endpoint");
         }
         return name;
+    }
+
+    public static URL getResource(Class clazz, String name) {
+        return getResource(clazz, name, false);
+    }
+
+    public static URL getResource(Class clazz, String name, boolean includeClassName) {
+        return clazz.getResource((includeClassName ? clazz.getSimpleName() + "/" : "") + name);
     }
 }

@@ -22,8 +22,6 @@ import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.util.OneShotEvent;
 
-import java.io.IOException;
-
 public class ProjectFixture {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
@@ -87,12 +85,8 @@ public class ProjectFixture {
         return sqsMessage;
     }
 
-    public ProjectFixture withSqsMessage(Class clzz, String filename) {
-        try {
-            this.sqsMessage = org.apache.commons.io.IOUtils.toString(clzz.getResourceAsStream(filename));
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
+    public ProjectFixture setSqsMessage(String sqsMessage) {
+        this.sqsMessage = sqsMessage;
         return this;
     }
 

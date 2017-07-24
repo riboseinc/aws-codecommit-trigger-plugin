@@ -32,7 +32,7 @@ public class MockAwsSqs {
 
     private static final MockAwsSqs instance = new MockAwsSqs();
 
-    private final String sqsMessageTemplate = MockResource.get().getSqsMessageTemplate();
+    private String sqsMessageTemplate;// = MockResource.get().getSqsMessageTemplate();
     private int port = 8001;//TODO find free port
     private boolean started = false;
     private SQSService api;
@@ -79,17 +79,17 @@ public class MockAwsSqs {
         return instance;
     }
 
-    public void send(final int nom, final String ref) {//@param nom - number of messages should sends
-        for (int i = 0; i < nom; i++) {
-            send(randomSqsMessageString(ref));
-        }
-    }
+//    public void send(final int nom, final String ref) {//@param nom - number of messages should sends
+//        for (int i = 0; i < nom; i++) {
+//            send(randomSqsMessageString(ref));
+//        }
+//    }
 
-    public void sendRandom(final int nom) {//@param nom - number of messages should sends
-        for (int i = 0; i < nom; i++) {
-            send(randomSqsMessageString(UUID.randomUUID().toString()));
-        }
-    }
+//    public void sendRandom(final int nom) {//@param nom - number of messages should sends
+//        for (int i = 0; i < nom; i++) {
+//            send(randomSqsMessageString(UUID.randomUUID().toString()));
+//        }
+//    }
 
     public void clearMessages() {
         List<Message> messages = this.sqsClient.receiveMessage(this.sqsUrl).getMessages();
@@ -113,13 +113,13 @@ public class MockAwsSqs {
         this.sqsClient.sendMessage(this.sqsUrl, message);
     }
 
-    public int getPort() {
-        return this.port;
-    }
-
-    public boolean isStarted() {
-        return this.started;
-    }
+//    public int getPort() {
+//        return this.port;
+//    }
+//
+//    public boolean isStarted() {
+//        return this.started;
+//    }
 
     public AmazonSQS getSqsClient() {
         return sqsClient;
@@ -129,7 +129,7 @@ public class MockAwsSqs {
         return sqsUrl;
     }
 
-    private int findFreeLocalPort() throws IOException {
+    private int findFreeLocalPort() throws IOException {//TODO use to get available free port
         ServerSocket serverSocket = new ServerSocket(0);
         int port = serverSocket.getLocalPort();
         serverSocket.close();
@@ -143,5 +143,10 @@ public class MockAwsSqs {
             .replace("${MessageId}", messageId)
             .replace("${EventId}", eventId)
             .replace("${Ref}", ref);
+    }
+
+    public MockAwsSqs setSqsMessageTemplate(String sqsMessageTemplate) {
+        this.sqsMessageTemplate = sqsMessageTemplate;
+        return this;
     }
 }

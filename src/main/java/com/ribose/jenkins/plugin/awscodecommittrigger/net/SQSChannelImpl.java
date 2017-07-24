@@ -49,7 +49,7 @@ public class SQSChannelImpl implements SQSChannel {
 
     @Override
     public List<Message> getMessages() {
-        log.info("Star polling messages");
+        log.debug("Star polling messages");
 
         List<Message> messages = Collections.emptyList();
 

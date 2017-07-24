@@ -19,6 +19,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.util.StreamTaskListener;
@@ -46,7 +47,10 @@ public class SQSTriggerBuilder implements Runnable {
         this.listener = new StreamTaskListener(sqsLogFile, true, Charset.forName("UTF-8"));
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger());
 
-        this.log.info("Try to trigger the build, message: %s", this.job, this.message.getBody());
+        String body = this.message.getBody();
+        String messageId = StringUtils.findByUniqueJsonKey(body, "MessageId");
+        this.log.info("Try to trigger the build, messageId: %s", this.job, messageId);
+        this.log.debug("Print out message-body: %s", this.job, body);
     }
 
     @Override

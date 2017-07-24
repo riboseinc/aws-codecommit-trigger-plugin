@@ -23,7 +23,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.factories.SQSExecutorFacto
 import com.ribose.jenkins.plugin.awscodecommittrigger.factories.SQSFactoryImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.factories.ThreadFactoryImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
-import com.ribose.jenkins.plugin.awscodecommittrigger.model.EventTriggerMatcherImpl;
+import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.EventTriggerMatcherImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.SQSQueueProviderImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactoryImpl;

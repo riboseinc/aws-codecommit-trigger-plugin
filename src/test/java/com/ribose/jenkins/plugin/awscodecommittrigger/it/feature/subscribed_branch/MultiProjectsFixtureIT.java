@@ -2,14 +2,12 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_bra
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
-import hudson.util.OneShotEvent;
 import org.assertj.core.api.Assertions;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,15 +63,15 @@ public class MultiProjectsFixtureIT extends AbstractJenkinsIT {
 
                 @Override
                 public void run() {
-                    try {
-                        MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
-                        OneShotEvent buildEvent = MultiProjectsFixtureIT.this.submitGitScmProject(MultiProjectsFixtureIT.this.getScm(), fixture.getSubscribedBranches());
-                        buildEvent.block(fixture.getTimeout() * MultiProjectsFixtureIT.this.projectFixtures.size());
-                        fixture.setEvent(buildEvent);
-                        MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());
-                    } catch (IOException | InterruptedException e) {
-                        throw new AssertionError(e);
-                    }
+//                    try {
+//                        MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-STARTED] subscribed branches: {0}", fixture.getSubscribedBranches());
+//                        OneShotEvent buildEvent = MultiProjectsFixtureIT.this.submitGitScmProject(MultiProjectsFixtureIT.this.getScm(), fixture.getSubscribedBranches());
+//                        buildEvent.block(fixture.getTimeout() * MultiProjectsFixtureIT.this.projectFixtures.size());
+//                        fixture.setEvent(buildEvent);
+//                        MultiProjectsFixtureIT.this.logger.log(Level.INFO, "[THREAD-DONE] subscribed branches: {0}", fixture.getSubscribedBranches());
+//                    } catch (IOException | InterruptedException e) {
+//                        throw new AssertionError(e);
+//                    }
                 }
             });
         }

@@ -6,14 +6,12 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitorScheduler;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockAwsSqs;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockResource;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockSQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorSchedulerImpl;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleProject;
-import hudson.plugins.git.GitSCM;
 import hudson.scm.SCM;
 import hudson.util.OneShotEvent;
 import org.junit.After;
@@ -59,10 +57,6 @@ public abstract class AbstractJenkinsIT {
     @After
     public void after() {
         this.mockAwsSqs.shutdown();
-    }
-
-    public SCM getScm() {
-        return new GitSCM(MockResource.get().getGitUrl());
     }
 
     protected OneShotEvent submitGitScmProject(SCM scm, String subscribedBranches) throws IOException {

@@ -23,7 +23,5 @@
             "eventVersion": "1.0",
             "userIdentityARN": "arn:aws:iam::MYAWSACCOUNT:user/MYACCOUNT"
         }
-    ],
-
-    "__gitUrl__": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/MYREPONAME"
+    ]
 }

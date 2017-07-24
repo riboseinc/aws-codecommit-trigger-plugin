@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model;
+package com.ribose.jenkins.plugin.awscodecommittrigger.matchers;
 
 import hudson.model.AbstractProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
@@ -24,11 +24,11 @@ import org.apache.commons.lang3.ClassUtils;
 
 import java.util.List;
 
-public class OrEventTriggerMatcher extends AbstractEventTriggerMatcher {
+public class AndEventTriggerMatcher extends AbstractEventTriggerMatcher {
 
-    private static final Log log = Log.get(OrEventTriggerMatcher.class);
+    private static final Log log = Log.get(AndEventTriggerMatcher.class);
 
-    public OrEventTriggerMatcher(EventTriggerMatcher... matchers) {
+    public AndEventTriggerMatcher(EventTriggerMatcher... matchers) {
         super(matchers);
     }
 
@@ -36,12 +36,12 @@ public class OrEventTriggerMatcher extends AbstractEventTriggerMatcher {
     public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
         for (EventTriggerMatcher matcher : matchers) {
             log.info("Test if any event not match using %s", ClassUtils.getAbbreviatedName(matcher.getClass(), 1));
-            if (matcher.matches(events, job)) {
-                return true;
+            if (!matcher.matches(events, job)) {
+                return false;
             }
         }
 
         log.info("OK! At least one event matched");
-        return false;
+        return true;
     }
 }

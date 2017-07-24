@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.model;
+package com.ribose.jenkins.plugin.awscodecommittrigger.matchers;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import org.apache.commons.collections.CollectionUtils;

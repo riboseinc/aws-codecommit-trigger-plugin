@@ -18,13 +18,19 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_bra
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
+import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
+import hudson.plugins.git.GitSCM;
 import hudson.util.OneShotEvent;
+import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,6 +44,18 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
 
     @Parameterized.Parameter(1)
     public ProjectFixture projectFixture;
+
+    private static final GitSCM SCM;
+    private static final String SqsMessageTemplate;
+
+    static {
+        try {
+            SqsMessageTemplate =  IOUtils.toString(StringUtils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
+            SCM = new GitSCM(StringUtils.findByUniqueJsonKey(SqsMessageTemplate, "__gitUrl__"));
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     @Parameters(name = "{0}")
     public static List<Object[]> fixtures() {
@@ -123,12 +141,17 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
         });
     }
 
+    @Before
+    public void beforeRun() throws Exception {
+        this.mockAwsSqs.setSqsMessageTemplate(SqsMessageTemplate);
+    }
+
     @Test
     public void shouldPassProjectFixture() throws Exception {
         logger.log(Level.INFO, "[RUN] {0}", this.name);
         logger.log(Level.FINEST, "[FIXTURE] {0}", this.projectFixture);
         this.mockAwsSqs.send(this.projectFixture.getSendBranches());
-        OneShotEvent buildStarted = submitGitScmProject(this.getScm(), this.projectFixture.getSubscribedBranches());
+        OneShotEvent buildStarted = submitGitScmProject(SCM, this.projectFixture.getSubscribedBranches());
         buildStarted.block(this.projectFixture.getTimeout());
         Assertions.assertThat(buildStarted.isSignaled()).isEqualTo(this.projectFixture.getShouldStarted());
         logger.log(Level.INFO, "[DONE] {0}", this.name);

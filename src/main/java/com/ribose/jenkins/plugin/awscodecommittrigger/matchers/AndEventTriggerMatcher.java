@@ -35,7 +35,7 @@ public class AndEventTriggerMatcher extends AbstractEventTriggerMatcher {
     @Override
     public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
         for (EventTriggerMatcher matcher : matchers) {
-            log.info("Test if any event not match using %s", ClassUtils.getAbbreviatedName(matcher.getClass(), 1));
+            log.debug("Test if any event not match using %s", ClassUtils.getAbbreviatedName(matcher.getClass(), 1));
             if (!matcher.matches(events, job)) {
                 return false;
             }

@@ -41,9 +41,12 @@ public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
             branches = Collections.singletonList("**");// default is any branches
         }
 
+        log.debug("Events size: %d", events.size());
+
         for (String branch : branches) {
             BranchSpec branchSpec = new BranchSpec(branch);
             for (Event event : events) {
+                log.debug(event.toString());
                 if (branchSpec.matches(event.getBranch())) {
                     log.info("Hurray! Event %s matches branch %s", job, event.getArn(), branchSpec.toString());
                     return true;
@@ -51,7 +54,7 @@ public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
             }
         }
 
-        log.info("Found no event matched", job);
+        log.info("No event matched", job);
         return false;
     }
 }

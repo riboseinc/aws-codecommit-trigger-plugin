@@ -44,14 +44,17 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
+        log.debug("Events size: %d", events.size());
+
         for (Event event : events) {
+            log.debug(event.toString());
             if (this.matches(event, scm)) {
                 log.info("Hurray! Event %s matched SCM ", job, event.getArn(), scm.getKey());
                 return true;
             }
         }
 
-        log.info("Found no event matched", job);
+        log.info("No event matched", job);
         return false;
     }
 

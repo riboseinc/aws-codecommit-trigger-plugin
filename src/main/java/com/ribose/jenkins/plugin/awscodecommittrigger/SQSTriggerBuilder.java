@@ -22,6 +22,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
+import hudson.scm.NullSCM;
 import hudson.util.StreamTaskListener;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class SQSTriggerBuilder implements Runnable {
     @Override
     public void run() {
         final boolean hasChanges = this.job.poll(listener).hasChanges();
+        this.log.debug("Has SCM? %s", this.job, this.job.getScm().getClass().isAssignableFrom(NullSCM.class));
         this.log.info("Any code changes found in SCM? %s", this.job, hasChanges);
 
         if (hasChanges) {

@@ -95,7 +95,8 @@ public class SQSFactoryImpl implements SQSFactory {
     public SQSQueueMonitor createMonitor(final ExecutorService executor, final SQSQueue queue) {
         final AmazonSQS sqs = this.createSQSAsync(queue);
         final SQSChannel channel = new SQSChannelImpl(sqs, queue, this.factory);
-        return new SQSQueueMonitorImpl(executor, queue, channel);
+        SQSQueueMonitor monitor = new SQSQueueMonitorImpl(executor, queue, channel);
+        return monitor;
     }
 
     @Override

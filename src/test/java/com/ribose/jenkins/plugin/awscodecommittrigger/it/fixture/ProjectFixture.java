@@ -91,6 +91,7 @@ public class ProjectFixture {
     }
 
     public String getScmUrl() {
+        assert this.sqsMessage != null;
         return StringUtils.findByUniqueJsonKey(this.sqsMessage, "__gitUrl__");
     }
 

@@ -89,4 +89,13 @@ public class CodeCommitEvent implements Event {
         return arn;
     }
 
+    @Override
+    public String toString() {
+        return "CodeCommitEvent{" +
+            "host='" + host + '\'' +
+            ", path='" + path + '\'' +
+            ", branch='" + branch + '\'' +
+            ", arn='" + arn + '\'' +
+            '}';
+    }
 }

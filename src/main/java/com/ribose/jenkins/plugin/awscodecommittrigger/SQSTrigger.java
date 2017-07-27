@@ -26,14 +26,15 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.EventBroker;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJobFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
-import hudson.plugins.git.GitSCM;
-import hudson.scm.SCM;
+import hudson.model.Job;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
@@ -41,8 +42,7 @@ import hudson.util.ListBoxModel;
 import hudson.util.SequentialExecutionQueue;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jgit.transport.RemoteConfig;
-import org.eclipse.jgit.transport.URIish;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -52,22 +52,39 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQueueListener {
+public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
+
     private static final Log log = Log.get(SQSTrigger.class);
 
-    private final String queueUuid;
-    private final String subscribedBranches;
+    private String queueUuid;
+    private String subscribedBranches;
 
+    @Inject
     private transient SQSQueueMonitorScheduler scheduler;
 
+    @Inject
     private transient MessageParserFactory messageParserFactory;
+
+    @Inject
     private transient EventTriggerMatcher eventTriggerMatcher;
 
+    @Inject
+    private transient SQSJobFactory sqsJobFactory;
+
+    @Inject
     private transient ExecutorService executor;
+
     private transient List<String> scmRepoUrls;
+
+    private transient SQSJob sqsJob;
+
+//    public SQSTrigger() {
+//        Context.injector().injectMembers(this);
+//    }
 
     @DataBoundConstructor
     public SQSTrigger(final String queueUuid, final String subscribedBranches) {
+//        this();
         this.queueUuid = queueUuid;
         this.subscribedBranches = subscribedBranches;
     }
@@ -79,10 +96,18 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         return Collections.emptyList();
     }
 
+    private void loadSqsJob() {
+        Context.injector().injectMembers(this);
+        log.debug("Job is AbstractProject? %s or WorkflowJob? %s", this.job, job instanceof AbstractProject, job instanceof WorkflowJob);
+        this.sqsJob = this.sqsJobFactory.createSqsJob(this.job, this);
+    }
+
     @Override
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
-    public void start(final AbstractProject<?, ?> project, final boolean newInstance) {
-        super.start(project, newInstance);
+    public void start(final Job<?, ?> job, final boolean newInstance) {
+        super.start(job, newInstance);
+
+        loadSqsJob();
 
         final DescriptorImpl descriptor = (DescriptorImpl) this.getDescriptor();
         descriptor.queue.execute(new Runnable() {
@@ -90,8 +115,8 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
             @Override
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
-                boolean succeed = SQSTrigger.this.getScheduler().register(SQSTrigger.this);
-                log.info("Register trigger %s", SQSTrigger.this.job, succeed);
+                boolean succeed = SQSTrigger.this.scheduler.register(SQSTrigger.this);
+                log.info("Register trigger for %s? %s", SQSTrigger.this.job, SQSTrigger.this.getQueueUuid(), succeed);
             }
         });
     }
@@ -106,7 +131,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
             @Override
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
-                boolean succeed = SQSTrigger.this.getScheduler().unregister(SQSTrigger.this);
+                boolean succeed = SQSTrigger.this.scheduler.unregister(SQSTrigger.this);
                 log.info("Unregister trigger %s", SQSTrigger.this.job, succeed);
             }
         });
@@ -133,63 +158,15 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         return this.subscribedBranches;
     }
 
-    @Inject
-    public void setScheduler(final SQSQueueMonitorScheduler scheduler) {
-        this.scheduler = scheduler;
-    }
-
-    public SQSQueueMonitorScheduler getScheduler() {
-        if (this.scheduler == null) {
-            Context.injector().injectMembers(this);
-        }
-        return this.scheduler;
-    }
-
-    @Inject
-    public void setMessageParserFactory(final MessageParserFactory factory) {
-        this.messageParserFactory = factory;
-    }
-
-    public MessageParserFactory getMessageParserFactory() {
-        if (this.messageParserFactory == null) {
-            Context.injector().injectMembers(this);
-        }
-        return this.messageParserFactory;
-    }
-
-    @Inject
-    public void setEventTriggerMatcher(final EventTriggerMatcher matcher) {
-        this.eventTriggerMatcher = matcher;
-    }
-
-    public EventTriggerMatcher getEventTriggerMatcher() {
-        if (this.eventTriggerMatcher == null) {
-            Context.injector().injectMembers(this);
-        }
-        return this.eventTriggerMatcher;
-    }
-
-    @Inject
-    public void setExecutorService(final ExecutorService executor) {
-        this.executor = executor;
-    }
-
-    public ExecutorService getExecutorService() {
-        if (this.executor == null) {
-            Context.injector().injectMembers(this);
-        }
-        return this.executor;
-    }
-
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
     private boolean handleMessage(final Message message) {
         log.info("Parse and do match against events, message: %s", this.job, message.getBody());
 
         final MessageParser parser = this.messageParserFactory.createParser(message);
-        final EventTriggerMatcher matcher = this.getEventTriggerMatcher();
+        final EventTriggerMatcher matcher = this.eventTriggerMatcher;
         final List<Event> events = parser.parseMessage(message);
 
-        if (matcher.matches(events, this.job)) {
+        if (matcher.matches(events, this.sqsJob)) {
             log.info("Hurray! Execute it", this.job);
             this.execute(message);
             return true;
@@ -206,7 +183,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 try {
-                    new SQSTriggerBuilder(SQSTrigger.this.job, message).run();
+                    new SQSTriggerBuilder(SQSTrigger.this.sqsJob, message).run();
                 } catch (Exception e) {
                     UnexpectedException error = new UnexpectedException(e);
                     throw error;
@@ -215,28 +192,49 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
         });
     }
 
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
-    public List<String> getScmRepoUrls() {
-        if (this.scmRepoUrls == null) {
-            this.scmRepoUrls = new ArrayList<>();
+    //TODO
+//    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
+//    public List<String> getScmRepoUrls() {
+//        if (this.scmRepoUrls == null) {
+//            this.scmRepoUrls = new ArrayList<>();
+//
+//            SCM scm = this.job.getScm();
+//            if (scm instanceof GitSCM) {
+//                final GitSCM git = (GitSCM) this.job.getScm();
+//                List<RemoteConfig> repos = git.getRepositories();
+//
+//                for (RemoteConfig repo : repos) {
+//                    List<URIish> uris = repo.getURIs();
+//                    for (URIish uri : uris) {
+//                        this.scmRepoUrls.add(uri.toASCIIString());
+//                    }
+//                }
+//            }
+//        }
+//
+//        return this.scmRepoUrls;
+//    }
 
-            SCM scm = this.job.getScm();
-            if (scm instanceof GitSCM) {
-                final GitSCM git = (GitSCM) this.job.getScm();
-                List<RemoteConfig> repos = git.getRepositories();
 
-                for (RemoteConfig repo : repos) {
-                    List<URIish> uris = repo.getURIs();
-                    for (URIish uri : uris) {
-                        this.scmRepoUrls.add(uri.toASCIIString());
-                    }
-                }
-            }
-        }
-
-        return this.scmRepoUrls;
+    public void setScheduler(SQSQueueMonitorScheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
+    public void setMessageParserFactory(MessageParserFactory messageParserFactory) {
+        this.messageParserFactory = messageParserFactory;
+    }
+
+    public void setEventTriggerMatcher(EventTriggerMatcher eventTriggerMatcher) {
+        this.eventTriggerMatcher = eventTriggerMatcher;
+    }
+
+    public void setSqsJobFactory(SQSJobFactory sqsJobFactory) {
+        this.sqsJobFactory = sqsJobFactory;
+    }
+
+    public void setExecutor(ExecutorService executor) {
+        this.executor = executor;
+    }
 
     @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
@@ -266,7 +264,7 @@ public class SQSTrigger extends Trigger<AbstractProject<?, ?>> implements SQSQue
 
         @Override
         public boolean isApplicable(final Item item) {
-            return item instanceof AbstractProject;
+            return item instanceof Job;
         }
 
         @Override

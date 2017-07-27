@@ -17,23 +17,16 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
-import hudson.model.AbstractProject;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
+import hudson.model.Job;
 
 import java.util.List;
 
 
 /**
- * Interface definition for classes that match events to {@link AbstractProject}s. If an event
+ * Interface definition for classes that match events to {@link Job}s. If an event
  * matches a project its build process should be triggered.
  */
 public interface EventTriggerMatcher {
-
-    /**
-     * Returns a value indicating whether any of the specified events matches the specified job.
-     * @param events The collection of {@link Event}s to test against the job.
-     * @param job The {@link AbstractProject} to test against.
-     * @return {@code true} if any of the specified events matches the specified job; otherwise,
-     * {@code false}.
-     */
-    boolean matches(List<Event> events, AbstractProject<?, ?> job);
+    boolean matches(List<Event> events, SQSJob job);
 }

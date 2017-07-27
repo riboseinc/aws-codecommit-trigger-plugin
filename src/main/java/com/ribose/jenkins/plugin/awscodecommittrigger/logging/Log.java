@@ -16,7 +16,10 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.logging;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import hudson.model.Job;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.io.PrintStream;
@@ -31,6 +34,7 @@ public class Log {
     private StreamHandler streamHandler;
     private Logger logger;
     private Class clazz;
+    private boolean enableExtraInfo = true;
 
     private Log(Class clazz) {
         this.clazz = clazz;
@@ -47,8 +51,10 @@ public class Log {
         return new Log(clazz);
     }
 
-    public static Log get(Class clazz, PrintStream logstream) {
-        return new Log(clazz, logstream);
+    public static Log get(Class clazz, PrintStream logstream, boolean enableExtraInfo) {
+        Log log = new Log(clazz, logstream);
+        log.enableExtraInfo = enableExtraInfo;
+        return log;
     }
 
     public void error(final String message, final Object... args) {
@@ -59,12 +65,20 @@ public class Log {
         write(Level.SEVERE, prependJobName(job, message), args);
     }
 
+    public void error(String message, final SQSJob job, final Object... args) {
+        error(message, job.getJenkinsJob(), args);
+    }
+
     public void info(final String message, final Object... args) {
         write(Level.INFO, message, args);
     }
 
     public void info(String message, final Job job, final Object... args) {
-        write(Level.INFO, prependJobName(job, message), args);
+        info(prependJobName(job, message), args);
+    }
+
+    public void info(String message, final SQSJob job, final Object... args) {
+        this.info(message, job.getJenkinsJob(), args);
     }
 
     public void debug(final String message, final Object... args) {
@@ -72,7 +86,11 @@ public class Log {
     }
 
     public void debug(String message, final Job job, final Object... args) {
-        write(Level.CONFIG, prependJobName(job, message), args);
+        debug(prependJobName(job, message), args);
+    }
+
+    public void debug(String message, final SQSJob job, final Object... args) {
+        debug(message, job.getJenkinsJob(), args);
     }
 
     public void warning(final String message, final Object... args) {
@@ -82,17 +100,25 @@ public class Log {
     private String format(final String message, final Object... args) {
         final String formatted = String.format(message, args);
         final long id = Thread.currentThread().getId();
-        return String.format("[%s][thread-%06X] %s", ClassUtils.getAbbreviatedName(this.clazz, 1), id, formatted);
+        return enableExtraInfo ? String.format("[%s][thread-%06X] %s", ClassUtils.getAbbreviatedName(this.clazz, 1), id, formatted) : formatted;
     }
 
     private void write(final Level level, final String message, final Object... args) {
         String msg = format(message, args);
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof SQSTriggerQueue) {
+                args[i] = ((SQSTriggerQueue) args[i]).getUrl();
+            }
+            else if (args[i] instanceof Throwable) {
+                args[i] = ExceptionUtils.getStackTrace((Throwable)args[i]);
+            }
+        }
         if (level == Level.CONFIG) {
             msg = "[DEBUG] " + msg;
         } else if (level == Level.SEVERE) {
             msg = "[ERROR] " + msg;
         }
-        this.logger.log(level, msg);
+        this.logger.logp(level, "[log]", "", msg);
     }
 
     private String prependJobName(final Job job, String message) {

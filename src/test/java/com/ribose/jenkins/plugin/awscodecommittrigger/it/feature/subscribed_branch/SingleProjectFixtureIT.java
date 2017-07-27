@@ -60,21 +60,49 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
     public static List<Object[]> fixtures() {
         return Arrays.asList(new Object[][]{
             {
-                "should_trigger_branches_without_wildcard",
+                "should_trigger_branches_without_wildcard_1",
                 new ProjectFixture()//without wildcard
                     .setSendBranches("refs/heads/foo")
                     .setSubscribedBranches("foo")
                     .setShouldStarted(Boolean.TRUE)
             },
             {
-                "should_trigger_branches_without_wildcard",
+                "should_trigger_branches_without_wildcard_2",
                 new ProjectFixture()//without wildcard
                     .setSendBranches("refs/heads/foo")
                     .setSubscribedBranches("refs/heads/foo")
                     .setShouldStarted(Boolean.TRUE)
             },
             {
-                "should_not_trigger_prefix_wildcard_branches",
+                "should_trigger_branches_without_wildcard_3",
+                new ProjectFixture()//without wildcard
+                    .setSendBranches("refs/heads/foo/bar")
+                    .setSubscribedBranches("refs/heads/foo/bar")
+                    .setShouldStarted(Boolean.TRUE)
+            },
+            {
+                "should_trigger_branches_without_wildcard_4",
+                new ProjectFixture()//without wildcard
+                    .setSendBranches("refs/heads/foo/bar/foo")
+                    .setSubscribedBranches("refs/heads/foo/bar/foo")
+                    .setShouldStarted(Boolean.TRUE)
+            },
+            {
+                "should_trigger_branches_without_wildcard_5",
+                new ProjectFixture()//without wildcard
+                    .setSendBranches("refs/heads/foo/bar/foo")
+                    .setSubscribedBranches("foo/bar/foo")
+                    .setShouldStarted(Boolean.TRUE)
+            },
+            {
+                "should_not_trigger_prefix_wildcard_branches_1",
+                new ProjectFixture()//without wildcard
+                    .setSendBranches("refs/heads/foo/bar/foo")
+                    .setSubscribedBranches("refs/heads/foo/bar")
+                    .setShouldStarted(Boolean.FALSE)
+            },
+            {
+                "should_not_trigger_prefix_wildcard_branches_2",
                 new ProjectFixture()//prefix wildcard
                     .setSendBranches("refs/heads/foo-bar", "refs/heads/bar/foo", "refs/heads/foo/bar")
                     .setSubscribedBranches("*foo")
@@ -146,7 +174,7 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
     }
 
     @Test
-    public void shouldPassFixture() throws Exception {
+    public void shouldPassIt() throws Exception {
         logger.log(Level.INFO, "[RUN] {0}", this.name);
         this.mockAwsSqs.send(this.fixture.getSendBranches());
         this.submitAndAssertFixture(SCM, this.fixture);

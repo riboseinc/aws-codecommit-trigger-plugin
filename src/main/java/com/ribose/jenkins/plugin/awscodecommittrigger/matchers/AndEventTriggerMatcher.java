@@ -16,10 +16,10 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers;
 
-import hudson.model.AbstractProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class AndEventTriggerMatcher extends AbstractEventTriggerMatcher {
     }
 
     @Override
-    public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
+    public boolean matches(List<Event> events, SQSJob job) {
         for (EventTriggerMatcher matcher : matchers) {
             log.debug("Test if any event not match using %s", ClassUtils.getAbbreviatedName(matcher.getClass(), 1));
             if (!matcher.matches(events, job)) {

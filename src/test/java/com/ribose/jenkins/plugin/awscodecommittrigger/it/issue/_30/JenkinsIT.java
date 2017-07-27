@@ -29,7 +29,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
 
     @Test
     public void shouldPassIt() throws IOException, InterruptedException {
-        logger.log(Level.INFO, "[RUN] integration test for issue #30");
+        logger.log(Level.INFO, "[RUN] Integration test for issue #30");
         this.mockAwsSqs.sendMessage(this.fixture.getSqsMessage());
         this.submitAndAssertFixture(this.scm, fixture);
         logger.log(Level.INFO, "[DONE]");

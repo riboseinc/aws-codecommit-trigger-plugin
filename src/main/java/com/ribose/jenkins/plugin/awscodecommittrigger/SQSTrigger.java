@@ -35,6 +35,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.Job;
+import hudson.scm.SCM;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
@@ -74,17 +75,10 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     @Inject
     private transient ExecutorService executor;
 
-    private transient List<String> scmRepoUrls;
-
     private transient SQSJob sqsJob;
-
-//    public SQSTrigger() {
-//        Context.injector().injectMembers(this);
-//    }
 
     @DataBoundConstructor
     public SQSTrigger(final String queueUuid, final String subscribedBranches) {
-//        this();
         this.queueUuid = queueUuid;
         this.subscribedBranches = subscribedBranches;
     }
@@ -186,35 +180,21 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                     new SQSTriggerBuilder(SQSTrigger.this.sqsJob, message).run();
                 } catch (Exception e) {
                     UnexpectedException error = new UnexpectedException(e);
+                    SQSTrigger.log.error("Unable to execute job for this message %s, cause: %s", SQSTrigger.this.job, message.getMessageId(), error);
                     throw error;
                 }
             }
         });
     }
 
-    //TODO
-//    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
-//    public List<String> getScmRepoUrls() {
-//        if (this.scmRepoUrls == null) {
-//            this.scmRepoUrls = new ArrayList<>();
-//
-//            SCM scm = this.job.getScm();
-//            if (scm instanceof GitSCM) {
-//                final GitSCM git = (GitSCM) this.job.getScm();
-//                List<RemoteConfig> repos = git.getRepositories();
-//
-//                for (RemoteConfig repo : repos) {
-//                    List<URIish> uris = repo.getURIs();
-//                    for (URIish uri : uris) {
-//                        this.scmRepoUrls.add(uri.toASCIIString());
-//                    }
-//                }
-//            }
-//        }
-//
-//        return this.scmRepoUrls;
-//    }
-
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
+    public List<String> getScmRepoUrls() {
+        ArrayList<String> scmRepoUrls = new ArrayList<>();
+        for (SCM scm : this.sqsJob.getScmList()) {
+            scmRepoUrls.addAll(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.parseScmUrls(scm));
+        }
+        return scmRepoUrls;
+    }
 
     public void setScheduler(SQSQueueMonitorScheduler scheduler) {
         this.scheduler = scheduler;

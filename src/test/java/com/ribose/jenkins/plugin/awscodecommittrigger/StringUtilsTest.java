@@ -65,7 +65,7 @@ public class StringUtilsTest {
 
     @Test
     public void testFindByUniqueJsonKey() throws IOException {
-        String sqsResponse = IOUtils.toString(StringUtils.getResource(StringUtilsTest.class, "sqsmsg.json"), StandardCharsets.UTF_8);
+        String sqsResponse = IOUtils.toString(Utils.getResource(StringUtilsTest.class, "sqsmsg.json"), StandardCharsets.UTF_8);
         String messageId = StringUtils.findByUniqueJsonKey(sqsResponse, "MessageId");
         String timestamp = StringUtils.findByUniqueJsonKey(sqsResponse, "Timestamp");
         String topicArn = StringUtils.findByUniqueJsonKey(sqsResponse, "TopicArn");

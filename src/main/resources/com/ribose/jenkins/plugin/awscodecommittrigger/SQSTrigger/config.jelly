@@ -17,7 +17,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <!--j:if test="${instance.getScmRepoUrls().size() > 0}">
+    <j:if test="${instance.getScmRepoUrls().size() > 0}">
         <f:block>
             <span>This job will be triggered whenever the SQS queue receives an SNS message that any of the following CodeCommit repositories are updated</span>
             <ul>
@@ -26,7 +26,7 @@
                 </j:forEach>
             </ul>
         </f:block>
-    </j:if-->
+    </j:if>
 
     <f:entry title="${%SQS queue to monitor}" field="queueUuid">
         <f:select/>

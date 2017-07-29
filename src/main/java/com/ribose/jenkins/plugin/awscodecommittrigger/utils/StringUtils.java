@@ -17,7 +17,11 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
-import java.net.URL;
+import hudson.plugins.git.GitSCM;
+import hudson.scm.SCM;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -164,11 +168,19 @@ public final class StringUtils {
         return name;
     }
 
-    public static URL getResource(Class clazz, String name) {
-        return getResource(clazz, name, false);
-    }
+    public static List<String> parseScmUrls(SCM scm) {
+        List<String> urls = new ArrayList<>();
+        if (scm instanceof GitSCM) {
+            final GitSCM git = (GitSCM) scm;
+            List<RemoteConfig> repos = git.getRepositories();
 
-    public static URL getResource(Class clazz, String name, boolean includeClassName) {
-        return clazz.getResource((includeClassName ? clazz.getSimpleName() + "/" : "") + name);
+            for (RemoteConfig repo : repos) {
+                List<URIish> uris = repo.getURIs();
+                for (URIish uri : uris) {
+                    urls.add(uri.toASCIIString());
+                }
+            }
+        }
+        return urls;
     }
 }

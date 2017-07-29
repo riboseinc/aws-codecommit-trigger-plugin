@@ -16,10 +16,10 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_branch;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
-import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.plugins.git.GitSCM;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -49,7 +49,7 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
 
     static {
         try {
-            SqsMessageTemplate =  IOUtils.toString(StringUtils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
+            SqsMessageTemplate =  IOUtils.toString(Utils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
             SCM = MockGitSCM.fromSqsMessage(SqsMessageTemplate);
         } catch (IOException e) {
             throw new AssertionError(e);

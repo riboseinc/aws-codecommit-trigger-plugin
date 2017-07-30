@@ -22,17 +22,22 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.Message;
 import io.findify.sqsmock.SQSService;
+import org.assertj.core.api.Assertions;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
+
 
 public class MockAwsSqs {
 
+    private static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
     private static final MockAwsSqs instance = new MockAwsSqs();
 
-    private String sqsMessageTemplate;// = MockResource.get().getSqsMessageTemplate();
+    private String sqsMessageTemplate;
     private int port = 8001;//TODO find free port
     private boolean started = false;
     private SQSService api;
@@ -42,7 +47,7 @@ public class MockAwsSqs {
     private MockAwsSqs() {
     }
 
-    public void shutdown() {
+    public synchronized void shutdown() {
         if (!this.started) {
             throw new IllegalStateException("Server might not started yet");
         }
@@ -91,17 +96,20 @@ public class MockAwsSqs {
 //        }
 //    }
 
-    public void clearMessages() {
+    public void clearAndShutdown() {
+        this.sqsMessageTemplate = null;
         List<Message> messages = this.sqsClient.receiveMessage(this.sqsUrl).getMessages();
         for (Message message : messages) {
             this.sqsClient.deleteMessage(this.sqsUrl, message.getReceiptHandle());
         }
+
+        this.shutdown();
     }
 
-    public void clearAndSend(final String... refs) {
-        clearMessages();
-        this.send(refs);
-    }
+//    public void clearAndSend(final String... refs) {
+//        clearMessages();
+//        this.send(refs);
+//    }
 
     public void send(final String... refs) {
         for (String ref : refs) {
@@ -137,6 +145,7 @@ public class MockAwsSqs {
     }
 
     private String randomSqsMessageString(final String ref) {
+        Assertions.assertThat(this.sqsMessageTemplate).isNotEmpty();
         String messageId = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
         String eventId = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
         return this.sqsMessageTemplate

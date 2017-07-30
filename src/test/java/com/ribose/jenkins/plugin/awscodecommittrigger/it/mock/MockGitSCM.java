@@ -11,6 +11,7 @@ import hudson.scm.SCMRevisionState;
 import java.io.File;
 import java.io.IOException;
 
+
 public class MockGitSCM extends GitSCM {
     public MockGitSCM(String repositoryUrl) {
         super(repositoryUrl);

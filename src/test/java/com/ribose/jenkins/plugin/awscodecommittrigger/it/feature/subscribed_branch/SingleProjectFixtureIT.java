@@ -16,20 +16,13 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_branch;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
-import hudson.plugins.git.GitSCM;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,18 +36,6 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
 
     @Parameterized.Parameter(1)
     public ProjectFixture fixture;
-
-    private static final GitSCM SCM;
-    private static final String SqsMessageTemplate;
-
-    static {
-        try {
-            SqsMessageTemplate =  IOUtils.toString(Utils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
-            SCM = MockGitSCM.fromSqsMessage(SqsMessageTemplate);
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
 
     @Parameters(name = "{0}")
     public static List<Object[]> fixtures() {
@@ -168,16 +149,11 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
         });
     }
 
-    @Before
-    public void beforeRun() throws Exception {
-        this.mockAwsSqs.setSqsMessageTemplate(SqsMessageTemplate);
-    }
-
     @Test
     public void shouldPassIt() throws Exception {
         logger.log(Level.INFO, "[RUN] {0}", this.name);
         this.mockAwsSqs.send(this.fixture.getSendBranches());
-        this.submitAndAssertFixture(SCM, this.fixture);
+        this.submitAndAssertFixture(DefaultSCM, this.fixture);
         logger.log(Level.INFO, "[DONE] {0}", this.name);
     }
 }

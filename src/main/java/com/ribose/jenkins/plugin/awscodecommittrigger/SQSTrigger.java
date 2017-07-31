@@ -85,11 +85,12 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
     public Collection<? extends Action> getProjectActions() {
         if (this.job != null) {
-            return Arrays.asList(new SQSTriggerActivityAction(this.job));
+            return Arrays.asList(new SQSActivityAction(this.job));
         }
         return Collections.emptyList();
     }
 
+    @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
     private void loadSqsJob() {
         Context.injector().injectMembers(this);
         log.debug("Job is AbstractProject? %s or WorkflowJob? %s", this.job, job instanceof AbstractProject, job instanceof WorkflowJob);
@@ -189,7 +190,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     public List<String> getScmRepoUrls() {
-        ArrayList<String> scmRepoUrls = new ArrayList<>();
+        List<String> scmRepoUrls = new ArrayList<>();
         for (SCM scm : this.sqsJob.getScmList()) {
             scmRepoUrls.addAll(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.parseScmUrls(scm));
         }

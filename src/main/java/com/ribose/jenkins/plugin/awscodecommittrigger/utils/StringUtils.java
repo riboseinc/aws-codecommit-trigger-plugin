@@ -17,6 +17,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
+import com.amazonaws.services.sqs.model.Message;
 import hudson.plugins.git.GitSCM;
 import hudson.scm.SCM;
 import org.eclipse.jgit.transport.RemoteConfig;
@@ -182,5 +183,10 @@ public final class StringUtils {
             }
         }
         return urls;
+    }
+
+    public static String getMessageId(Message message) {
+        String body = message.getBody();
+        return StringUtils.findByUniqueJsonKey(body, "MessageId");
     }
 }

@@ -70,7 +70,7 @@ public class MultiProjectFixtureIT extends AbstractJenkinsIT {
                     new ProjectFixture()
                         .setSendBranches("refs/heads/bar")
                         .setSubscribedBranches("bar")
-                        .setShouldStarted(Boolean.FALSE)
+                        .setShouldStarted(Boolean.TRUE)
                 )
             }
         });

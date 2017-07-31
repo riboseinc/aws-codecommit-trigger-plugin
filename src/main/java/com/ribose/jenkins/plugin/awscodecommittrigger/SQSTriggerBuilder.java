@@ -22,32 +22,40 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.model.Cause;
+import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class SQSTriggerBuilder implements Runnable {
 
+    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
+
     private final SQSJob job;
     private final Log log;
-    private final StreamTaskListener listener;
+    private final TaskListener listener;
     private final Message message;
 
     public SQSTriggerBuilder(final SQSJob job, final Message message) throws IOException {
         this.job = job;
         this.message = message;
 
-        File sqsLogFile = this.job.getJenkinsJob().getAction(SQSTriggerActivityAction.class).getSqsLogFile();
-        this.listener = new StreamTaskListener(sqsLogFile, true, Charset.forName("UTF-8"));
+        SQSActivityAction activityAction = this.job.getJenkinsJob().getAction(SQSActivityAction.class);
+
+        String date = df.format(new Date());
+        String logPath = String.format("%s/triggers-on-%s.log", activityAction.getActivityDir().getPath(), date);
+
+        this.listener = new StreamTaskListener(new File(logPath), true, Charset.forName("UTF-8"));
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), false);
 
-        String body = this.message.getBody();
-        String messageId = StringUtils.findByUniqueJsonKey(body, "MessageId");
-        this.log.info("Try to trigger the build, messageId: %s", messageId);
-        this.log.debug("Print out message-body: %s", body);
+        this.log.info("Try to trigger the build, message-id: %s", StringUtils.getMessageId(message));
+        this.log.debug("Print out message-body: %s", this.message.getBody());
     }
 
     @Override

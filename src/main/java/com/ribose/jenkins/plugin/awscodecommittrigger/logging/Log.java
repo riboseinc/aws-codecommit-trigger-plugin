@@ -22,7 +22,10 @@ import hudson.model.Job;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.ClassUtils;
 
+import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -36,24 +39,24 @@ public class Log {
     private Class clazz;
     private boolean enableExtraInfo = true;
 
+    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
+
     private Log(Class clazz) {
         this.clazz = clazz;
         this.logger = Logger.getLogger(this.clazz.getName());
-    }
-
-    private Log(Class clazz, PrintStream logstream) {
-        this(clazz);
-        this.streamHandler = new StreamHandler(logstream, new SimpleFormatter());
-        this.logger.addHandler(streamHandler);
     }
 
     public static Log get(Class clazz) {
         return new Log(clazz);
     }
 
-    public static Log get(Class clazz, PrintStream logstream, boolean enableExtraInfo) {
-        Log log = new Log(clazz, logstream);
+    public static Log get(Class clazz, PrintStream out, boolean enableExtraInfo) throws IOException {
+        Log log = get(clazz);
         log.enableExtraInfo = enableExtraInfo;
+
+        log.streamHandler = new StreamHandler(out, new SimpleFormatter());
+        log.logger.addHandler(log.streamHandler);
+
         return log;
     }
 
@@ -127,5 +130,9 @@ public class Log {
 
     public StreamHandler getStreamHandler() {
         return streamHandler;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

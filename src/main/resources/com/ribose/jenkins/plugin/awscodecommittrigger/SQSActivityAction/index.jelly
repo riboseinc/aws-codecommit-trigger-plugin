@@ -1,0 +1,36 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="SQS Activity">
+        <l:side-panel>
+            <f:entry>
+                <f:block>
+                    <span>List names</span>
+                    <ul>
+                        <j:forEach var="name" items="${it.logNames}">
+                            <li>${name}</li>
+                        </j:forEach>
+                    </ul>
+                </f:block>
+            </f:entry>
+        </l:side-panel>
+
+        <l:main-panel>
+            <!--<f:entry>-->
+                <!--<div>-->
+                    <!--<input type="button" value="${%clear}" class="yui-button validate-button" onclick="validateButton('clear', '', this)" />-->
+                <!--</div>-->
+                <!--<div>&lt;!&ndash; this is where the error message goes &ndash;&gt;</div>-->
+                <!--<a href=""></a>-->
+            <!--</f:entry>-->
+
+            <!--<f:entry>-->
+                <!--<j:if test="${it.big}"><p>Size is too big, ${it.logSize}, <a href="raw">view raw</a></p></j:if>-->
+                <!--<j:if test="${!it.big}"><pre>${it.log}</pre></j:if>-->
+            <!--</f:entry>-->
+            <f:entry>
+                <p>test me</p>
+            </f:entry>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

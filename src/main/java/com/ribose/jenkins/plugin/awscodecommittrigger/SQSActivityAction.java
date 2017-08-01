@@ -3,6 +3,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import hudson.model.Action;
 import hudson.model.Job;
+import hudson.util.FormValidation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
 import org.apache.http.HttpStatus;
@@ -76,10 +77,9 @@ public class SQSActivityAction implements Action {
         if (file.exists()) {
             FileInputStream is = FileUtils.openInputStream(file);
             response.serveFile(request, is, 0L, 60000L, file.length(), name);
-        }
-        else {
+        } else {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
-            response.getOutputStream().println("sorry, we not found it " + name);
+            response.getOutputStream().println("sorry, we not found it " + name.replace("/", ""));
         }
     }
 
@@ -87,16 +87,12 @@ public class SQSActivityAction implements Action {
         return job;
     }
 
-    //    public FormValidation doClear() {
-//        try {
-//            FileUtils.write(new File(this.sqsLogPath), "");
-//        } catch (IOException e) {
-//            return FormValidation.error(e, "Unable clear Activity");
-//        }
-//        return FormValidation.ok("Done. Please refresh the page.");
-//    }
-
-//    public File getSqsLogFile() {
-//        return activityDir;
-//    }
+    public FormValidation doClear() {
+        try {
+            FileUtils.cleanDirectory(this.activityDir);
+        } catch (IOException e) {
+            return FormValidation.error(e, "Unable clear Activity");
+        }
+        return FormValidation.ok("Done. Please refresh the page.");
+    }
 }

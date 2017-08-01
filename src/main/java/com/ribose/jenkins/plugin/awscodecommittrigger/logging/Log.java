@@ -22,12 +22,8 @@ import hudson.model.Job;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.ClassUtils;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
+import java.io.*;
+import java.util.logging.*;
 
 
 public class Log {
@@ -103,7 +99,6 @@ public class Log {
     }
 
     private void write(final Level level, final String message, final Object... args) {
-        String msg = format(message, args);
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof SQSTriggerQueue) {
                 args[i] = ((SQSTriggerQueue) args[i]).getUrl();
@@ -112,23 +107,30 @@ public class Log {
                 args[i] = ExceptionUtils.getStackTrace((Throwable)args[i]);
             }
         }
+
+        String msg = format(message, args);
         if (level == Level.CONFIG) {
             msg = "[DEBUG] " + msg;
         } else if (level == Level.SEVERE) {
             msg = "[ERROR] " + msg;
         }
         this.logger.logp(level, "[log]", "", msg);
+        if (this.streamHandler != null) {
+            this.streamHandler.flush();
+        }
     }
 
     private String prependJobName(final Job job, String message) {
         return String.format("[job-%s] %s", job.getName(), message);
     }
 
-    public StreamHandler getStreamHandler() {
-        return streamHandler;
-    }
-
     public Logger getLogger() {
         return logger;
+    }
+
+    public Log setOutputFile(File outputFile) throws FileNotFoundException {
+        this.streamHandler = new StreamHandler(new PrintStream(new FileOutputStream(outputFile, true), true), new SimpleFormatter());
+        this.logger.addHandler(this.streamHandler);
+        return this;
     }
 }

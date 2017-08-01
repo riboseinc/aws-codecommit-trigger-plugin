@@ -24,8 +24,6 @@ import org.apache.commons.lang3.ClassUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -34,12 +32,12 @@ import java.util.logging.StreamHandler;
 
 public class Log {
 
-    private StreamHandler streamHandler;
-    private Logger logger;
-    private Class clazz;
-    private boolean enableExtraInfo = true;
+    private transient StreamHandler streamHandler;
+    private transient Logger logger;
+    private transient Class clazz;
+    private transient boolean enableExtraInfo = true;//TODO change name?
 
-    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
+//    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
 
     private Log(Class clazz) {
         this.clazz = clazz;

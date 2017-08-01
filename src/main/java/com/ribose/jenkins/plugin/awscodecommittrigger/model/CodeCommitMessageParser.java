@@ -40,20 +40,14 @@ public class CodeCommitMessageParser implements MessageParser {
 
     private static final String EVENT_SOURCE_CODECOMMIT = "aws:codecommit";
 
-    private final Gson gson;
-
-    public CodeCommitMessageParser() {
-        this.gson = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-    }
+    private static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     @Override
     public List<Event> parseMessage(final Message message) {
         List<Event> events = Collections.emptyList();
 
         try {
-            MessageBody body = this.gson.fromJson(message.getBody(), MessageBody.class);
+            MessageBody body = gson.fromJson(message.getBody(), MessageBody.class);
             final String json = body.getMessage();
             log.debug("Parse message %s", json);
 
@@ -76,7 +70,7 @@ public class CodeCommitMessageParser implements MessageParser {
     }
 
     private List<Event> parseRecords(final String json) {
-        Records records = this.gson.fromJson(json, Records.class);
+        Records records = gson.fromJson(json, Records.class);
         List<Event> events = new ArrayList<>(records.size());
         for (final Record record : records) {
             this.parseEvents(events, record);

@@ -3,33 +3,17 @@
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <l:layout title="SQS Activity">
         <l:side-panel>
-            <f:entry>
-                <f:block>
-                    <span>List names</span>
-                    <ul>
-                        <j:forEach var="name" items="${it.logNames}">
-                            <li>${name}</li>
-                        </j:forEach>
-                    </ul>
-                </f:block>
-            </f:entry>
+            <st:include it="${it.job}" page="sidepanel.jelly" />
         </l:side-panel>
 
         <l:main-panel>
-            <!--<f:entry>-->
-                <!--<div>-->
-                    <!--<input type="button" value="${%clear}" class="yui-button validate-button" onclick="validateButton('clear', '', this)" />-->
-                <!--</div>-->
-                <!--<div>&lt;!&ndash; this is where the error message goes &ndash;&gt;</div>-->
-                <!--<a href=""></a>-->
-            <!--</f:entry>-->
-
-            <!--<f:entry>-->
-                <!--<j:if test="${it.big}"><p>Size is too big, ${it.logSize}, <a href="raw">view raw</a></p></j:if>-->
-                <!--<j:if test="${!it.big}"><pre>${it.log}</pre></j:if>-->
-            <!--</f:entry>-->
             <f:entry>
-                <p>test me</p>
+                <f:block>
+                    <p>Click on links to view raw logs (by date)</p>
+                    <j:forEach var="name" items="${it.logNames}">
+                        <l:task icon="icon-document icon-md"  href="download/${name}" title="${name}" />
+                    </j:forEach>
+                </f:block>
             </f:entry>
         </l:main-panel>
     </l:layout>

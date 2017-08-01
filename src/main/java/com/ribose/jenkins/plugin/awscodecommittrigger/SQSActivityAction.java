@@ -5,8 +5,15 @@ import hudson.model.Action;
 import hudson.model.Job;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
+import org.apache.http.HttpStatus;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.interceptor.RespondSuccess;
 
+import javax.servlet.ServletException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,9 +26,6 @@ public class SQSActivityAction implements Action {
 
     private final transient Job job;
     private final transient File activityDir;
-
-//    private static final String SQS_LOG_NAME = "sqs-activity.log";
-    private static final Long DEFAULT_BIG_SIZE = 10L;
 
     public SQSActivityAction(Job job) {
         this.job = job;
@@ -45,7 +49,7 @@ public class SQSActivityAction implements Action {
 
     @Override
     public String getUrlName() {
-        return "SQSActivity";
+        return getDisplayName().toLowerCase().replaceAll(" ", "-");
     }
 
     public File getActivityDir() {
@@ -62,32 +66,28 @@ public class SQSActivityAction implements Action {
         return names;
     }
 
-//    public String getActivityDirPath() throws IOException {
-//        return this.activityDir.getCanonicalPath();
-//    }
+    @RespondSuccess
+    public void doDownload() throws IOException, ServletException {
+        StaplerRequest request = Stapler.getCurrentRequest();
+        StaplerResponse response = Stapler.getCurrentResponse();
 
-//    public void doRaw() throws ServletException, IOException {
-//        StaplerRequest request = Stapler.getCurrentRequest();
-//        StaplerResponse response = Stapler.getCurrentResponse();
-//        FileInputStream is = FileUtils.openInputStream(this.activityDir);
-//        response.serveFile(request, is, 0L, 60000L, this.activityDir.length(), SQS_LOG_NAME);
-//    }
-
-    public boolean isBig(File log) {
-        long sizeInMB = log.length() / 1048576L; // 1048576 B = 1 MB
-        return sizeInMB > DEFAULT_BIG_SIZE;
+        String name = request.getRestOfPath();
+        File file = new File(this.activityDir.getPath() + "/" + name);
+        if (file.exists()) {
+            FileInputStream is = FileUtils.openInputStream(file);
+            response.serveFile(request, is, 0L, 60000L, file.length(), name);
+        }
+        else {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            response.getOutputStream().println("sorry, we not found it " + name);
+        }
     }
 
-//    public String getLogSize() {
-//        return FileUtils.byteCountToDisplaySize(this.activityDir.length());
-//    }
-
-    public String readLog(String name) throws IOException {
-        String path = this.activityDir.getPath() + "/" + name;
-        return FileUtils.readFileToString(new File(path), "UTF-8");
+    public Job getJob() {
+        return job;
     }
 
-//    public FormValidation doClear() {
+    //    public FormValidation doClear() {
 //        try {
 //            FileUtils.write(new File(this.sqsLogPath), "");
 //        } catch (IOException e) {

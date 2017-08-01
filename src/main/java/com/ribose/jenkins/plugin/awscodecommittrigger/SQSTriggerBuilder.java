@@ -26,17 +26,12 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.model.Cause;
 import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
-import org.apache.commons.lang.time.FastDateFormat;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Date;
 
 
 public class SQSTriggerBuilder implements Runnable {
-
-    private static final FastDateFormat df = FastDateFormat.getInstance("yyyyMMdd");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private final SQSJob job;
@@ -49,15 +44,11 @@ public class SQSTriggerBuilder implements Runnable {
         this.message = message;
 
         SQSActivityAction activityAction = this.job.getJenkinsJob().getAction(SQSActivityAction.class);
-
-        String date = df.format(new Date());
-        String logPath = String.format("%s/triggers-on-%s.log", activityAction.getActivityDir().getPath(), date);
-
-        this.listener = new StreamTaskListener(new File(logPath), true, Charset.forName("UTF-8"));
+        this.listener = new StreamTaskListener(activityAction.getActivityLogFile(), true, Charset.forName("UTF-8"));
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), false);
 
         this.log.info("Try to trigger the build, message-id: %s", StringUtils.getMessageId(message));
-        this.log.debug("Print out message-body: %s", this.message.getBody());
+        this.log.debug("Print out message-body: %s", gson.toJson(message));
     }
 
     @Override
@@ -79,6 +70,5 @@ public class SQSTriggerBuilder implements Runnable {
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         boolean scheduled = job.scheduleBuild(cause);
         this.log.info("Finally! The build is scheduled? %s", scheduled);
-        this.log.getStreamHandler().flush();
     }
 }

@@ -7,6 +7,7 @@ import hudson.model.Job;
 import hudson.util.FormValidation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.http.HttpStatus;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -19,12 +20,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
 public class SQSActivityAction implements Action {
 
     private static final Log log = Log.get(SQSActivityAction.class);
+    private static final FastDateFormat df = FastDateFormat.getInstance("yyyyMMdd");
 
     private final transient Job job;
     private final transient File activityDir;
@@ -97,5 +100,11 @@ public class SQSActivityAction implements Action {
             return FormValidation.error(e, "Unable clear Activity");
         }
         return FormValidation.ok("Done. Please refresh the page.");
+    }
+
+    public File getActivityLogFile() {
+        String date = df.format(new Date());
+        String logPath = String.format("%s/activities-on-%s.log", this.getActivityDir().getPath(), date);
+        return new File(logPath);
     }
 }

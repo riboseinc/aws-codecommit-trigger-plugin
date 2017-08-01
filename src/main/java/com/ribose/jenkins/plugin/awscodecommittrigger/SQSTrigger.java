@@ -42,6 +42,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.SequentialExecutionQueue;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -76,6 +77,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private transient ExecutorService executor;
 
     private transient SQSJob sqsJob;
+    private transient List<SQSActivityAction> actions;
 
     @DataBoundConstructor
     public SQSTrigger(final String queueUuid, final String subscribedBranches) {
@@ -84,10 +86,10 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     }
 
     public Collection<? extends Action> getProjectActions() {
-        if (this.job != null) {
-            return Arrays.asList(new SQSActivityAction(this.job));
+        if (this.job != null && CollectionUtils.isEmpty(this.actions)) {
+            this.actions =  Arrays.asList(new SQSActivityAction(this.job));
         }
-        return Collections.emptyList();
+        return this.actions;
     }
 
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF")

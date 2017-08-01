@@ -18,8 +18,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.services.sqs.model.Message;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
@@ -32,8 +30,6 @@ import java.nio.charset.Charset;
 
 
 public class SQSTriggerBuilder implements Runnable {
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
     private final SQSJob job;
     private final Log log;
     private final TaskListener listener;
@@ -48,7 +44,7 @@ public class SQSTriggerBuilder implements Runnable {
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), false);
 
         this.log.info("Try to trigger the build, message-id: %s", StringUtils.getMessageId(message));
-        this.log.debug("Print out message-body: %s", gson.toJson(message));
+        this.log.debug("Print out message-body: %s", message.getBody());
     }
 
     @Override
@@ -65,7 +61,7 @@ public class SQSTriggerBuilder implements Runnable {
     }
 
     private void startJob() {
-        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %n %s", gson.toJson(message)));
+        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %s", StringUtils.getMessageId(message)));
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         boolean scheduled = job.scheduleBuild(cause);

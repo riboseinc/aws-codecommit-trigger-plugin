@@ -50,8 +50,9 @@ public class SQSActivityAction implements Action {
     }
 
     @Override
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public String getUrlName() {
-        return getDisplayName().toLowerCase().replaceAll(" ", "-");
+        return getDisplayName().toLowerCase().replace(" ", "-");
     }
 
     public File getActivityDir() {

@@ -127,10 +127,4 @@ public class Log {
     public Logger getLogger() {
         return logger;
     }
-
-    public Log setOutputFile(File outputFile) throws FileNotFoundException {
-        this.streamHandler = new StreamHandler(new PrintStream(new FileOutputStream(outputFile, true), true), new SimpleFormatter());
-        this.logger.addHandler(this.streamHandler);
-        return this;
-    }
 }

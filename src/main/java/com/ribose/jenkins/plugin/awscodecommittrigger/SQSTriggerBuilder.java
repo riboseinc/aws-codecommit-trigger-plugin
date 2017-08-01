@@ -43,7 +43,7 @@ public class SQSTriggerBuilder implements Runnable {
         this.listener = new StreamTaskListener(activityAction.getActivityLogFile(), true, Charset.forName("UTF-8"));
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), false);
 
-        this.log.info("Try to trigger the build, message-id: %s", StringUtils.getMessageId(message));
+        this.log.info("Try to trigger the build for message: %s", StringUtils.getMessageId(message));
         this.log.debug("Print out message-body: %s", message.getBody());
     }
 

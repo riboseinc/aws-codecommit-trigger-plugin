@@ -1,6 +1,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.util.FormValidation;
@@ -57,6 +58,7 @@ public class SQSActivityAction implements Action {
         return activityDir;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public List<String> getLogNames() {
         List<String> names = new ArrayList<>();
         File[] files = this.activityDir.listFiles();

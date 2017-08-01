@@ -26,18 +26,17 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.model.Cause;
 import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
+import org.apache.commons.lang.time.FastDateFormat;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 public class SQSTriggerBuilder implements Runnable {
 
-    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
+    private static final FastDateFormat df = FastDateFormat.getInstance("yyyyMMdd");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private final SQSJob job;
@@ -75,7 +74,7 @@ public class SQSTriggerBuilder implements Runnable {
     }
 
     private void startJob() {
-        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: \n %s", gson.toJson(message)));
+        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %n %s", gson.toJson(message)));
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         boolean scheduled = job.scheduleBuild(cause);

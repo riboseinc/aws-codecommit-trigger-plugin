@@ -35,9 +35,7 @@ public class Log {
     private transient StreamHandler streamHandler;
     private transient Logger logger;
     private transient Class clazz;
-    private transient boolean enableExtraInfo = true;//TODO change name?
-
-//    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
+    private transient boolean autoFormat = true;//TODO change name?
 
     private Log(Class clazz) {
         this.clazz = clazz;
@@ -48,9 +46,9 @@ public class Log {
         return new Log(clazz);
     }
 
-    public static Log get(Class clazz, PrintStream out, boolean enableExtraInfo) throws IOException {
+    public static Log get(Class clazz, PrintStream out, boolean autoFormat) throws IOException {
         Log log = get(clazz);
-        log.enableExtraInfo = enableExtraInfo;
+        log.autoFormat = autoFormat;
 
         log.streamHandler = new StreamHandler(out, new SimpleFormatter());
         log.logger.addHandler(log.streamHandler);
@@ -101,7 +99,7 @@ public class Log {
     private String format(final String message, final Object... args) {
         final String formatted = String.format(message, args);
         final long id = Thread.currentThread().getId();
-        return enableExtraInfo ? String.format("[%s][thread-%06X] %s", ClassUtils.getAbbreviatedName(this.clazz, 1), id, formatted) : formatted;
+        return autoFormat ? String.format("[%s][thread-%06X] %s", ClassUtils.getAbbreviatedName(this.clazz, 1), id, formatted) : formatted;
     }
 
     private void write(final Level level, final String message, final Object... args) {

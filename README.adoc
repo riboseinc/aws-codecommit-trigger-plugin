@@ -71,6 +71,17 @@ on Amazon Web Services.
 
 image::doc/images/global-config.png["Jenkins configuration test"]
 
+If you get the error `Unable to find a region via the region provider chain`,
+create the directory `.aws` inside the Jenkins home directory.
+Then inside the `.aws` directory add the `config` file with the following configuration.
+
+```
+[default]
+output = json
+region = <region where is your repository>
+```
+
+image::doc/images/region-not-found.png["Region not found error"]
 
 == Jenkins Job Configuration
 
@@ -122,4 +133,3 @@ https://www.ribose.com[Ribose Inc.]
 == License
 
 Full text: link:LICENSE[Apache License]
-

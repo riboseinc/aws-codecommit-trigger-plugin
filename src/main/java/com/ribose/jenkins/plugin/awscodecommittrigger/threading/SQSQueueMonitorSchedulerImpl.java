@@ -107,12 +107,12 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         SQSQueueMonitor monitor = this.monitors.get(uuid);
 
         if (monitor == null) {
-            log.info("No monitor exists, creating new monitor for %s", queue.getUrl());
+            log.info("No monitor exists, creating new monitor for %s", queue);
             monitor = this.factory.createMonitor(this.executor, queue);
             this.monitors.put(uuid, monitor);
         }
 
-        log.debug("Add listener to monitor for %s", queue.getUrl());
+        log.debug("Add listener to monitor for %s", queue);
         monitor.add(listener);
     }
 

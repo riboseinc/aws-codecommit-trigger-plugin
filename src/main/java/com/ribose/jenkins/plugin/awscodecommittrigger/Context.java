@@ -25,6 +25,8 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.factories.ThreadFactoryImp
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.EventTriggerMatcherImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.SQSQueueProviderImpl;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJobFactory;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.impl.SQSJobFactoryImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactoryImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.ExecutorProviderImpl;
@@ -86,5 +88,9 @@ public class Context extends com.google.inject.AbstractModule {
         this.bind(EventTriggerMatcher.class)
                 .to(EventTriggerMatcherImpl.class)
                 .in(com.google.inject.Singleton.class);
+
+        this.bind(SQSJobFactory.class)
+            .to(SQSJobFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
     }
 }

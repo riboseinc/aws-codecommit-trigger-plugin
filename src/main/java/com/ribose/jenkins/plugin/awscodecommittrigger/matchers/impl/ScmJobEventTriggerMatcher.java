@@ -19,8 +19,8 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.AbstractProject;
 import hudson.plugins.git.GitSCM;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
@@ -37,20 +37,21 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     private static final Log log = Log.get(ScmJobEventTriggerMatcher.class);
 
     @Override
-    public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
-        SCM scm = job.getScm();
-        if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
-            log.info("NullSCM detected", job);
-            return false;
-        }
+    public boolean matches(List<Event> events, SQSJob job) {
+        List<SCM> scms = job.getScmList();
+        log.debug("Events size: %d, SCMs size: %d", job, events.size(), scms.size());
 
-        log.debug("Events size: %d", events.size());
-
-        for (Event event : events) {
-            log.debug(event.toString());
-            if (this.matches(event, scm)) {
-                log.info("Hurray! Event %s matched SCM ", job, event.getArn(), scm.getKey());
-                return true;
+        for (SCM scm : scms) {
+            if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
+                log.debug("NullSCM detected, continue match next SCM", job);
+                continue;
+            }
+            for (Event event : events) {
+                log.debug("Matching event %s with SCM %s", event, scm.getKey());
+                if (this.matches(event, scm)) {
+                    log.info("Hurray! Event %s matched SCM %s", job, event.getArn(), scm.getKey());
+                    return true;
+                }
             }
         }
 

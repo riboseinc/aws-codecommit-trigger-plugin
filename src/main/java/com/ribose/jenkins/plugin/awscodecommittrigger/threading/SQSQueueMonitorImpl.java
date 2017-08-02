@@ -102,18 +102,18 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
             }
 
             if (!this.isRunning.compareAndSet(false, true)) {
-                log.warning("Monitor for %s already started", this.queue.getUrl());
+                log.warning("Monitor for %s already started", this.queue);
                 return;
             }
 
-            log.debug("Start monitor for %s", this.queue.getUrl());
+            log.debug("Start monitor for %s", this.queue);
             this.processMessages();
         } catch (Exception e) {
-            log.warning("Monitor for %s stopped, error: %s", this.queue.getUrl(), e);
+            log.warning("Monitor for %s stopped, error: %s", this.queue, e);
             this.isShutDown = true;
         } finally {
             if (!this.isRunning.compareAndSet(true, false)) {
-                log.warning("Monitor for %s already stopped", this.queue.getUrl());
+                log.warning("Monitor for %s already stopped", this.queue);
             }
             this.execute();
         }

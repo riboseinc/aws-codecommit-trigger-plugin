@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import hudson.util.OneShotEvent;
 
+
 public class ProjectFixture {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
@@ -30,6 +31,7 @@ public class ProjectFixture {
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
     private String sqsMessage;
+    private String jenkinsProjectName;
 
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -86,6 +88,15 @@ public class ProjectFixture {
 
     public ProjectFixture setSqsMessage(String sqsMessage) {
         this.sqsMessage = sqsMessage;
+        return this;
+    }
+
+    public String getJenkinsProjectName() {
+        return jenkinsProjectName;
+    }
+
+    public ProjectFixture setJenkinsProjectName(String jenkinsProjectName) {
+        this.jenkinsProjectName = jenkinsProjectName;
         return this;
     }
 

@@ -18,11 +18,11 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
+import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl.ScmJobEventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl.SubscribeBranchEventTriggerMatcher;
-import hudson.model.AbstractProject;
-import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class EventTriggerMatcherImpl implements EventTriggerMatcher {
     }
 
     @Override
-    public boolean matches(List<Event> events, AbstractProject<?, ?> job) {
+    public boolean matches(List<Event> events, SQSJob job) {
         boolean match = this.delegate.matches(events, job);
         log.info("Finally, events match status is %s", job, match);
         return match;

@@ -20,8 +20,8 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
-import hudson.model.AbstractProject;
 import hudson.plugins.git.BranchSpec;
 
 import java.util.Collections;
@@ -33,22 +33,22 @@ public class SubscribeBranchEventTriggerMatcher implements EventTriggerMatcher {
     private static final Log log = Log.get(SubscribeBranchEventTriggerMatcher.class);
 
     @Override
-    public boolean matches(final List<Event> events, final AbstractProject<?, ?> job) {
-        SQSTrigger trigger = job.getTrigger(SQSTrigger.class);
+    public boolean matches(List<Event> events, SQSJob job) {
+        SQSTrigger trigger = job.getTrigger();
         List<String> branches = StringUtils.parseCsvString(trigger.getSubscribedBranches());
         if (branches.size() == 0) {
             log.debug("Subscribe Branch is empty, using default value `**`", job);
             branches = Collections.singletonList("**");// default is any branches
         }
 
-        log.debug("Events size: %d", events.size());
+        log.debug("Events size: %d", job, events.size());
 
         for (String branch : branches) {
             BranchSpec branchSpec = new BranchSpec(branch);
             for (Event event : events) {
-                log.debug(event.toString());
+                log.debug("Matching event %s with branch %s", event, branch);
                 if (branchSpec.matches(event.getBranch())) {
-                    log.info("Hurray! Event %s matches branch %s", job, event.getArn(), branchSpec.toString());
+                    log.info("Hurray! Event %s matched branch %s", job, event.getArn(), branch);
                     return true;
                 }
             }

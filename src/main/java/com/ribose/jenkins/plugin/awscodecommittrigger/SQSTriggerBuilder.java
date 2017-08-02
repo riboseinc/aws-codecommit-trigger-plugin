@@ -19,61 +19,52 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
-import hudson.model.AbstractProject;
 import hudson.model.Cause;
-import hudson.scm.NullSCM;
+import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 
 
 public class SQSTriggerBuilder implements Runnable {
-
-    private final AbstractProject job;
-    private final DateFormat formatter = DateFormat.getDateTimeInstance();
-
+    private final SQSJob job;
     private final Log log;
-    private final StreamTaskListener listener;
+    private final TaskListener listener;
     private final Message message;
 
-    public SQSTriggerBuilder(final AbstractProject job, final Message message) throws IOException {
+    public SQSTriggerBuilder(final SQSJob job, final Message message) throws IOException {
         this.job = job;
         this.message = message;
 
-        File sqsLogFile = this.job.getAction(SQSTriggerActivityAction.class).getSqsLogFile();
-        this.listener = new StreamTaskListener(sqsLogFile, true, Charset.forName("UTF-8"));
-        this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger());
+        SQSActivityAction activityAction = this.job.getJenkinsJob().getAction(SQSActivityAction.class);
+        this.listener = new StreamTaskListener(activityAction.getActivityLogFile(), true, Charset.forName("UTF-8"));
+        this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), false);
 
-        String body = this.message.getBody();
-        String messageId = StringUtils.findByUniqueJsonKey(body, "MessageId");
-        this.log.info("Try to trigger the build, messageId: %s", this.job, messageId);
-        this.log.debug("Print out message-body: %s", this.job, body);
+        this.log.info("Try to trigger the build for message: %s", StringUtils.getMessageId(message));
+        this.log.debug("Print out message-body: %s", message.getBody());
     }
 
     @Override
     public void run() {
         final boolean hasChanges = this.job.poll(listener).hasChanges();
-        this.log.debug("Has SCM? %s", this.job, this.job.getScm().getClass().isAssignableFrom(NullSCM.class));
-        this.log.info("Any code changes found in SCM? %s", this.job, hasChanges);
+        this.log.info("Any code changes found in SCM? %s", hasChanges);
 
         if (hasChanges) {
             this.startJob();
         }
         else {
-            log.info("Cancel the build since no change found", this.job);
+            log.info("Cancel the build since no change found");
         }
     }
 
     private void startJob() {
-        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %s", message));
+        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %s", StringUtils.getMessageId(message)));
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         boolean scheduled = job.scheduleBuild(cause);
-        this.log.info("Finally! The build is scheduled? %s", this.job, scheduled);
-        this.log.getStreamHandler().flush();
+        this.log.info("Finally! The build is scheduled? %s", scheduled);
     }
 }

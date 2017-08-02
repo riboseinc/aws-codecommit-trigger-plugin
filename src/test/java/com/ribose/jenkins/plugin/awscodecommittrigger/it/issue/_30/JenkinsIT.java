@@ -1,9 +1,9 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._30;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
-import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.plugins.git.GitSCM;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
 
     public JenkinsIT() throws IOException {
         this.fixture = new ProjectFixture()
-            .setSqsMessage(IOUtils.toString(StringUtils.getResource(JenkinsIT.class, "us-east-1.json"), StandardCharsets.UTF_8))
+            .setSqsMessage(IOUtils.toString(Utils.getResource(JenkinsIT.class, "us-east-1.json"), StandardCharsets.UTF_8))
             .setSubscribedBranches("refs/heads/master")
             .setShouldStarted(Boolean.TRUE);
         this.scm = MockGitSCM.fromSqsMessage(this.fixture.getSqsMessage());
@@ -29,7 +29,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
 
     @Test
     public void shouldPassIt() throws IOException, InterruptedException {
-        logger.log(Level.INFO, "[RUN] integration test for issue #30");
+        logger.log(Level.INFO, "[RUN] Integration test for issue #30");
         this.mockAwsSqs.sendMessage(this.fixture.getSqsMessage());
         this.submitAndAssertFixture(this.scm, fixture);
         logger.log(Level.INFO, "[DONE]");

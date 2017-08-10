@@ -17,9 +17,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.map.LinkedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.assertj.core.api.Assertions;
@@ -27,9 +24,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,63 +70,6 @@ public class StringUtilsTest {
         sqsResponse = "not a json string";
         messageId = StringUtils.findByUniqueJsonKey(sqsResponse, "MessageId");
         Assertions.assertThat(messageId).isNull();
-    }
-
-    @Test
-    public void testParseWildcard() {
-        final List<String> branches = Arrays.asList(
-            "master",
-            "refs/heads/master",
-            "tags/master",
-
-            "feature/sqstest",
-            "sqstest",
-            "sqstest-foo",
-            "sqstest/csv",
-            "sqstest-foo/csv",
-            "sqstest/csv/something"
-        );
-
-        final Map<String, List<String>> fixtures = new LinkedMap();
-        fixtures.put("*", Arrays.asList("master", "sqstest", "sqstest-foo"));
-        fixtures.put("**", branches);
-        fixtures.put("master", Arrays.asList("master"));
-        fixtures.put("*master", Arrays.asList("master"));
-        fixtures.put("*sqstest", Arrays.asList("sqstest"));
-        fixtures.put("sqstest*", Arrays.asList("sqstest", "sqstest-foo"));
-        fixtures.put("**sqstest", Arrays.asList("feature/sqstest", "sqstest"));
-        fixtures.put("sqstest**", Arrays.asList("sqstest", "sqstest-foo", "sqstest-foo/csv", "sqstest/csv", "sqstest/csv/something"));
-        fixtures.put("sqstest/**", Arrays.asList("sqstest/csv", "sqstest/csv/something"));
-        fixtures.put("sqstest/*", Arrays.asList("sqstest/csv"));
-        fixtures.put("sqstest/**", Arrays.asList("sqstest/csv", "sqstest/csv/something"));
-
-        class WildcardPredicate implements Predicate {
-
-            private final String pattern;
-
-            public WildcardPredicate(String pattern) {
-                this.pattern = StringUtils.parseWildcard(pattern);
-            }
-
-            @Override
-            public boolean evaluate(Object o) {
-                String str = o.toString();
-                return str.matches(pattern);
-            }
-        }
-
-        for (String pattern : fixtures.keySet()) {
-            System.out.println(String.format("Assert match pattern '%s' => result: %s", pattern, fixtures.get(pattern)));
-            final List<String> matchedBranchs = (List<String>) CollectionUtils.select(branches, new WildcardPredicate(pattern));
-            Assertions.assertThat(matchedBranchs).containsExactlyInAnyOrder(fixtures.get(pattern).toArray(new String[]{}));
-        }
-    }
-
-    @Test
-    public void testRegexNotSupported() {
-        String pattern = StringUtils.parseWildcard("(foo|bar)");
-        Assertions.assertThat("foo").doesNotMatch(pattern);
-        Assertions.assertThat("bar").doesNotMatch(pattern);
     }
 
     @Test

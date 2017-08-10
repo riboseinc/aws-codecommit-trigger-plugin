@@ -30,16 +30,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Provides static methods that can be used to work with {@link String}
- */
+
 public final class StringUtils {
 
     public static final Pattern SQS_URL_PATTERN = Pattern
         .compile("^(?:http(?:s)?://)?(?<endpoint>sqs\\..+?\\.amazonaws\\.com)/(?<id>.+?)/(?<name>.*)$");
-
-//    public static final Pattern CODECOMMIT_URL_PATTERN = Pattern
-//        .compile("^(?:http(?:s)?://)?git-codecommit\\.(?<region>.+?)\\.amazonaws\\.com/v1/repos/(?<name>.*)$");
 
     /**
      * Parse csv string and return list of trimmed strings
@@ -86,56 +81,6 @@ public final class StringUtils {
     }
 
     /**
-     * Parse string containing wildcards to Java Regex string
-     *
-     * @param str string containing wildcards, can not null
-     * @return regex can be used in {@link String#matches(String)}, or <code>null</code>  if not found
-     */
-    public static String parseWildcard(String str) {
-        assert str != null;
-
-        str = str.trim();
-        StringBuffer regexBuilder = new StringBuffer(str.length());
-        regexBuilder.append('^');
-        for (int i = 0, is = str.length(); i < is; i++) {
-            char c = str.charAt(i);
-            switch (c) {
-                case '*':
-                    char nc = i + 1 < str.length() ? str.charAt(i + 1) : 0;
-                    if (nc == '*') {//detect '**'
-                        i++;// move i to next
-                        regexBuilder.append(".*");
-                    } else {
-                        regexBuilder.append("[^/]*");
-                    }
-                    break;
-                case '?':
-                    regexBuilder.append(".");
-                    break;
-                // escape special regexp-characters
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '$':
-                case '^':
-                case '.':
-                case '{':
-                case '}':
-                case '|':
-                case '\\':
-                    regexBuilder.append("\\").append(c);
-                    break;
-                default:
-                    regexBuilder.append(c);
-                    break;
-            }
-        }
-        regexBuilder.append('$');
-        return regexBuilder.toString();
-    }
-
-    /**
      * Parse queueUrl to return the name of that queue
      *
      * @param queueUrl url of the queue, can not null
@@ -169,7 +114,13 @@ public final class StringUtils {
         return name;
     }
 
-    public static List<String> parseScmUrls(SCM scm) {
+    /**
+     * Read SCM-URL from given SCM
+     *
+     * @param scm
+     * @return list of SCM-URL
+     * */
+    public static List<String> getScmUrls(SCM scm) {
         List<String> urls = new ArrayList<>();
         if (scm instanceof GitSCM) {
             final GitSCM git = (GitSCM) scm;
@@ -185,6 +136,12 @@ public final class StringUtils {
         return urls;
     }
 
+    /**
+     * Read `MessageId` from given message.body
+     *
+     * @param message
+     * @return Message Id
+     * */
     public static String getMessageId(Message message) {
         String body = message.getBody();
         return StringUtils.findByUniqueJsonKey(body, "MessageId");

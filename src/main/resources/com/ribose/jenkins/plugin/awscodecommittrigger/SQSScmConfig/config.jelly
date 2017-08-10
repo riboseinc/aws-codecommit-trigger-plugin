@@ -1,0 +1,51 @@
+<!--
+   Copyright 2017 Ribose Inc. <https://www.ribose.com>
+   Copyright 2016 M-Way Solutions GmbH
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson"
+         xmlns:f="/lib/form">
+
+    <f:entry title="Subscribed branches" field="subscribedBranches">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="Subscribe to CodeCommit Repo" field="type">
+        <table style="width: 100%">
+            <tbody>
+                <tr>
+                    <td>
+                        <f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM' || instance.type==null}" inline="true">
+                            <j:if test="${sqsTrigger.workflowJob}">
+                                <f:block>
+                                    <span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>
+                                </f:block>
+                            </j:if>
+                        </f:radioBlock>
+
+                        <f:radioBlock name="type" title="or Manually enter CodeCommit Repo URL" checked="${instance.type=='URL'}" value="URL" inline="true" >
+                            <f:entry field="url" description="only Git supported">
+                                <f:textbox />
+                            </f:entry>
+                        </f:radioBlock>
+                    </td>
+                    <td/>
+                </tr>
+            </tbody>
+        </table>
+    </f:entry>
+
+</j:jelly>

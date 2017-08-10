@@ -16,6 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -29,6 +30,7 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.jenkinsci.plugins.multiplescms.MultiSCM;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -38,14 +40,27 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
     @Override
     public boolean matches(List<Event> events, SQSJob job) {
-        List<SCM> scms = job.getScmList();
+        List<SCM> scms = Collections.emptyList();
+        SQSScmConfig scmConfig = job.getTrigger().getSqsScmConfig();
+        switch (scmConfig.getType()) {
+            case JOB_SCM:
+                scms = job.getScmList();
+                break;
+
+            case URL:
+                String scmUrl = scmConfig.getUrl();
+                scms = Collections.singletonList((SCM) new GitSCM(scmUrl));//TODO support multi scm-types
+                break;
+        }
+
         log.debug("Events size: %d, SCMs size: %d", job, events.size(), scms.size());
 
         for (SCM scm : scms) {
-            if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
+            if (scm.getClass().isAssignableFrom(NullSCM.class)) {
                 log.debug("NullSCM detected, continue match next SCM", job);
                 continue;
             }
+
             for (Event event : events) {
                 log.debug("Matching event %s with SCM %s", event, scm.getKey());
                 if (this.matches(event, scm)) {
@@ -74,7 +89,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     }
 
     private boolean matchesGitSCM(final Event event, final SCM scmProvider) {
-        if (!(scmProvider instanceof hudson.plugins.git.GitSCM)) {
+        if (!(scmProvider instanceof GitSCM)) {
             return false;
         }
 

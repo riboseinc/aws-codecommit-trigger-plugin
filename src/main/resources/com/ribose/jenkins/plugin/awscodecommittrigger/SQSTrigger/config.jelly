@@ -16,24 +16,18 @@
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <j:if test="${instance.getScmRepoUrls().size() > 0}">
-        <f:block>
-            <span>This job will be triggered whenever the SQS queue receives an SNS message that any of the following CodeCommit repositories are updated</span>
-            <ul>
-                <j:forEach var="scmRepoUrl" items="${instance.getScmRepoUrls()}">
-                    <li>${scmRepoUrl}</li>
-                </j:forEach>
-            </ul>
-        </f:block>
-    </j:if>
+         xmlns:t="/lib/hudson"
+         xmlns:f="/lib/form">
+    <!--<j:if test="${instance.requiredOneBuilt}">-->
+        <!--<f:block>-->
+            <!--<span class="warning">Trigger not work unless there is at-least-once job built SUCCESS</span>-->
+        <!--</f:block>-->
+    <!--</j:if>-->
 
     <f:entry title="${%SQS queue to monitor}" field="queueUuid">
         <f:select/>
     </f:entry>
 
-    <f:entry title="${%Subscribed branches}" field="subscribedBranches"
-             description="ex: (blank for 'any', like '*'), development, master, *feature, feature/**">
-        <f:textbox default="master"/>
-    </f:entry>
+    <j:set var="sqsTrigger" value="${instance}"/>
+    <f:property field="sqsScmConfig"/>
 </j:jelly>

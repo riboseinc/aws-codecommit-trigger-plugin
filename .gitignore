@@ -20,3 +20,4 @@ buildNumber.properties
 *.iws
 
 .me/
+workflow/

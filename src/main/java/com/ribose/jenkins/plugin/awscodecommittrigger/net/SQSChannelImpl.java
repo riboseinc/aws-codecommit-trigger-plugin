@@ -77,7 +77,6 @@ public class SQSChannelImpl implements SQSChannel {
         }
 
         final DeleteMessageBatchResult result = this.deleteMessageBatch(messages);
-
         if (result == null) {
             return;
         }

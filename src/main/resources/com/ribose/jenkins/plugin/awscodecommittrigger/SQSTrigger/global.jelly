@@ -36,15 +36,9 @@
                                 page="${descriptor.configPage}"/>
                             <f:entry>
                                 <div align="right">
-                                    <input
-                                        type="button"
-                                        value="${%Add}"
-                                        class="repeatable-add show-if-last"/>
-                                    <input
-                                        type="button"
-                                        value="${%Delete}"
-                                        class="repeatable-delete danger show-if-not-only"
-                                        style="margin-left: 1em;"/>
+                                    <input type="button" value="${%Add}" class="repeatable-add show-if-last"/>
+                                    <input type="button" value="${%Delete}"
+                                           class="repeatable-delete danger show-if-not-only" style="margin-left: 1em;"/>
                                 </div>
                             </f:entry>
                         </table>

@@ -16,7 +16,6 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -41,17 +40,17 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     @Override
     public boolean matches(List<Event> events, SQSJob job) {
         List<SCM> scms = Collections.emptyList();
-        SQSScmConfig scmConfig = job.getTrigger().getSqsScmConfig();
-        switch (scmConfig.getType()) {
-            case JOB_SCM:
-                scms = job.getScmList();
-                break;
-
-            case URL:
-                String scmUrl = scmConfig.getUrl();
-                scms = Collections.singletonList((SCM) new GitSCM(scmUrl));//TODO support multi scm-types
-                break;
-        }
+//        SQSScmConfig scmConfig = job.getTrigger().getSqsScmConfig();
+//        switch (scmConfig.getType()) {
+//            case JOB_SCM:
+//                scms = job.getScmList();
+//                break;
+//
+//            case URL:
+//                String scmUrl = scmConfig.getUrl();
+//                scms = Collections.singletonList((SCM) new GitSCM(scmUrl));//TODO support multi scm-types
+//                break;
+//        }
 
         log.debug("Events size: %d, SCMs size: %d", job, events.size(), scms.size());
 

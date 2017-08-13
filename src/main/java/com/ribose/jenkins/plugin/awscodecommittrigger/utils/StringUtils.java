@@ -18,10 +18,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
 import com.amazonaws.services.sqs.model.Message;
-import hudson.plugins.git.GitSCM;
-import hudson.scm.SCM;
-import org.eclipse.jgit.transport.RemoteConfig;
-import org.eclipse.jgit.transport.URIish;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +31,8 @@ public final class StringUtils {
 
     public static final Pattern SQS_URL_PATTERN = Pattern
         .compile("^(?:http(?:s)?://)?(?<endpoint>sqs\\..+?\\.amazonaws\\.com)/(?<id>.+?)/(?<name>.*)$");
+
+    public static final Pattern CODE_COMMIT_PATTERN = Pattern.compile("^(?:(https|ssh)?://)?(?<endpoint>git-codecommit\\..+?\\.amazonaws\\.com)/(?<version>.+?)/repos/(?<repoName>.*)$");
 
     /**
      * Parse csv string and return list of trimmed strings
@@ -64,9 +62,6 @@ public final class StringUtils {
      * @return value of <code>jsonString.uniqueKey</code>, or <code>null</code>  if not found
      */
     public static String findByUniqueJsonKey(String jsonString, String uniqueKey) {
-        assert jsonString != null;
-        assert uniqueKey != null;
-
         jsonString = jsonString.trim();
         uniqueKey = uniqueKey.trim();
 
@@ -80,6 +75,15 @@ public final class StringUtils {
         return value;
     }
 
+    private static String findValueByPatter(String string, Pattern pattern, String groupName) {
+        String value = null;
+        final Matcher matcher = pattern.matcher(string);
+        if (matcher.matches()) {
+            value = matcher.group(groupName);
+        }
+        return value;
+    }
+
     /**
      * Parse queueUrl to return the name of that queue
      *
@@ -87,14 +91,7 @@ public final class StringUtils {
      * @return the name of queue
      */
     public static String getSqsQueueName(final String queueUrl) {
-        assert queueUrl != null;
-
-        String name = null;
-        final Matcher sqsUrlMatcher = SQS_URL_PATTERN.matcher(queueUrl);
-        if (sqsUrlMatcher.matches()) {
-            name = sqsUrlMatcher.group("name");
-        }
-        return name;
+        return findValueByPatter(queueUrl, SQS_URL_PATTERN, "name");
     }
 
     /**
@@ -104,36 +101,7 @@ public final class StringUtils {
      * @return the endpoint of that queue
      */
     public static String getSqsEndpoint(final String queueUrl) {
-        assert queueUrl != null;
-
-        String name = null;
-        final Matcher sqsUrlMatcher = SQS_URL_PATTERN.matcher(queueUrl);
-        if (sqsUrlMatcher.matches()) {
-            name = sqsUrlMatcher.group("endpoint");
-        }
-        return name;
-    }
-
-    /**
-     * Read SCM-URL from given SCM
-     *
-     * @param scm
-     * @return list of SCM-URL
-     * */
-    public static List<String> getScmUrls(SCM scm) {
-        List<String> urls = new ArrayList<>();
-        if (scm instanceof GitSCM) {
-            final GitSCM git = (GitSCM) scm;
-            List<RemoteConfig> repos = git.getRepositories();
-
-            for (RemoteConfig repo : repos) {
-                List<URIish> uris = repo.getURIs();
-                for (URIish uri : uris) {
-                    urls.add(uri.toASCIIString());
-                }
-            }
-        }
-        return urls;
+        return findValueByPatter(queueUrl, SQS_URL_PATTERN, "endpoint");
     }
 
     /**
@@ -145,5 +113,9 @@ public final class StringUtils {
     public static String getMessageId(Message message) {
         String body = message.getBody();
         return StringUtils.findByUniqueJsonKey(body, "MessageId");
+    }
+
+    public static String getCodeCommitRepoName(String codeCommitUrl) {
+        return findValueByPatter(codeCommitUrl, CODE_COMMIT_PATTERN, "repoName");
     }
 }

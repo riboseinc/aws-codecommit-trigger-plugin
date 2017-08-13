@@ -85,4 +85,13 @@ public class StringUtilsTest {
     public void testShortClassName() {
         Assertions.assertThat(ClassUtils.getAbbreviatedName(StringUtilsTest.class, 1).length()).isLessThan(StringUtilsTest.class.getName().length());
     }
+
+    @Test
+    public void testParseCodeCommitUrl() {
+        Assertions.assertThat(StringUtils.getCodeCommitRepoName("https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins")).isEqualToIgnoringCase("testjenkins");
+        Assertions.assertThat(StringUtils.getCodeCommitRepoName("ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins")).isEqualToIgnoringCase("testjenkins");
+        Assertions.assertThat(StringUtils.getCodeCommitRepoName("ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins2")).isNotEqualToIgnoringCase("testjenkins");
+        Assertions.assertThat(StringUtils.getCodeCommitRepoName("http://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins")).isNullOrEmpty();
+        Assertions.assertThat(StringUtils.getCodeCommitRepoName("http://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins")).isNotEqualToIgnoringCase("testjenkins");
+    }
 }

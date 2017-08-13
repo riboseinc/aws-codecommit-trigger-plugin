@@ -19,33 +19,88 @@
          xmlns:t="/lib/hudson"
          xmlns:f="/lib/form">
 
-    <f:entry title="Subscribed branches" field="subscribedBranches">
+    <!--f:entry title="Subscribed branches" field="subscribedBranches">
         <f:textbox />
+    </f:entry-->
+    <f:entry>
+        <f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM' || instance.type==null}">
+            <j:if test="${sqsTrigger.workflowJob}">
+                <f:block>
+                    <span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>
+                </f:block>
+            </j:if>
+            <f:entry title="Subscribed branches" field="subscribedBranches">
+                <f:textbox placeholder="ex: development, master, *feature, feature/**" />
+            </f:entry>
+        </f:radioBlock>
+
+        <f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='URL'}" value="URL">
+            <f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">
+                <f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo" />
+            </f:entry>
+            <f:entry title="Subscribed branches" field="subscribedBranches">
+                <f:textbox placeholder="ex: development, master, *feature, feature/**" />
+            </f:entry>
+        </f:radioBlock>
+
+        <f:entry>
+            <div align="right">
+                <f:repeatableDeleteButton />
+            </div>
+        </f:entry>
     </f:entry>
+    <f:block>
+        <hr />
+    </f:block>
 
-    <f:entry title="Subscribe to CodeCommit Repo" field="type">
-        <table style="width: 100%">
-            <tbody>
-                <tr>
-                    <td>
-                        <f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM' || instance.type==null}" inline="true">
-                            <j:if test="${sqsTrigger.workflowJob}">
-                                <f:block>
-                                    <span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>
-                                </f:block>
-                            </j:if>
-                        </f:radioBlock>
+    <!--<f:entry>-->
+        <!--&lt;!&ndash;<f:entry title="Subscribe to CodeCommit Repository defined in SCM / Pipeline script" checked="true" onclick="return false">Defined in SCM / Pipeline script</f:entry>&ndash;&gt;-->
 
-                        <f:radioBlock name="type" title="or Manually enter CodeCommit Repo URL" checked="${instance.type=='URL'}" value="URL" inline="true" >
-                            <f:entry field="url" description="only Git supported">
-                                <f:textbox />
-                            </f:entry>
-                        </f:radioBlock>
-                    </td>
-                    <td/>
-                </tr>
-            </tbody>
-        </table>
-    </f:entry>
 
+        <!--<table style="width: 100%">-->
+            <!--<tbody>-->
+                <!--<tr>-->
+                    <!--<td>-->
+                        <!--<f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM' || instance.type==null}" inline="true">-->
+                            <!--<j:if test="${sqsTrigger.workflowJob}">-->
+                                <!--<f:block>-->
+                                    <!--<span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>-->
+                                <!--</f:block>-->
+                            <!--</j:if>-->
+                            <!--&lt;!&ndash;<f:block>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<p>Detected Repo Url: xxxx</p>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<p>Detected Repo Branches: xxxx</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</f:block>&ndash;&gt;-->
+                            <!--<f:entry title="Subscribed branches" field="subscribedBranches">-->
+                                <!--<f:textbox placeholder="ex: development, master, *feature, feature/**" />-->
+                            <!--</f:entry>-->
+                        <!--</f:radioBlock>-->
+
+                        <!--&lt;!&ndash;<f:block>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<f:entry title="Subscribe to CodeCommit Repository defined in SCM / Pipeline script" checked="true" onclick="return false">Defined in SCM / Pipeline script</f:entry>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</f:block>&ndash;&gt;-->
+
+                        <!--<f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='URL'}" value="URL" inline="true" >-->
+                            <!--<f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">-->
+                                <!--<f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo" />-->
+                            <!--</f:entry>-->
+                            <!--<f:entry title="Subscribed branches" field="subscribedBranches">-->
+                                <!--<f:textbox placeholder="ex: development, master, *feature, feature/**" />-->
+                            <!--</f:entry>-->
+                        <!--</f:radioBlock>-->
+
+
+
+                        <!--<f:entry>-->
+                            <!--<div align="right">-->
+                                <!--<f:repeatableDeleteButton />-->
+                            <!--</div>-->
+                        <!--</f:entry>-->
+                    <!--</td>-->
+                    <!--<td/>-->
+                <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
+        <!--<hr />-->
+    <!--</f:entry>-->
 </j:jelly>

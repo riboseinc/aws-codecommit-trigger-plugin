@@ -21,7 +21,6 @@ import com.amazonaws.services.sqs.model.Message;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
-import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstrigger.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
@@ -44,6 +43,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.SQSTrigger.Messages;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -55,7 +55,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private static final Log log = Log.get(SQSTrigger.class);
 
     private String queueUuid;
-    private SQSScmConfig sqsScmConfig;
+    private List<SQSScmConfig> sqsScmConfig;
 
     @Inject
     private transient SQSQueueMonitorScheduler scheduler;
@@ -76,7 +76,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private transient List<SQSActivityAction> actions;
 
     @DataBoundConstructor
-    public SQSTrigger(final String queueUuid, final SQSScmConfig sqsScmConfig) {
+    public SQSTrigger(final String queueUuid, final List<SQSScmConfig> sqsScmConfig) {
         this.queueUuid = queueUuid;
         this.sqsScmConfig = sqsScmConfig;
     }
@@ -153,10 +153,11 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     @Override
     public String getSubscribedBranches() {
 //        return this.subscribedBranches;
-        return this.sqsScmConfig.getSubscribedBranches();
+//        return this.sqsScmConfig.getSubscribedBranches();
+        return null;
     }
 
-    public SQSScmConfig getSqsScmConfig() {
+    public List<SQSScmConfig> getSqsScmConfig() {
         return sqsScmConfig;
     }
 

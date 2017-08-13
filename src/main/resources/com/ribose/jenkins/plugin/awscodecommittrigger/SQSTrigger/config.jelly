@@ -29,5 +29,13 @@
     </f:entry>
 
     <j:set var="sqsTrigger" value="${instance}"/>
-    <f:property field="sqsScmConfig"/>
+
+    <!--<f:property field="sqsScmConfig"/>-->
+
+    <f:entry title="SCM subscription">
+        <!--<f:checkbox title="Subscribe to CodeCommit Repository defined in SCM / Pipeline script"-->
+                    <!--checked="true" onclick="return false">Defined in SCM / Pipeline script</f:checkbox>-->
+        <f:repeatableProperty field="sqsScmConfig" />
+        <!--<f:hetero-list-->
+    </f:entry>
 </j:jelly>

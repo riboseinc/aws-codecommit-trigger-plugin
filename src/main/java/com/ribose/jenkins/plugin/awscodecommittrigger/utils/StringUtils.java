@@ -118,4 +118,16 @@ public final class StringUtils {
     public static String getCodeCommitRepoName(String codeCommitUrl) {
         return findValueByPatter(codeCommitUrl, CODE_COMMIT_PATTERN, "repoName");
     }
+
+    public static boolean isCodeCommitRepo(String url) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(url)) {
+            return false;
+        }
+
+        String repoName = getCodeCommitRepoName(url);
+        if (org.apache.commons.lang3.StringUtils.isEmpty(repoName)) {
+            return false;
+        }
+        return true;
+    }
 }

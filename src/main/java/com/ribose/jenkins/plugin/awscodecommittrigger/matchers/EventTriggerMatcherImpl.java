@@ -21,7 +21,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl.ScmJobEventTriggerMatcher;
-import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl.SubscribeBranchEventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 
 import java.util.List;
@@ -34,8 +33,8 @@ public class EventTriggerMatcherImpl implements EventTriggerMatcher {
 
     public EventTriggerMatcherImpl() {
         this.delegate = new AndEventTriggerMatcher(
-            new ScmJobEventTriggerMatcher(),
-            new SubscribeBranchEventTriggerMatcher()
+            new ScmJobEventTriggerMatcher()
+//            new SubscribeBranchEventTriggerMatcher()
         );
     }
 

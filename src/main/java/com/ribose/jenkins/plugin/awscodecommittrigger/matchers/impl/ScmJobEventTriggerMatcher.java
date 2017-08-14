@@ -16,11 +16,14 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
@@ -29,7 +32,7 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.jenkinsci.plugins.multiplescms.MultiSCM;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,19 +41,22 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     private static final Log log = Log.get(ScmJobEventTriggerMatcher.class);
 
     @Override
-    public boolean matches(List<Event> events, SQSJob job) {
-        List<SCM> scms = Collections.emptyList();
-//        SQSScmConfig scmConfig = job.getTrigger().getSqsScmConfig();
-//        switch (scmConfig.getType()) {
-//            case JOB_SCM:
-//                scms = job.getScmList();
-//                break;
-//
-//            case URL:
-//                String scmUrl = scmConfig.getUrl();
-//                scms = Collections.singletonList((SCM) new GitSCM(scmUrl));//TODO support multi scm-types
-//                break;
-//        }
+    public boolean matches(List<Event> events, SQSJob job) {//TODO load scm list
+        SQSTrigger trigger = job.getTrigger();
+        List<SQSScmConfig> scmConfigs = trigger.getSqsScmConfig();
+
+        List<SCM> scms = new ArrayList<>();
+        for (SQSScmConfig scmConfig : scmConfigs) {
+            switch (scmConfig.getType()) {
+                case JOB_SCM:
+                    scms.addAll(job.getScmList());
+                    break;
+
+                case URL:
+                    scms.add(scmConfig.toGitSCM());
+                    break;
+            }
+        }
 
         log.debug("Events size: %d, SCMs size: %d", job, events.size(), scms.size());
 
@@ -95,7 +101,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         final GitSCM git = (GitSCM) scmProvider;
         final List<RemoteConfig> configs = git.getRepositories();
 
-        return this.matchesConfigs(event, configs);
+        return this.matchesConfigs(event, configs) && this.matchBranch(event, git.getBranches());
     }
 
     private boolean matchesMultiSCM(final Event event, final SCM scmProvider) {
@@ -123,17 +129,33 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return false;
     }
 
-    private boolean matchesConfig(final Event event, final RemoteConfig config) {
-        List<URIish> uris = config.getURIs();
-        for (final URIish uri : uris) {
-            if (event.isMatch(uri)) {
-                log.debug("Event %s matched uri %s", event.getArn(), uri);
+    private boolean matchBranch(final Event event, final List<BranchSpec> branchSpecs) {//TODO use it
+        for (BranchSpec branchSpec : branchSpecs) {
+            if (branchSpec.matches(event.getBranch())) {
+                log.debug("Event %s matched branch %s", event.getArn(), branchSpec.getName());
                 return true;
             }
         }
 
-        log.debug("Found no event matched config: ", event.getArn(), config.getName());
+        log.debug("Found no event matched any branch", event.getArn());
         return false;
+    }
+
+    private boolean matchesConfig(final Event event, final RemoteConfig config) {
+        return getMatchesConfig(event, config) != null;
+    }
+
+    private URIish getMatchesConfig(final Event event, final RemoteConfig config) {
+        List<URIish> uris = config.getURIs();
+        for (final URIish uri : uris) {
+            if (event.isMatch(uri)) {//TODO use here matchBranch(event, branchSpec)
+                log.debug("Event %s matched uri %s", event.getArn(), uri);
+                return uri;
+            }
+        }
+
+        log.debug("Found no event matched config: ", event.getArn(), config.getName());
+        return null;
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")

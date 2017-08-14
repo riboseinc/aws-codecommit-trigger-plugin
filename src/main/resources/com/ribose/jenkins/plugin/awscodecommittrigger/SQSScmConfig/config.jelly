@@ -22,23 +22,52 @@
     <!--f:entry title="Subscribed branches" field="subscribedBranches">
         <f:textbox />
     </f:entry-->
+
     <f:entry>
-        <f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM' || instance.type==null}">
+        <f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM'}">
             <j:if test="${sqsTrigger.workflowJob}">
                 <f:block>
                     <span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>
                 </f:block>
             </j:if>
-            <f:entry title="Subscribed branches" field="subscribedBranches">
-                <f:textbox placeholder="ex: development, master, *feature, feature/**" />
+            <!--<st:include page="${descriptor.subscribeBranchPage}" />-->
+
+            <j:set var="repoInfo" value="${sqsTrigger.repoInfo}"/>
+
+            <j:if test="${repoInfo.hasCodeCommit}">
+
+            </j:if>
+            <j:choose>
+                <j:when test="${repoInfo.hasCodeCommit}">
+                    <f:entry title="Detected Code Commit Repo">
+                        <j:forEach var="url" items="${repoInfo.urls}">
+                            <div class="warning-inline">${url}</div>
+                        </j:forEach>
+                    </f:entry>
+                    <f:entry title="Detected branches">
+                        <j:forEach var="branch" items="${repoInfo.branches}">
+                            <span class="warning-inline">${branch}, </span>
+                        </j:forEach>
+                    </f:entry>
+                </j:when>
+                <j:otherwise>
+                    <div class="error">No code commit repo detected</div>
+                </j:otherwise>
+            </j:choose>
+            <!--${scmRepoUrls.urls}-->
+            <!--${scmRepoUrls.branches}-->
+
+            <f:entry>
+
             </f:entry>
         </f:radioBlock>
 
-        <f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='URL'}" value="URL">
+        <f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='URL' || instance.type==null}" value="URL">
             <f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">
                 <f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo" />
             </f:entry>
-            <f:entry title="Subscribed branches" field="subscribedBranches">
+
+            <f:entry description="csv format, more details in help button" title="Subscribed branches (blank for 'any')" field="subscribedBranches">
                 <f:textbox placeholder="ex: development, master, *feature, feature/**" />
             </f:entry>
         </f:radioBlock>
@@ -49,6 +78,7 @@
             </div>
         </f:entry>
     </f:entry>
+
     <f:block>
         <hr />
     </f:block>

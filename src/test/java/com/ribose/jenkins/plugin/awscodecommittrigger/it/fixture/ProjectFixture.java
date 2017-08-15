@@ -19,14 +19,18 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
 import hudson.util.OneShotEvent;
+
+import java.util.List;
 
 
 public class ProjectFixture {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
-    private String subscribedBranches;
-    private String[] sendBranches;
+//    private String subscribedBranches;
+    private List<SQSScmConfig> scmConfigs;
+    private String[] sendBranches;//TODO support new model changed
     private Boolean shouldStarted;
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
@@ -37,12 +41,22 @@ public class ProjectFixture {
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
 
-    public String getSubscribedBranches() {
-        return subscribedBranches;
+//    public String getSubscribedBranches() {
+//        return subscribedBranches;
+//    }
+//
+//    public ProjectFixture setSubscribedBranches(String subscribedBranches) {
+//        this.subscribedBranches = subscribedBranches;
+//        return this;
+//    }
+
+
+    public List<SQSScmConfig> getScmConfigs() {
+        return scmConfigs;
     }
 
-    public ProjectFixture setSubscribedBranches(String subscribedBranches) {
-        this.subscribedBranches = subscribedBranches;
+    public ProjectFixture setScmConfigs(List<SQSScmConfig> scmConfigs) {
+        this.scmConfigs = scmConfigs;
         return this;
     }
 

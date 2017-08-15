@@ -17,14 +17,13 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
 @ExportedBean
-public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> implements Serializable {
+public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
     public enum Type {JOB_SCM, URL}
 
@@ -123,7 +122,7 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> implemen
             JSONObject json = jsonObject.getJSONObject("type");
             json.put("type", json.getString("value"));
             json.remove("value");
-            return req.bindJSON(SQSScmConfig.class, json);
+            return super.newInstance(req, json);//req.bindJSON(SQSScmConfig.class, json);
         }
 
         public FormValidation doCheckUrl(@QueryParameter final String url) {

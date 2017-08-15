@@ -13,8 +13,15 @@ import java.io.IOException;
 
 
 public class MockGitSCM extends GitSCM {
+    private final String url;
+
     public MockGitSCM(String repositoryUrl) {
         super(repositoryUrl);
+        this.url = repositoryUrl;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @Override

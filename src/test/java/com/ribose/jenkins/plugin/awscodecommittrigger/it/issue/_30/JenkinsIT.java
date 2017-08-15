@@ -1,5 +1,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._30;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
@@ -11,6 +12,7 @@ import org.jvnet.hudson.test.Issue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 @Issue("riboseinc/aws-codecommit-trigger-plugin/issues/30")
@@ -22,7 +24,8 @@ public class JenkinsIT extends AbstractJenkinsIT {
     public JenkinsIT() throws IOException {
         this.fixture = new ProjectFixture()
             .setSqsMessage(IOUtils.toString(Utils.getResource(JenkinsIT.class, "us-east-1.json"), StandardCharsets.UTF_8))
-            .setSubscribedBranches("refs/heads/master")
+            //.setSubscribedBranches("refs/heads/master")
+            .setScmConfigs(Arrays.asList(new SQSScmConfig(SQSScmConfig.Type.JOB_SCM, MockGitSCM.class.cast(DefaultSCM).getUrl(),"refs/heads/master")))
             .setShouldStarted(Boolean.TRUE);
         this.scm = MockGitSCM.fromSqsMessage(this.fixture.getSqsMessage());
     }

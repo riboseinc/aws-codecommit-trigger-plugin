@@ -121,7 +121,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
     @Override
     public void shutDown() {
-        log.info("Shut down monitor for %s", this.channel);
+        log.debug("Shut down monitor for %s", this.channel);
         this.isShutDown = true;
     }
 

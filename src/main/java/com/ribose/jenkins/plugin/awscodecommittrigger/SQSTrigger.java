@@ -117,7 +117,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 boolean succeed = SQSTrigger.this.scheduler.register(SQSTrigger.this);
-                log.info("Register trigger for %s? %s", SQSTrigger.this.job, SQSTrigger.this.getQueueUuid(), succeed);
+                log.debug("Register trigger for %s? %s", SQSTrigger.this.job, SQSTrigger.this.getQueueUuid(), succeed);
             }
         });
     }
@@ -133,7 +133,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 boolean succeed = SQSTrigger.this.scheduler.unregister(SQSTrigger.this);
-                log.info("Unregister trigger %s", SQSTrigger.this.job, succeed);
+                log.debug("Unregister trigger %s", SQSTrigger.this.job, succeed);
             }
         });
     }
@@ -167,14 +167,14 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
     private boolean handleMessage(final Message message) {
-        log.info("Parse and do match against events, message: %s", this.job, message.getBody());
+        log.debug("Parse and do match against events, message: %s", this.job, message.getBody());
 
         final MessageParser parser = this.messageParserFactory.createParser(message);
         final EventTriggerMatcher matcher = this.eventTriggerMatcher;
         final List<Event> events = parser.parseMessage(message);
 
         if (matcher.matches(events, this.sqsJob)) {
-            log.info("Hurray! Execute it", this.job);
+            log.debug("Hurray! Execute it", this.job);
             this.execute(message);
             return true;
         }

@@ -202,7 +202,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
     @Override
     public void refresh() {
-        log.info("no-op method");
+        log.debug("no-op method");
     }
 
     @Extension

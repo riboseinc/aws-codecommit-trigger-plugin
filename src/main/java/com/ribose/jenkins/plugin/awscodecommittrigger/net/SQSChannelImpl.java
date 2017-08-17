@@ -83,7 +83,7 @@ public class SQSChannelImpl implements SQSChannel {
 
         final List<?> failed = result.getFailed();
         final List<?> success = result.getSuccessful();
-        log.info("Delete %d message(s) (%d failed) from %s", success.size(), failed.size(), this.queue);
+        log.debug("Delete %d message(s) (%d failed) from %s", success.size(), failed.size(), this.queue);
     }
 
     @Override

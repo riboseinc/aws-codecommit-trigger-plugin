@@ -41,7 +41,7 @@ public class AndEventTriggerMatcher extends AbstractEventTriggerMatcher {
             }
         }
 
-        log.info("OK! At least one event matched");
+        log.debug("OK! At least one event matched");
         return true;
     }
 }

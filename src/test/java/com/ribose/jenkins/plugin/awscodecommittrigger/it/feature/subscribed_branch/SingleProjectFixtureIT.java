@@ -26,7 +26,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 
 @RunWith(Parameterized.class)
@@ -161,9 +160,7 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
 
     @Test
     public void shouldPassIt() throws Exception {
-        logger.log(Level.INFO, "[RUN] {0}", this.name);
         this.mockAwsSqs.send(this.fixture.getSendBranches());
         this.submitAndAssertFixture(defaultSCM, this.fixture);
-        logger.log(Level.INFO, "[DONE] {0}", this.name);
     }
 }

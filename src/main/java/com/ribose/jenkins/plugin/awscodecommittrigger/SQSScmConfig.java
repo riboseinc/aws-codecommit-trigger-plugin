@@ -1,6 +1,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.SQSScmConfig.Messages;
+import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqsscmconfig.Messages;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;

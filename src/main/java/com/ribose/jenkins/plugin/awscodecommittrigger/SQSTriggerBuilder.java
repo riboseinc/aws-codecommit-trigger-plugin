@@ -34,6 +34,7 @@ public class SQSTriggerBuilder implements Runnable {
     private final Log log;
     private final TaskListener listener;
     private final Message message;
+    private final String messageId;
 
     public SQSTriggerBuilder(final SQSJob job, final Message message) throws IOException {
         this.job = job;
@@ -43,7 +44,8 @@ public class SQSTriggerBuilder implements Runnable {
         this.listener = new StreamTaskListener(activityAction.getActivityLogFile(), true, Charset.forName("UTF-8"));
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), true);
 
-        this.log.info("Try to trigger the build for message: %s", StringUtils.getMessageId(message));
+        this.messageId = StringUtils.getMessageId(message);
+        this.log.info("Try to trigger the build for message: %s", messageId);
         this.log.debug("Print out message-body: %s", message.getBody());
     }
 
@@ -65,6 +67,6 @@ public class SQSTriggerBuilder implements Runnable {
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         boolean scheduled = job.scheduleBuild(cause);
-        this.log.info("Finally! The build is scheduled? %s", scheduled);
+        this.log.info("The build is scheduled? %s by Message: %s", scheduled, this.messageId);
     }
 }

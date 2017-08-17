@@ -1,3 +1,4 @@
+dist: precise
 sudo: required
 
 cache:
@@ -8,5 +9,11 @@ jdk: [oraclejdk8, oraclejdk7]
 
 language: java
 
+#install: true
+
 script:
-  - mvn clean compile verify -P$TRAVIS_BRANCH
+  - mvn clean verify -P$TRAVIS_BRANCH
+
+#after_script:
+#  - find /home/travis/build/phuonghuynh/aws-codecommit-trigger-plugin/target/generated-sources/
+#  - cat /home/travis/build/phuonghuynh/aws-codecommit-trigger-plugin/target/generated-sources/localizer/com/ribose/jenkins/plugin/awscodecommittrigger/i18n/sqsscmconfig/Messages.java

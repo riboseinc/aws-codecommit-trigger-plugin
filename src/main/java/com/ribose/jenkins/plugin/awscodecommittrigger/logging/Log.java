@@ -109,7 +109,7 @@ public class Log {
             source
                 .append("[").append(ClassUtils.getAbbreviatedName(this.clazz, 1)).append("]")
                 .append("[thread-").append(id).append("]");
-            if (StringUtils.isNotEmpty(jobName)) {
+            if (StringUtils.isNotBlank(jobName)) {
                 source.append("[job-").append(jobName).append("]");
             }
         }

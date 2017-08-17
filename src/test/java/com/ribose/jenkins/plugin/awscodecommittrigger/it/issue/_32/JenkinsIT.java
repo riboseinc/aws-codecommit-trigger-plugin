@@ -4,7 +4,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ScmConfigFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -25,7 +24,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
         String sqsMessage = IOUtils.toString(Utils.getResource(this.getClass(), "us-east-1.json"), StandardCharsets.UTF_8);
         this.scm = MockGitSCM.fromSqsMessage(sqsMessage, "refs/heads/master");
 
-        List<SQSScmConfig> scmConfigs = ScmConfigFactory.get().createIR();
+        List<SQSScmConfig> scmConfigs = scmConfigFactory.createIR();
         this.fixture = new ProjectFixture()
             .setSqsMessage(sqsMessage)
             .setScmConfigs(scmConfigs)

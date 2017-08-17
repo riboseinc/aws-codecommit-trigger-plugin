@@ -44,7 +44,12 @@ public class MockGitSCM extends GitSCM {
     }
 
     public static MockGitSCM fromSqsMessage(String sqsMessage) {
-        return new MockGitSCM(StringUtils.findByUniqueJsonKey(sqsMessage, "__gitUrl__"));
+        String url = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitUrl__");
+        String branches = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitBranches__");
+        if (org.apache.commons.lang3.StringUtils.isBlank(branches)) {
+            return new MockGitSCM(url);
+        }
+        return fromSqsMessage(url, branches);
     }
 
     public static MockGitSCM fromSqsMessage(String sqsMessage, String branches) {

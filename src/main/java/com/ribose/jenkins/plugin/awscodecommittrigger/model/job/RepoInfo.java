@@ -13,8 +13,9 @@ import java.util.List;
 
 public class RepoInfo {
 
-    private List<String> urls;
+    private List<String> codeCommitUrls;
     private List<String> branches;
+    private List<String> nonCodeCommitUrls;
 
     private RepoInfo(){}
 
@@ -22,8 +23,10 @@ public class RepoInfo {
         RepoInfo repoInfo = new RepoInfo();
 
         List<SCM> scms = sqsJob.getScmList();
-        List<String> urls = new ArrayList<>();
+        List<String> codeCommitUrls = new ArrayList<>();
+        List<String> nonCodeCommitUrls = new ArrayList<>();
         List<String> branches = new ArrayList<>();
+
         for (SCM scm : scms) {
             if (scm instanceof GitSCM) {//TODO refactor to visitor
                 GitSCM git = (GitSCM) scm;
@@ -32,12 +35,11 @@ public class RepoInfo {
                     for (URIish urIish : repo.getURIs()) {
                         String url = urIish.toString();
                         if (StringUtils.isCodeCommitRepo(url)) {
-                            urls.add(url);
+                            codeCommitUrls.add(url);
                         }
-//                        urls.add(url);
-//                        if (!repoInfo.hasCodeCommit && StringUtils.isCodeCommitRepo(url)) {
-//                            repoInfo.hasCodeCommit = true;
-//                        }
+                        else {
+                            nonCodeCommitUrls.add(url);
+                        }
                     }
                 }
 
@@ -47,22 +49,33 @@ public class RepoInfo {
             }
         }
 
-        repoInfo.urls = urls;
+        repoInfo.nonCodeCommitUrls = nonCodeCommitUrls;
+        repoInfo.codeCommitUrls = codeCommitUrls;
         repoInfo.branches = branches;
         return repoInfo;
     }
 
-
-
-    public List<String> getUrls() {
-        return urls;
+    public List<String> getCodeCommitUrls() {
+        return codeCommitUrls;
     }
 
     public List<String> getBranches() {
         return branches;
     }
 
+    public List<String> getNonCodeCommitUrls() {
+        return nonCodeCommitUrls;
+    }
+
     public boolean isHasCodeCommit() {
-        return CollectionUtils.isNotEmpty(this.urls);
+        return CollectionUtils.isNotEmpty(this.codeCommitUrls);
+    }
+
+    public boolean isHasNonCodeCommit() {
+        return CollectionUtils.isNotEmpty(this.nonCodeCommitUrls);
+    }
+
+    public boolean isNoUrlFound() {
+        return CollectionUtils.isEmpty(this.nonCodeCommitUrls) && CollectionUtils.isEmpty(this.codeCommitUrls);
     }
 }

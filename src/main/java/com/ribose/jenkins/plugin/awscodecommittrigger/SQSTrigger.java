@@ -21,7 +21,7 @@ import com.amazonaws.services.sqs.model.Message;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
-import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.SQSTrigger.Messages;
+import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstrigger.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;

@@ -51,7 +51,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
 
     @Override
     public boolean register(final SQSQueueListener listener) {
-        log.info("Register SQS listener");
+        log.debug("Register SQS listener");
         final String uuid = listener.getQueueUuid();
         final SQSQueue queue = this.provider.getSqsQueue(uuid);
 
@@ -70,7 +70,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
             return false;
         }
 
-        log.info("Unregister SQS listener");
+        log.debug("Unregister SQS listener");
         final String uuid = listener.getQueueUuid();
         final SQSQueueMonitor monitor = this.monitors.get(uuid);
 

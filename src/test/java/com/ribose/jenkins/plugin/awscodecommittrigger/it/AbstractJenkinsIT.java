@@ -31,11 +31,8 @@ import org.jvnet.hudson.test.TestBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public abstract class AbstractJenkinsIT {
-
-    protected static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();

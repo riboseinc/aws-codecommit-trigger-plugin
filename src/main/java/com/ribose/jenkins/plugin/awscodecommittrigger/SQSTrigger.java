@@ -175,7 +175,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         boolean matched = matcher.matches(events, this.sqsJob);
         String messageId = com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getMessageId(message);
-        log.info("Message: %s Any event matched? %s", this.job, messageId, matched);
+        log.info("Any event matched? %s. Message: %s", this.job, matched, messageId);
         if (matched) {
             log.debug("Hurray! Execute it", this.job);
             this.execute(message);

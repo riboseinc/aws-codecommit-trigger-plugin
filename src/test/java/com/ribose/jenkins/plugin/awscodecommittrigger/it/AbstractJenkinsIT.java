@@ -117,11 +117,11 @@ public abstract class AbstractJenkinsIT {
         Assertions.assertThat(event.isSignaled()).isEqualTo(fixture.getShouldStarted());
     }
 
-    protected void subscribePipelineProject(String pipelineDefinition, ProjectFixture fixture) throws IOException {
-//        String name = UUID.randomUUID().toString();
-//        fixture.setJenkinsProjectName(name);
-
-//        WorkflowJob project = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
-//        project.setDefinition(new Cps);
-    }
+//    protected void subscribePipelineProject(String pipelineDefinition, ProjectFixture fixture) throws IOException {
+////        String name = UUID.randomUUID().toString();
+////        fixture.setJenkinsProjectName(name);
+//
+////        WorkflowJob project = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
+////        project.setDefinition(new Cps);
+//    }
 }

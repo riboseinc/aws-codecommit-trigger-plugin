@@ -50,7 +50,7 @@ public class SQSTriggerBuilder implements Runnable {
     @Override
     public void run() {
         final boolean hasChanges = this.job.poll(listener).hasChanges();
-        this.log.info("Any code changes found in SCM? %s", hasChanges);
+        this.log.debug("Any code changes found in SCM? %s", hasChanges);
 
         if (hasChanges) {
             this.startJob();

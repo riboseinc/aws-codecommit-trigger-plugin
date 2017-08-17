@@ -148,6 +148,13 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
                     .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
                     .setScmConfigs(scmConfigFactory.createERs(scmUrl, "**"))
                     .setShouldStarted(Boolean.TRUE),
+            },
+            {
+                "should_trigger_internal_scm",
+                new ProjectFixture()// "**"
+                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
+                    .setScmConfigs(scmConfigFactory.createIR())
+                    .setShouldStarted(Boolean.TRUE),
             }
         });
     }

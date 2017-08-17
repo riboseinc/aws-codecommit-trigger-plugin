@@ -41,7 +41,7 @@ public class SQSTriggerBuilder implements Runnable {
 
         SQSActivityAction activityAction = this.job.getJenkinsJob().getAction(SQSActivityAction.class);
         this.listener = new StreamTaskListener(activityAction.getActivityLogFile(), true, Charset.forName("UTF-8"));
-        this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), false);
+        this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), true);
 
         this.log.info("Try to trigger the build for message: %s", StringUtils.getMessageId(message));
         this.log.debug("Print out message-body: %s", message.getBody());

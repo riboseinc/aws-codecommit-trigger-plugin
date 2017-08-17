@@ -34,7 +34,6 @@ public class EventTriggerMatcherImpl implements EventTriggerMatcher {
     public EventTriggerMatcherImpl() {
         this.delegate = new AndEventTriggerMatcher(
             new ScmJobEventTriggerMatcher()
-//            new SubscribeBranchEventTriggerMatcher()
         );
     }
 

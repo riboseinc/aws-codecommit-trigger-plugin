@@ -8,6 +8,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitorScheduler;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_branch.SingleProjectFixtureIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ScmConfigFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockAwsSqs;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockSQSFactory;
@@ -44,13 +45,14 @@ public abstract class AbstractJenkinsIT {
 
     protected final MockSQSFactory mockSQSFactory = MockSQSFactory.get();
 
-    protected static final GitSCM DefaultSCM;
-    protected static final String DefaultSqsMessageTemplate;
+    protected static final ScmConfigFactory scmConfigFactory = ScmConfigFactory.get();
+    protected static final GitSCM defaultSCM;
+    protected static final String defaultSqsMessageTemplate;
 
     static {
         try {
-            DefaultSqsMessageTemplate = IOUtils.toString(Utils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
-            DefaultSCM = MockGitSCM.fromSqsMessage(DefaultSqsMessageTemplate);
+            defaultSqsMessageTemplate = IOUtils.toString(Utils.getResource(SingleProjectFixtureIT.class, "sqsmsg.json.tpl"), StandardCharsets.UTF_8);
+            defaultSCM = MockGitSCM.fromSqsMessage(defaultSqsMessageTemplate);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -59,7 +61,7 @@ public abstract class AbstractJenkinsIT {
     @Before
     public void before() throws Exception {
         this.mockAwsSqs = MockAwsSqs.get();
-        this.mockAwsSqs.setSqsMessageTemplate(DefaultSqsMessageTemplate);
+        this.mockAwsSqs.setSqsMessageTemplate(defaultSqsMessageTemplate);
 
         ((SQSQueueMonitorSchedulerImpl) Context.injector().getBinding(SQSQueueMonitorScheduler.class).getProvider().get()).setFactory(this.mockSQSFactory);
 
@@ -82,7 +84,7 @@ public abstract class AbstractJenkinsIT {
 
     protected void subscribeFreestyleProject(SCM scm, ProjectFixture fixture) throws IOException {
         String name = UUID.randomUUID().toString();
-        fixture.setJenkinsProjectName(name);
+//        fixture.setJenkinsProjectName(name);
 
         final FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, name);
         project.setScm(scm);
@@ -116,8 +118,8 @@ public abstract class AbstractJenkinsIT {
     }
 
     protected void subscribePipelineProject(String pipelineDefinition, ProjectFixture fixture) throws IOException {
-        String name = UUID.randomUUID().toString();
-        fixture.setJenkinsProjectName(name);
+//        String name = UUID.randomUUID().toString();
+//        fixture.setJenkinsProjectName(name);
 
 //        WorkflowJob project = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
 //        project.setDefinition(new Cps);

@@ -79,7 +79,7 @@ public class MultiProjectFixtureIT extends AbstractJenkinsIT {
     }
 
     public SCM getScm(ProjectFixture fixture) {
-        return fixture.getSqsMessage() != null ? MockGitSCM.fromSqsMessage(fixture.getSqsMessage()) : DefaultSCM;
+        return fixture.getSqsMessage() != null ? MockGitSCM.fromSqsMessage(fixture.getSqsMessage()) : defaultSCM;
     }
 
     @Test

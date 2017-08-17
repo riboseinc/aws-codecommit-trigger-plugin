@@ -24,7 +24,7 @@
     </f:entry-->
 
     <f:entry>
-        <f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM'}">
+        <f:radioBlock name="type" value="IR" title="Defined in SCM / Pipeline script" checked="${instance.type=='IR'}">
             <j:if test="${sqsTrigger.workflowJob}">
                 <f:block>
                     <span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>
@@ -62,7 +62,7 @@
             </f:entry>
         </f:radioBlock>
 
-        <f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='URL' || instance.type==null}" value="URL">
+        <f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='ER' || instance.type==null}" value="ER">
             <f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">
                 <f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo" />
             </f:entry>
@@ -91,7 +91,7 @@
             <!--<tbody>-->
                 <!--<tr>-->
                     <!--<td>-->
-                        <!--<f:radioBlock name="type" value="JOB_SCM" title="Defined in SCM / Pipeline script" checked="${instance.type=='JOB_SCM' || instance.type==null}" inline="true">-->
+                        <!--<f:radioBlock name="type" value="IR" title="Defined in SCM / Pipeline script" checked="${instance.type=='IR' || instance.type==null}" inline="true">-->
                             <!--<j:if test="${sqsTrigger.workflowJob}">-->
                                 <!--<f:block>-->
                                     <!--<span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>-->
@@ -110,8 +110,8 @@
                             <!--&lt;!&ndash;<f:entry title="Subscribe to CodeCommit Repository defined in SCM / Pipeline script" checked="true" onclick="return false">Defined in SCM / Pipeline script</f:entry>&ndash;&gt;-->
                         <!--&lt;!&ndash;</f:block>&ndash;&gt;-->
 
-                        <!--<f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='URL'}" value="URL" inline="true" >-->
-                            <!--<f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">-->
+                        <!--<f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='ER'}" value="ER" inline="true" >-->
+                            <!--<f:entry title="CodeCommit Repo ER" field="url" description="only Git supported">-->
                                 <!--<f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo" />-->
                             <!--</f:entry>-->
                             <!--<f:entry title="Subscribed branches" field="subscribedBranches">-->

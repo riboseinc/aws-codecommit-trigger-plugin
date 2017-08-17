@@ -25,7 +25,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
         this.fixture = new ProjectFixture()
             .setSqsMessage(IOUtils.toString(Utils.getResource(JenkinsIT.class, "us-east-1.json"), StandardCharsets.UTF_8))
             //.setSubscribedBranches("refs/heads/master")
-            .setScmConfigs(Arrays.asList(new SQSScmConfig(SQSScmConfig.Type.JOB_SCM, MockGitSCM.class.cast(DefaultSCM).getUrl(),"refs/heads/master")))
+            .setScmConfigs(Arrays.asList(new SQSScmConfig(SQSScmConfig.Type.IR, MockGitSCM.class.cast(defaultSCM).getUrl(),"refs/heads/master")))
             .setShouldStarted(Boolean.TRUE);
         this.scm = MockGitSCM.fromSqsMessage(this.fixture.getSqsMessage());
     }

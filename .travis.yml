@@ -9,4 +9,4 @@ jdk: [oraclejdk8, oraclejdk7]
 language: java
 
 script:
-  - mvn clean verify -P$TRAVIS_BRANCH
+  - mvn clean compile verify -P$TRAVIS_BRANCH

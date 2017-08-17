@@ -25,7 +25,7 @@ import java.util.List;
 @ExportedBean
 public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
-    public enum Type {JOB_SCM, URL}
+    public enum Type {IR, ER}
 
     private String subscribedBranches;
     private Type type;
@@ -38,7 +38,7 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
         this.subscribedBranches = subscribedBranches;
         this.type = type;
 
-        if (this.type == Type.JOB_SCM) {
+        if (this.type == Type.IR) {
             url = "";
         }
         this.url = url;
@@ -79,33 +79,6 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
             Collections.<GitSCMExtension>emptyList()
         );
     }
-
-//    public static void yield(SQSJob sqsJob, Predicate predicate) {
-//        List<SCM> scms = sqsJob.getScmList();
-//        for (SCM scm : scms) {
-//            if (scm instanceof GitSCM) {//TODO refactor to visitor
-//                GitSCM git = (GitSCM) scm;
-//                List<RemoteConfig> repos = git.getRepositories();
-//                for (RemoteConfig repo : repos) {
-//                    for (URIish urIish : repo.getURIs()) {
-//                        urls.add(urIish.toString());
-//                    }
-//                }
-//
-//                for (BranchSpec branchSpec : git.getBranches()) {
-//                    branches.add(branchSpec.getName());
-//                }
-//            }
-//        }
-//    }
-
-
-//    public static SQSScmConfig fromSCM(SCM scm) {
-//        if (scm instanceof GitSCM) {
-//            GitSCM git = (GitSCM) scm;
-//            return new SQSScmConfig(git.getUserRemoteConfigs())
-//        }
-//    }
 
     @Extension
     public static class DescriptorImpl extends Descriptor<SQSScmConfig> {

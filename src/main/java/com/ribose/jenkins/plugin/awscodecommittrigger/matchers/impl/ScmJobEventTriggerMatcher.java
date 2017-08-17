@@ -48,11 +48,11 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         List<SCM> scms = new ArrayList<>();
         for (SQSScmConfig scmConfig : scmConfigs) {
             switch (scmConfig.getType()) {
-                case JOB_SCM:
+                case IR:
                     scms.addAll(job.getScmList());
                     break;
 
-                case URL:
+                case ER:
                     scms.add(scmConfig.toGitSCM());
                     break;
             }
@@ -101,7 +101,9 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         final GitSCM git = (GitSCM) scmProvider;
         final List<RemoteConfig> configs = git.getRepositories();
 
-        return this.matchesConfigs(event, configs) && this.matchBranch(event, git.getBranches());
+        boolean matched = this.matchesConfigs(event, configs);
+        matched = matched && this.matchBranch(event, git.getBranches());
+        return matched;
     }
 
     private boolean matchesMultiSCM(final Event event, final SCM scmProvider) {
@@ -166,9 +168,9 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
-        boolean rs = jenkins.getPlugin("multiple-scms") != null;
-        log.debug("Multiple-SCMs plugin found: %s", rs);
-        return rs;
+        boolean hasPlugin = jenkins.getPlugin("multiple-scms") != null;
+        log.debug("Multiple-SCMs plugin found: %s", hasPlugin);
+        return hasPlugin;
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
@@ -179,8 +181,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
-        boolean rs = jenkins.getPlugin("git") != null;
-        log.debug("Git plugin found: %s", rs);
-        return rs;
+        boolean hasPlugin = jenkins.getPlugin("git") != null;
+        log.debug("Git plugin found: %s", hasPlugin);
+        return hasPlugin;
     }
 }

@@ -28,27 +28,16 @@ import java.util.List;
 public class ProjectFixture {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
-//    private String subscribedBranches;
     private List<SQSScmConfig> scmConfigs;
     private String[] sendBranches;//TODO support new model changed
     private Boolean shouldStarted;
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
     private String sqsMessage;
-    private String jenkinsProjectName;
 
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
-
-//    public String getSubscribedBranches() {
-//        return subscribedBranches;
-//    }
-//
-//    public ProjectFixture setSubscribedBranches(String subscribedBranches) {
-//        this.subscribedBranches = subscribedBranches;
-//        return this;
-//    }
 
 
     public List<SQSScmConfig> getScmConfigs() {
@@ -102,15 +91,6 @@ public class ProjectFixture {
 
     public ProjectFixture setSqsMessage(String sqsMessage) {
         this.sqsMessage = sqsMessage;
-        return this;
-    }
-
-    public String getJenkinsProjectName() {
-        return jenkinsProjectName;
-    }
-
-    public ProjectFixture setJenkinsProjectName(String jenkinsProjectName) {
-        this.jenkinsProjectName = jenkinsProjectName;
         return this;
     }
 

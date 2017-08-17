@@ -23,18 +23,15 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.Message;
 import io.findify.sqsmock.SQSService;
 import org.assertj.core.api.Assertions;
-import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 
 public class MockAwsSqs {
 
-    private static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
     private static final MockAwsSqs instance = new MockAwsSqs();
 
     private String sqsMessageTemplate;

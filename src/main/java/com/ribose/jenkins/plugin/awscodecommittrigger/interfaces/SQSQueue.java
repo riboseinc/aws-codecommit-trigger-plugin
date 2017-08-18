@@ -41,8 +41,8 @@ public interface SQSQueue extends AWSCredentials, AWSCredentialsProvider {
     String getUuid();
 
     /**
-     * Returns the URL of the queue the configuration is associated with.
-     * @return The URL of a queue.
+     * Returns the ER of the queue the configuration is associated with.
+     * @return The ER of a queue.
      */
     String getUrl();
 

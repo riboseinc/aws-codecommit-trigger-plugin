@@ -18,24 +18,8 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson"
          xmlns:f="/lib/form">
-    <!--<j:if test="${instance.requiredOneBuilt}">-->
-        <!--<f:block>-->
-            <!--<span class="warning">Trigger not work unless there is at-least-once job built SUCCESS</span>-->
-        <!--</f:block>-->
-    <!--</j:if>-->
 
-    <f:entry title="${%SQS queue to monitor}" field="queueUuid">
-        <f:select/>
-    </f:entry>
-
-    <j:set var="sqsTrigger" value="${instance}"/>
-
-    <!--<f:property field="sqsScmConfig"/>-->
-
-    <f:entry title="Config SCM subscription">
-        <!--<f:checkbox title="Subscribe to CodeCommit Repository defined in SCM / Pipeline script"-->
-                    <!--checked="true" onclick="return false">Defined in SCM / Pipeline script</f:checkbox>-->
-        <f:repeatableProperty field="sqsScmConfig" />
-        <!--<f:hetero-list-->
+    <f:entry description="csv format, more details in help button" title="Subscribed branches (blank for 'any')" field="subscribedBranches">
+        <f:textbox placeholder="ex: development, master, *feature, feature/**" />
     </f:entry>
 </j:jelly>

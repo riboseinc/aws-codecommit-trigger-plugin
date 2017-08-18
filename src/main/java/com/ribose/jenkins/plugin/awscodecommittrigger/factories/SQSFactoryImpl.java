@@ -131,7 +131,7 @@ public class SQSFactoryImpl implements SQSFactory {
                 config.setProxyPassword(proxyConfig.getPassword());
             }
 
-            log.info("Proxy settings for SQS: %s:%s", config.getProxyHost(), config.getProxyPort());
+            log.debug("Proxy settings for SQS: %s:%s", config.getProxyHost(), config.getProxyPort());
         }
         return config;
     }

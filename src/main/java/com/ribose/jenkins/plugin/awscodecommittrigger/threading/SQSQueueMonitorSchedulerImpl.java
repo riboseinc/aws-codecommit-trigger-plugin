@@ -51,7 +51,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
 
     @Override
     public boolean register(final SQSQueueListener listener) {
-        log.info("Register SQS listener");
+        log.debug("Register SQS listener");
         final String uuid = listener.getQueueUuid();
         final SQSQueue queue = this.provider.getSqsQueue(uuid);
 
@@ -70,7 +70,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
             return false;
         }
 
-        log.info("Unregister SQS listener");
+        log.debug("Unregister SQS listener");
         final String uuid = listener.getQueueUuid();
         final SQSQueueMonitor monitor = this.monitors.get(uuid);
 
@@ -79,7 +79,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
             return false;
         }
 
-        log.info("Remove listener from monitor for {%s}", uuid);
+        log.debug("Remove listener from monitor for {%s}", uuid);
         if (monitor.remove(listener)) {
             monitor.shutDown();
         }
@@ -107,7 +107,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         SQSQueueMonitor monitor = this.monitors.get(uuid);
 
         if (monitor == null) {
-            log.info("No monitor exists, creating new monitor for %s", queue);
+            log.debug("No monitor exists, creating new monitor for %s", queue);
             monitor = this.factory.createMonitor(this.executor, queue);
             this.monitors.put(uuid, monitor);
         }
@@ -122,11 +122,11 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         final SQSQueue queue = this.provider.getSqsQueue(uuid);
 
         if (queue == null) {
-            log.info("Queue {%s} removed, shut down monitor", uuid);
+            log.debug("Queue {%s} removed, shut down monitor", uuid);
             monitor.shutDown();
             entries.remove();
         } else if (monitor.isShutDown() || this.hasQueueChanged(monitor, queue)) {
-            log.info("Queue {%s} changed or monitor stopped, create new monitor", uuid);
+            log.debug("Queue {%s} changed or monitor stopped, create new monitor", uuid);
             monitor = this.factory.createMonitor(monitor, queue);
             entry.setValue(monitor).shutDown();
             this.executor.execute(monitor);

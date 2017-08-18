@@ -16,11 +16,14 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.matchers.impl;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMatcher;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
@@ -29,6 +32,7 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.jenkinsci.plugins.multiplescms.MultiSCM;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,25 +41,41 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     private static final Log log = Log.get(ScmJobEventTriggerMatcher.class);
 
     @Override
-    public boolean matches(List<Event> events, SQSJob job) {
-        List<SCM> scms = job.getScmList();
+    public boolean matches(List<Event> events, SQSJob job) {//TODO load scm list
+        SQSTrigger trigger = job.getTrigger();
+        List<SQSScmConfig> scmConfigs = trigger.getSqsScmConfig();
+
+        List<SCM> scms = new ArrayList<>();
+        for (SQSScmConfig scmConfig : scmConfigs) {
+            switch (scmConfig.getType()) {
+                case IR:
+                    scms.addAll(job.getScmList());
+                    break;
+
+                case ER:
+                    scms.add(scmConfig.toGitSCM());
+                    break;
+            }
+        }
+
         log.debug("Events size: %d, SCMs size: %d", job, events.size(), scms.size());
 
         for (SCM scm : scms) {
-            if (scm.getClass().isAssignableFrom(NullSCM.class)) {//TODO support NoSCM?? or NoSCM auto-detect?
+            if (scm.getClass().isAssignableFrom(NullSCM.class)) {
                 log.debug("NullSCM detected, continue match next SCM", job);
                 continue;
             }
+
             for (Event event : events) {
                 log.debug("Matching event %s with SCM %s", event, scm.getKey());
                 if (this.matches(event, scm)) {
-                    log.info("Hurray! Event %s matched SCM %s", job, event.getArn(), scm.getKey());
+                    log.debug("Hurray! Event %s matched SCM %s", job, event.getArn(), scm.getKey());
                     return true;
                 }
             }
         }
 
-        log.info("No event matched", job);
+        log.debug("No event matched", job);
         return false;
     }
 
@@ -74,14 +94,16 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     }
 
     private boolean matchesGitSCM(final Event event, final SCM scmProvider) {
-        if (!(scmProvider instanceof hudson.plugins.git.GitSCM)) {
+        if (!(scmProvider instanceof GitSCM)) {
             return false;
         }
 
         final GitSCM git = (GitSCM) scmProvider;
         final List<RemoteConfig> configs = git.getRepositories();
 
-        return this.matchesConfigs(event, configs);
+        boolean matched = this.matchesConfigs(event, configs);
+        matched = matched && this.matchBranch(event, git.getBranches());
+        return matched;
     }
 
     private boolean matchesMultiSCM(final Event event, final SCM scmProvider) {
@@ -109,17 +131,33 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return false;
     }
 
-    private boolean matchesConfig(final Event event, final RemoteConfig config) {
-        List<URIish> uris = config.getURIs();
-        for (final URIish uri : uris) {
-            if (event.isMatch(uri)) {
-                log.debug("Event %s matched uri %s", event.getArn(), uri);
+    private boolean matchBranch(final Event event, final List<BranchSpec> branchSpecs) {//TODO use it
+        for (BranchSpec branchSpec : branchSpecs) {
+            if (branchSpec.matches(event.getBranch())) {
+                log.debug("Event %s matched branch %s", event.getArn(), branchSpec.getName());
                 return true;
             }
         }
 
-        log.debug("Found no event matched config: ", event.getArn(), config.getName());
+        log.debug("Found no event matched any branch", event.getArn());
         return false;
+    }
+
+    private boolean matchesConfig(final Event event, final RemoteConfig config) {
+        return getMatchesConfig(event, config) != null;
+    }
+
+    private URIish getMatchesConfig(final Event event, final RemoteConfig config) {
+        List<URIish> uris = config.getURIs();
+        for (final URIish uri : uris) {
+            if (event.isMatch(uri)) {//TODO use here matchBranch(event, branchSpec)
+                log.debug("Event %s matched uri %s", event.getArn(), uri);
+                return uri;
+            }
+        }
+
+        log.debug("Found no event matched config: ", event.getArn(), config.getName());
+        return null;
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
@@ -130,9 +168,9 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
-        boolean rs = jenkins.getPlugin("multiple-scms") != null;
-        log.debug("Multiple-SCMs plugin found: %s", rs);
-        return rs;
+        boolean hasPlugin = jenkins.getPlugin("multiple-scms") != null;
+        log.debug("Multiple-SCMs plugin found: %s", hasPlugin);
+        return hasPlugin;
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
@@ -143,8 +181,8 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             return false;
         }
 
-        boolean rs = jenkins.getPlugin("git") != null;
-        log.debug("Git plugin found: %s", rs);
-        return rs;
+        boolean hasPlugin = jenkins.getPlugin("git") != null;
+        log.debug("Git plugin found: %s", hasPlugin);
+        return hasPlugin;
     }
 }

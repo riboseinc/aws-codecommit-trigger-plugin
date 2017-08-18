@@ -1,0 +1,14 @@
+package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.pipeline
+
+node {
+    stage('Preparation') {
+        git url: 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins', branch: 'master', credentials: 'ext-phuong-huynh-at-239062223385'
+
+    }
+    stage('Build') {
+        sh "echo 'Heee'"
+    }
+    stage('Results') {
+        sh "echo 'Heee Result'"
+    }
+}

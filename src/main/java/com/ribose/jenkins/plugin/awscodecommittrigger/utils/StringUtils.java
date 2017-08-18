@@ -18,10 +18,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
 import com.amazonaws.services.sqs.model.Message;
-import hudson.plugins.git.GitSCM;
-import hudson.scm.SCM;
-import org.eclipse.jgit.transport.RemoteConfig;
-import org.eclipse.jgit.transport.URIish;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,16 +26,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Provides static methods that can be used to work with {@link String}
- */
+
 public final class StringUtils {
 
     public static final Pattern SQS_URL_PATTERN = Pattern
         .compile("^(?:http(?:s)?://)?(?<endpoint>sqs\\..+?\\.amazonaws\\.com)/(?<id>.+?)/(?<name>.*)$");
 
-//    public static final Pattern CODECOMMIT_URL_PATTERN = Pattern
-//        .compile("^(?:http(?:s)?://)?git-codecommit\\.(?<region>.+?)\\.amazonaws\\.com/v1/repos/(?<name>.*)$");
+    public static final Pattern CODE_COMMIT_PATTERN = Pattern.compile("^(?:(https|ssh)?://)?(?<endpoint>git-codecommit\\..+?\\.amazonaws\\.com)/(?<version>.+?)/repos/(?<repoName>.*)$");
 
     /**
      * Parse csv string and return list of trimmed strings
@@ -69,9 +62,6 @@ public final class StringUtils {
      * @return value of <code>jsonString.uniqueKey</code>, or <code>null</code>  if not found
      */
     public static String findByUniqueJsonKey(String jsonString, String uniqueKey) {
-        assert jsonString != null;
-        assert uniqueKey != null;
-
         jsonString = jsonString.trim();
         uniqueKey = uniqueKey.trim();
 
@@ -85,54 +75,13 @@ public final class StringUtils {
         return value;
     }
 
-    /**
-     * Parse string containing wildcards to Java Regex string
-     *
-     * @param str string containing wildcards, can not null
-     * @return regex can be used in {@link String#matches(String)}, or <code>null</code>  if not found
-     */
-    public static String parseWildcard(String str) {
-        assert str != null;
-
-        str = str.trim();
-        StringBuffer regexBuilder = new StringBuffer(str.length());
-        regexBuilder.append('^');
-        for (int i = 0, is = str.length(); i < is; i++) {
-            char c = str.charAt(i);
-            switch (c) {
-                case '*':
-                    char nc = i + 1 < str.length() ? str.charAt(i + 1) : 0;
-                    if (nc == '*') {//detect '**'
-                        i++;// move i to next
-                        regexBuilder.append(".*");
-                    } else {
-                        regexBuilder.append("[^/]*");
-                    }
-                    break;
-                case '?':
-                    regexBuilder.append(".");
-                    break;
-                // escape special regexp-characters
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '$':
-                case '^':
-                case '.':
-                case '{':
-                case '}':
-                case '|':
-                case '\\':
-                    regexBuilder.append("\\").append(c);
-                    break;
-                default:
-                    regexBuilder.append(c);
-                    break;
-            }
+    private static String findValueByPatter(String string, Pattern pattern, String groupName) {
+        String value = null;
+        final Matcher matcher = pattern.matcher(string);
+        if (matcher.matches()) {
+            value = matcher.group(groupName);
         }
-        regexBuilder.append('$');
-        return regexBuilder.toString();
+        return value;
     }
 
     /**
@@ -142,14 +91,7 @@ public final class StringUtils {
      * @return the name of queue
      */
     public static String getSqsQueueName(final String queueUrl) {
-        assert queueUrl != null;
-
-        String name = null;
-        final Matcher sqsUrlMatcher = SQS_URL_PATTERN.matcher(queueUrl);
-        if (sqsUrlMatcher.matches()) {
-            name = sqsUrlMatcher.group("name");
-        }
-        return name;
+        return findValueByPatter(queueUrl, SQS_URL_PATTERN, "name");
     }
 
     /**
@@ -159,34 +101,33 @@ public final class StringUtils {
      * @return the endpoint of that queue
      */
     public static String getSqsEndpoint(final String queueUrl) {
-        assert queueUrl != null;
-
-        String name = null;
-        final Matcher sqsUrlMatcher = SQS_URL_PATTERN.matcher(queueUrl);
-        if (sqsUrlMatcher.matches()) {
-            name = sqsUrlMatcher.group("endpoint");
-        }
-        return name;
+        return findValueByPatter(queueUrl, SQS_URL_PATTERN, "endpoint");
     }
 
-    public static List<String> parseScmUrls(SCM scm) {
-        List<String> urls = new ArrayList<>();
-        if (scm instanceof GitSCM) {
-            final GitSCM git = (GitSCM) scm;
-            List<RemoteConfig> repos = git.getRepositories();
-
-            for (RemoteConfig repo : repos) {
-                List<URIish> uris = repo.getURIs();
-                for (URIish uri : uris) {
-                    urls.add(uri.toASCIIString());
-                }
-            }
-        }
-        return urls;
-    }
-
+    /**
+     * Read `MessageId` from given message.body
+     *
+     * @param message
+     * @return Message Id
+     * */
     public static String getMessageId(Message message) {
         String body = message.getBody();
         return StringUtils.findByUniqueJsonKey(body, "MessageId");
+    }
+
+    public static String getCodeCommitRepoName(String codeCommitUrl) {
+        return findValueByPatter(codeCommitUrl, CODE_COMMIT_PATTERN, "repoName");
+    }
+
+    public static boolean isCodeCommitRepo(String url) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(url)) {
+            return false;
+        }
+
+        String repoName = getCodeCommitRepoName(url);
+        if (org.apache.commons.lang3.StringUtils.isEmpty(repoName)) {
+            return false;
+        }
+        return true;
     }
 }

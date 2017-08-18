@@ -26,6 +26,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.EventBroker;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.RepoInfo;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJobFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -35,7 +36,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.Job;
-import hudson.scm.SCM;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
@@ -59,7 +59,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private static final Log log = Log.get(SQSTrigger.class);
 
     private String queueUuid;
-    private String subscribedBranches;
+    private List<SQSScmConfig> sqsScmConfig;
 
     @Inject
     private transient SQSQueueMonitorScheduler scheduler;
@@ -80,14 +80,18 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private transient List<SQSActivityAction> actions;
 
     @DataBoundConstructor
-    public SQSTrigger(final String queueUuid, final String subscribedBranches) {
+    public SQSTrigger(final String queueUuid, final List<SQSScmConfig> sqsScmConfig) {
         this.queueUuid = queueUuid;
-        this.subscribedBranches = subscribedBranches;
+        this.sqsScmConfig = sqsScmConfig;
     }
 
     public Collection<? extends Action> getProjectActions() {
         if (this.job != null && CollectionUtils.isEmpty(this.actions)) {
-            this.actions =  Arrays.asList(new SQSActivityAction(this.job));
+            this.actions = Collections.singletonList(new SQSActivityAction(this.job));
+        }
+
+        if (this.actions == null) {
+            this.actions = Collections.emptyList();
         }
         return this.actions;
     }
@@ -113,7 +117,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 boolean succeed = SQSTrigger.this.scheduler.register(SQSTrigger.this);
-                log.info("Register trigger for %s? %s", SQSTrigger.this.job, SQSTrigger.this.getQueueUuid(), succeed);
+                log.debug("Register trigger for %s? %s", SQSTrigger.this.job, SQSTrigger.this.getQueueUuid(), succeed);
             }
         });
     }
@@ -129,7 +133,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
             public void run() {
                 boolean succeed = SQSTrigger.this.scheduler.unregister(SQSTrigger.this);
-                log.info("Unregister trigger %s", SQSTrigger.this.job, succeed);
+                log.debug("Unregister trigger %s", SQSTrigger.this.job, succeed);
             }
         });
     }
@@ -150,21 +154,30 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         return this.queueUuid;
     }
 
-    @Override
-    public String getSubscribedBranches() {
-        return this.subscribedBranches;
+//    @Override
+//    public String getSubscribedBranches() {
+////        return this.subscribedBranches;
+////        return this.sqsScmConfig.getSubscribedBranches();
+//        return null;
+//    }
+
+    public List<SQSScmConfig> getSqsScmConfig() {
+        return sqsScmConfig;
     }
 
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
     private boolean handleMessage(final Message message) {
-        log.info("Parse and do match against events, message: %s", this.job, message.getBody());
+        log.debug("Parse and do match against events, message: %s", this.job, message.getBody());
 
         final MessageParser parser = this.messageParserFactory.createParser(message);
         final EventTriggerMatcher matcher = this.eventTriggerMatcher;
         final List<Event> events = parser.parseMessage(message);
 
-        if (matcher.matches(events, this.sqsJob)) {
-            log.info("Hurray! Execute it", this.job);
+        boolean matched = matcher.matches(events, this.sqsJob);
+        String messageId = com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getMessageId(message);
+        log.info("Any event matched? %s. Message: %s", this.job, matched, messageId);
+        if (matched) {
+            log.debug("Hurray! Execute it", this.job);
             this.execute(message);
             return true;
         }
@@ -191,12 +204,33 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     }
 
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
-    public List<String> getScmRepoUrls() {
-        List<String> scmRepoUrls = new ArrayList<>();
-        for (SCM scm : this.sqsJob.getScmList()) {
-            scmRepoUrls.addAll(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.parseScmUrls(scm));
-        }
-        return scmRepoUrls;
+    public boolean isWorkflowJob() {
+        return this.job instanceof WorkflowJob;
+    }
+
+    public RepoInfo getRepoInfo() {
+        return RepoInfo.fromSqsJob(this.sqsJob);
+    }
+
+//    public boolean hasCodeCommitRepo() {
+//        List<SQSScmConfig> scmConfigs = this.getScms();
+//        for (SQSScmConfig scmConfig : scmConfigs) {
+//            //TODO return false if no scmConfig is CodeCommit Repo
+//        }
+//        return true;
+//    }
+
+//    public List<SQSScmConfig> getScms() {
+//        List<SQSScmConfig> scms = Collections.emptyList();
+//        this.sqsJob.getScmList()
+//        return scms;
+//    }
+
+
+
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
+    public String getJobName() {
+        return this.job.getName();
     }
 
     public void setScheduler(SQSQueueMonitorScheduler scheduler) {
@@ -281,13 +315,6 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                 return FormValidation.error(Messages.errorQueueUuidUnknown());
             }
 
-            return FormValidation.ok();
-        }
-
-        public FormValidation doCheckSubscribedBranches(@QueryParameter final String subscribedBranches) {
-            if (StringUtils.isBlank(subscribedBranches)) {
-                return FormValidation.warning(Messages.warningSubscribedBranches());
-            }
             return FormValidation.ok();
         }
 

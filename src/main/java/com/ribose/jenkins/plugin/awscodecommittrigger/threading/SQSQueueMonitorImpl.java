@@ -121,7 +121,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
 
     @Override
     public void shutDown() {
-        log.info("Shut down monitor for %s", this.channel);
+        log.debug("Shut down monitor for %s", this.channel);
         this.isShutDown = true;
     }
 
@@ -154,7 +154,7 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
         final List<Message> messages = this.channel.getMessages();
         List<Message> proceedMessages = notifyListeners(messages);
         log.debug("Received %d messages, proceed %d messages", messages.size(), proceedMessages.size());
-        this.channel.deleteMessages(proceedMessages);
+        this.channel.deleteMessages(messages);
     }
 
     private List<Message> notifyListeners(final List<Message> messages) {
@@ -165,7 +165,6 @@ public class SQSQueueMonitorImpl implements SQSQueueMonitor {
             for (final SQSQueueListener listener : listeners) {
                 List<Message> msgs = listener.handleMessages(messages);
                 proceedMessages.addAll(msgs);
-                messages.removeAll(msgs);
             }
         }
 

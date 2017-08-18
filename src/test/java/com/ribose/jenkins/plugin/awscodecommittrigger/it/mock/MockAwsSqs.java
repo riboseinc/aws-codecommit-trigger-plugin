@@ -23,18 +23,15 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.Message;
 import io.findify.sqsmock.SQSService;
 import org.assertj.core.api.Assertions;
-import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 
 public class MockAwsSqs {
 
-    private static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
     private static final MockAwsSqs instance = new MockAwsSqs();
 
     private String sqsMessageTemplate;
@@ -84,18 +81,6 @@ public class MockAwsSqs {
         return instance;
     }
 
-//    public void send(final int nom, final String ref) {//@param nom - number of messages should sends
-//        for (int i = 0; i < nom; i++) {
-//            send(randomSqsMessageString(ref));
-//        }
-//    }
-
-//    public void sendRandom(final int nom) {//@param nom - number of messages should sends
-//        for (int i = 0; i < nom; i++) {
-//            send(randomSqsMessageString(UUID.randomUUID().toString()));
-//        }
-//    }
-
     public void clearAndShutdown() {
         this.sqsMessageTemplate = null;
         List<Message> messages = this.sqsClient.receiveMessage(this.sqsUrl).getMessages();
@@ -106,11 +91,6 @@ public class MockAwsSqs {
         this.shutdown();
     }
 
-//    public void clearAndSend(final String... refs) {
-//        clearMessages();
-//        this.send(refs);
-//    }
-
     public void send(final String... refs) {
         for (String ref : refs) {
             this.sqsClient.sendMessage(this.sqsUrl, randomSqsMessageString(ref));
@@ -118,16 +98,12 @@ public class MockAwsSqs {
     }
 
     public void sendMessage(String message) {
-        this.sqsClient.sendMessage(this.sqsUrl, message);
+        this.sqsClient.sendMessage(this.sqsUrl, randomSqsMessage(message, UUID.randomUUID().toString()));
     }
 
-//    public int getPort() {
-//        return this.port;
-//    }
-//
-//    public boolean isStarted() {
-//        return this.started;
-//    }
+    public void sendMessage(String message, String ref) {
+        this.sqsClient.sendMessage(this.sqsUrl, randomSqsMessage(message, ref));
+    }
 
     public AmazonSQS getSqsClient() {
         return sqsClient;
@@ -146,9 +122,14 @@ public class MockAwsSqs {
 
     private String randomSqsMessageString(final String ref) {
         Assertions.assertThat(this.sqsMessageTemplate).isNotEmpty();
+        return randomSqsMessage(this.sqsMessageTemplate, ref);
+    }
+
+    private String randomSqsMessage(final String sqsMessage, String ref) {
+        Assertions.assertThat(sqsMessage).isNotEmpty();
         String messageId = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
         String eventId = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
-        return this.sqsMessageTemplate
+        return sqsMessage
             .replace("${MessageId}", messageId)
             .replace("${EventId}", eventId)
             .replace("${Ref}", ref);

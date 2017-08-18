@@ -21,6 +21,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 import hudson.model.Job;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.logging.*;
@@ -56,12 +57,12 @@ public class Log {
         write(Level.SEVERE, message, args);
     }
 
-    public void error(String message, final Job job, final Object... args) {
-        write(Level.SEVERE, prependJobName(job, message), args);
-    }
-
     public void error(String message, final SQSJob job, final Object... args) {
         error(message, job.getJenkinsJob(), args);
+    }
+
+    public void error(String message, final Job job, final Object... args) {
+        write(Level.SEVERE, message, job, args);
     }
 
     public void info(final String message, final Object... args) {
@@ -69,7 +70,7 @@ public class Log {
     }
 
     public void info(String message, final Job job, final Object... args) {
-        info(prependJobName(job, message), args);
+        write(Level.INFO, message, job, args);
     }
 
     public void info(String message, final SQSJob job, final Object... args) {
@@ -81,7 +82,7 @@ public class Log {
     }
 
     public void debug(String message, final Job job, final Object... args) {
-        debug(prependJobName(job, message), args);
+        write(Level.CONFIG, message, job, args);
     }
 
     public void debug(String message, final SQSJob job, final Object... args) {
@@ -92,13 +93,7 @@ public class Log {
         write(Level.WARNING, message, args);
     }
 
-    private String format(final String message, final Object... args) {
-        final String formatted = String.format(message, args);
-        final long id = Thread.currentThread().getId();
-        return autoFormat ? String.format("[%s][thread-%06X] %s", ClassUtils.getAbbreviatedName(this.clazz, 1), id, formatted) : formatted;
-    }
-
-    private void write(final Level level, final String message, final Object... args) {
+    private void write(final Level level, final String message, final String jobName, final Object... args) {
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof SQSTriggerQueue) {
                 args[i] = ((SQSTriggerQueue) args[i]).getUrl();
@@ -108,20 +103,36 @@ public class Log {
             }
         }
 
-        String msg = format(message, args);
+        StringBuilder source = new StringBuilder();
+        if (this.autoFormat) {
+            final String id = String.format("%06X", Thread.currentThread().getId());
+            source
+                .append("[").append(ClassUtils.getAbbreviatedName(this.clazz, 1)).append("]")
+                .append("[thread-").append(id).append("]");
+            if (StringUtils.isNotBlank(jobName)) {
+                source.append("[job-").append(jobName).append("]");
+            }
+        }
+
+        String msg = String.format(message, args);
         if (level == Level.CONFIG) {
             msg = "[DEBUG] " + msg;
         } else if (level == Level.SEVERE) {
             msg = "[ERROR] " + msg;
         }
-        this.logger.logp(level, "[log]", "", msg);
+
+        this.logger.logp(level, source.toString(), "", msg);
         if (this.streamHandler != null) {
             this.streamHandler.flush();
         }
     }
 
-    private String prependJobName(final Job job, String message) {
-        return String.format("[job-%s] %s", job.getName(), message);
+    private void write(final Level level, final String message, final Job job, final Object... args) {
+        this.write(level, message, job.getName(), args);
+    }
+
+    private void write(final Level level, final String message, final Object... args) {
+        this.write(level, message, "", args);
     }
 
     public Logger getLogger() {

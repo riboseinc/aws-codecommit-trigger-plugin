@@ -7,7 +7,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import hudson.scm.SCM;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,9 +19,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 
-@Ignore
 @RunWith(Parameterized.class)
 public class MultiProjectFixtureIT extends AbstractJenkinsIT {
 
@@ -44,7 +43,7 @@ public class MultiProjectFixtureIT extends AbstractJenkinsIT {
             {
                 "test_mixed_scm_jobs",
                 Collections.singletonList(usEast1Json),
-                Arrays.asList(
+                Utils.asList(
                     new ProjectFixture()
                         .setSqsMessage(usEast1Json)
                         .setScmConfigs(scmConfigFactory.createIR())
@@ -109,8 +108,11 @@ public class MultiProjectFixtureIT extends AbstractJenkinsIT {
                 @Override
                 public void run() {
                     try {
+                        long threadId = Thread.currentThread().getId();
                         MultiProjectFixtureIT.this.subscribeFreestyleProject(MultiProjectFixtureIT.this.getScm(fixture), fixture);
+                        MultiProjectFixtureIT.this.logger.log(Level.INFO, "[THREAD-{0}] index: {1}", new Object[]{threadId, fixture.getIndex()});
                         fixture.getEvent().block(fixture.getTimeout());
+                        MultiProjectFixtureIT.this.logger.log(Level.INFO, "[THREAD-{0}] DONE", threadId);
                     } catch (IOException | InterruptedException e) {
                         throw new AssertionError(e);
                     }
@@ -122,6 +124,7 @@ public class MultiProjectFixtureIT extends AbstractJenkinsIT {
         threadPool.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
 
         for (ProjectFixture fixture : this.fixtures) {
+            this.logger.log(Level.INFO, "[THREAD-{0}] DONE", fixture.getIndex());
             Assertions.assertThat(fixture.getEvent()).isNotNull();
             Assertions.assertThat(fixture.getEvent().isSignaled()).isEqualTo(fixture.getShouldStarted());
         }

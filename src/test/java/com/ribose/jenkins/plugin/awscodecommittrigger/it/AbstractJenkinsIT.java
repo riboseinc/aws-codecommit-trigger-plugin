@@ -31,11 +31,13 @@ import org.jvnet.hudson.test.TestBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public abstract class AbstractJenkinsIT {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
+    protected static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
 
     protected MockAwsSqs mockAwsSqs;
     protected SQSTriggerQueue sqsQueue;

@@ -63,6 +63,10 @@ public class RepoInfo {
         return branches;
     }
 
+    public String getBranchesString() {
+        return org.apache.commons.lang3.StringUtils.join(branches,", ");
+    }
+
     public List<String> getNonCodeCommitUrls() {
         return nonCodeCommitUrls;
     }

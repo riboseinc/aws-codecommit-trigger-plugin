@@ -1,0 +1,39 @@
+{
+    "queueUuid": "9c7d547a-a1d0-471f-a319-25cc8bb684ef",
+    "irChecked": true,
+    "sqsScmConfig": [
+        {
+            "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins",
+            "subscribedBranches": "master"
+        },
+        {
+            "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins2",
+            "subscribedBranches": "*sqstest"
+        }
+    ]
+}
+
+
+{
+    "queueUuid": "9c7d547a-a1d0-471f-a319-25cc8bb684ef",
+    "irChecked": true,
+    "sqsScmConfig": {
+        "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins",
+        "subscribedBranches": "master"
+    }
+}
+
+{
+    "queueUuid": "9c7d547a-a1d0-471f-a319-25cc8bb684ef",
+    "irChecked": false
+}
+
+{
+    "queueUuid": "9c7d547a-a1d0-471f-a319-25cc8bb684ef",
+    "irChecked": true,
+    "sqsScmConfig": {
+        "type": true,
+        "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins",
+        "subscribedBranches": "master"
+    }
+}

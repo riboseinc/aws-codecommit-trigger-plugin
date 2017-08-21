@@ -16,26 +16,59 @@
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-         xmlns:t="/lib/hudson"
-         xmlns:f="/lib/form">
-    <!--<j:if test="${instance.requiredOneBuilt}">-->
-        <!--<f:block>-->
-            <!--<span class="warning">Trigger not work unless there is at-least-once job built SUCCESS</span>-->
-        <!--</f:block>-->
-    <!--</j:if>-->
-
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry title="${%SQS queue to monitor}" field="queueUuid">
         <f:select/>
     </f:entry>
 
-    <j:set var="sqsTrigger" value="${instance}"/>
-
-    <!--<f:property field="sqsScmConfig"/>-->
 
     <f:entry title="Config SCM subscription">
-        <!--<f:checkbox title="Subscribe to CodeCommit Repository defined in SCM / Pipeline script"-->
-                    <!--checked="true" onclick="return false">Defined in SCM / Pipeline script</f:checkbox>-->
-        <f:repeatableProperty field="sqsScmConfig" />
-        <!--<f:hetero-list-->
+        <table>
+            <f:optionalBlock field="subscribeInternalScm"
+                             title="Auto-detect CodeCommit URL and branches from SCM / Pipeline script"
+                             checked="${instance.subscribeInternalScm}">
+                <f:entry>
+                    <j:if test="${instance.workflowJob}">
+                        <div class="warning">Trigger will read the SCM Steps defined in the
+                            <a href="/jenkins/job/${instance.jobName}/lastBuild/flowGraphTable/">last build</a>
+                        </div>
+                    </j:if>
+
+                    <j:set var="repoInfo" value="${instance.repoInfo}"/>
+
+                    <j:choose>
+                        <j:when test="${repoInfo.noUrlFound}">
+                            <div class="error">No Repo URL detected</div>
+                        </j:when>
+                        <j:otherwise>
+                            <f:block>
+                                <h3 style="margin-top: 0px;">Subscribed to</h3>
+                            </f:block>
+                            <j:if test="${repoInfo.hasCodeCommit}">
+                                <f:entry title="Detected code commit repository">
+                                    <j:forEach var="url" items="${repoInfo.codeCommitUrls}">
+                                        <div class="info">${url}</div>
+                                    </j:forEach>
+                                </f:entry>
+                                <f:entry title="Detected branches">
+                                    <div class="info">${repoInfo.branchesString}</div>
+                                </f:entry>
+                            </j:if>
+                            <j:if test="${repoInfo.hasNonCodeCommit}">
+                                <f:entry title="Detected non code commit repository">
+                                    <j:forEach var="url" items="${repoInfo.nonCodeCommitUrls}">
+                                        <div class="error">${url}</div>
+                                    </j:forEach>
+                                </f:entry>
+                            </j:if>
+                        </j:otherwise>
+                    </j:choose>
+                </f:entry>
+            </f:optionalBlock>
+        </table>
+
+        <p>
+            <f:repeatableProperty add="Manually enter CodeCommit URL and branches" field="sqsScmConfig" />
+        </p>
     </f:entry>
 </j:jelly>

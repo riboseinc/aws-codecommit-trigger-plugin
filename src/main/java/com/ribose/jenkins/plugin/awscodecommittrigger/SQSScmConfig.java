@@ -70,7 +70,6 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
     public GitSCM toGitSCM() {
         return new GitSCM(
             GitSCM.createRepoList(this.url, null),
-//            Collections.singletonList(new BranchSpec("")),
             getBranchSpecs(),
             false,
             Collections.<SubmoduleConfig>emptyList(),
@@ -82,13 +81,6 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<SQSScmConfig> {
-
-//        public FormValidation doCheckSubscribedBranches(@QueryParameter final String subscribedBranches) {
-//            if (StringUtils.isBlank(subscribedBranches)) {
-//                return FormValidation.warning(Messages.warningSubscribedBranches());
-//            }
-//            return FormValidation.ok();
-//        }
 
         @Override
         public SQSScmConfig newInstance(StaplerRequest req, JSONObject jsonObject) throws FormException {

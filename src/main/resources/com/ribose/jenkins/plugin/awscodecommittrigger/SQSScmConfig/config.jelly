@@ -19,62 +19,26 @@
          xmlns:t="/lib/hudson"
          xmlns:f="/lib/form">
 
+    <f:block>
+        <h3 style="margin-top: 0px;">Manual Subscription</h3>
+    </f:block>
+
+    <f:invisibleEntry>
+        <f:readOnlyTextbox default="ER" field="type"/>
+    </f:invisibleEntry>
+
+    <f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">
+        <f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo"/>
+    </f:entry>
+
+    <f:entry description="csv format, more details in help button" title="Subscribed branches (blank for 'any')"
+             field="subscribedBranches">
+        <f:textbox placeholder="ex: development, master, *feature, feature/**"/>
+    </f:entry>
+
     <f:entry>
-        <f:radioBlock name="type" value="IR" title="Defined in SCM / Pipeline script" checked="${instance.type=='IR'}">
-            <j:if test="${sqsTrigger.workflowJob}">
-                <f:block>
-                    <span class="warning">Trigger will read the SCM Steps defined in the <a href="/jenkins/job/${sqsTrigger.jobName}/lastBuild/flowGraphTable/">last build</a></span>
-                </f:block>
-            </j:if>
-
-            <j:set var="repoInfo" value="${sqsTrigger.repoInfo}"/>
-
-            <j:choose>
-                <j:when test="${repoInfo.noUrlFound}">
-                    <f:entry>
-                        <div class="error">No Repo URL detected</div>
-                    </f:entry>
-                </j:when>
-                <j:otherwise>
-                    <j:if test="${repoInfo.hasNonCodeCommit}">
-                        <f:entry title="Detected NON Code Commit Repo">
-                            <j:forEach var="url" items="${repoInfo.nonCodeCommitUrls}">
-                                <div class="error-inline">${url}</div>
-                            </j:forEach>
-                        </f:entry>
-                    </j:if>
-
-                    <j:if test="${repoInfo.hasCodeCommit}">
-                        <f:entry title="Detected Code Commit Repo">
-                            <j:forEach var="url" items="${repoInfo.codeCommitUrls}">
-                                <div class="warning-inline">${url}</div>
-                            </j:forEach>
-                        </f:entry>
-                        <f:entry title="Detected branches">
-                            <j:forEach var="branch" items="${repoInfo.branches}">
-                                <span class="warning-inline">${branch}, </span>
-                            </j:forEach>
-                        </f:entry>
-                    </j:if>
-                </j:otherwise>
-            </j:choose>
-
-        </f:radioBlock>
-
-        <f:radioBlock name="type" title="or Manually enter it" checked="${instance.type=='ER' || instance.type==null}" value="ER">
-            <f:entry title="CodeCommit Repo URL" field="url" description="only Git supported">
-                <f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo" />
-            </f:entry>
-
-            <f:entry description="csv format, more details in help button" title="Subscribed branches (blank for 'any')" field="subscribedBranches">
-                <f:textbox placeholder="ex: development, master, *feature, feature/**" />
-            </f:entry>
-        </f:radioBlock>
-
-        <f:entry>
-            <div align="right">
-                <f:repeatableDeleteButton />
-            </div>
-        </f:entry>
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
     </f:entry>
 </j:jelly>

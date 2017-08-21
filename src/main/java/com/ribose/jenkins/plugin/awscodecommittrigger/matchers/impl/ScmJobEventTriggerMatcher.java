@@ -44,6 +44,9 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     public boolean matches(List<Event> events, SQSJob job) {//TODO load scm list
         SQSTrigger trigger = job.getTrigger();
         List<SQSScmConfig> scmConfigs = trigger.getSqsScmConfig();
+        if (trigger.getSubscribeInternalScm()) {
+            scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.IR, null, null));
+        }
 
         List<SCM> scms = new ArrayList<>();
         for (SQSScmConfig scmConfig : scmConfigs) {

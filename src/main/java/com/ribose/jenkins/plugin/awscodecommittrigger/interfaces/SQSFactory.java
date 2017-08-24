@@ -18,7 +18,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
-import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannel;
 
 import java.util.concurrent.ExecutorService;
 
@@ -33,14 +32,6 @@ public interface SQSFactory {
     /**
      * Returns a new Amazon SQS instance that can be used to access the specified queue.
      * @param queue The {@link SQSQueue} for which to create a client.
-     * @return A new instance of an {@link AmazonSQS} that is suitable for synchronous access to
-     * the specified queue.
-     */
-//    AmazonSQS createSQS(final SQSQueue queue);
-
-    /**
-     * Returns a new Amazon SQS instance that can be used to access the specified queue.
-     * @param queue The {@link SQSQueue} for which to create a client.
      * @return A new instance of an {@link AmazonSQSAsync} that is suitable for asynchronous access
      * to the specified queue.
      */
@@ -48,12 +39,7 @@ public interface SQSFactory {
 
     AmazonSQS createSQSAsync(String accessKey, String secretKey);
 
-    /**
-     * Returns a new channel instance that can be used to communicate with the specified queue.
-     * @param queue The {@link SQSQueue} for which to create the channel.
-     * @return A new {@link SQSChannel} for the specified queue.
-     */
-//    SQSChannel createChannel(final SQSQueue queue);
+    AmazonSQS createSQSAsync(String accessKey, String secretKey, String region);
 
     /**
      * Returns a new monitor instance that can be used to poll the specified queue for new

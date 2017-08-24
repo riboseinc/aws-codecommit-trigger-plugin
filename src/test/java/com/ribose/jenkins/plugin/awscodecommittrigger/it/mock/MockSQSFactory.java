@@ -58,6 +58,11 @@ public class MockSQSFactory implements SQSFactory {
     }
 
     @Override
+    public AmazonSQS createSQSAsync(String accessKey, String secretKey, String region) {
+        return MockAwsSqs.get().getSqsClient();
+    }
+
+    @Override
     public SQSQueueMonitor createMonitor(ExecutorService executor, SQSQueue queue) {
         final AmazonSQS sqs = this.createSQSAsync(queue);
         final SQSChannel channel = new SQSChannelImpl(sqs, queue, this.factory);

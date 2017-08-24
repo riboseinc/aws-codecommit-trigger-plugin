@@ -207,10 +207,6 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         return this.job instanceof WorkflowJob;
     }
 
-    public RepoInfo getRepoInfo() {
-        return RepoInfo.fromSqsJob(this.sqsJob);
-    }
-
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     public String getJobName() {
         return this.job.getName();
@@ -246,6 +242,8 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         private transient final SequentialExecutionQueue queue = new SequentialExecutionQueue(Executors.newSingleThreadExecutor());
 
+        private transient SQSJobFactory sqsJobFactory;
+
         public static DescriptorImpl get() {
             final DescriptorExtensionList<Trigger<?>, TriggerDescriptor> triggers = Trigger.all();
             return triggers.get(DescriptorImpl.class);
@@ -267,6 +265,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         public synchronized void load() {
             super.load();
             this.initQueueMap();
+            this.sqsJobFactory = Context.injector().getBinding(SQSJobFactory.class).getProvider().get();
             this.isLoaded = true;
         }
 
@@ -278,6 +277,11 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         @Override
         public String getDisplayName() {
             return Messages.displayName();
+        }
+
+        public RepoInfo getRepoInfo(Job job) {
+            SQSJob sqsJob = this.sqsJobFactory.createSqsJob(job, null);
+            return RepoInfo.fromSqsJob(sqsJob);
         }
 
         public ListBoxModel doFillQueueUuidItems() {

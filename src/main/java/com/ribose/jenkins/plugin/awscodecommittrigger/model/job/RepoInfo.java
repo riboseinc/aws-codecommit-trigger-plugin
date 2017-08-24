@@ -20,6 +20,10 @@ public class RepoInfo {
     private RepoInfo(){}
 
     public static RepoInfo fromSqsJob(SQSJob sqsJob) {
+        if (sqsJob == null) {
+            return null;
+        }
+
         RepoInfo repoInfo = new RepoInfo();
 
         List<SCM> scms = sqsJob.getScmList();

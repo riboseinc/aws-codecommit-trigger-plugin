@@ -21,10 +21,16 @@
         <f:readOnlyTextbox field="uuid"/>
     </f:invisibleEntry>
 
+    <f:entry title="AWS Region" field="region">
+        <f:select />
+        <tr />
+    </f:entry>
+
     <f:entry title="${%SQS Queue}" field="url">
         <f:select />
         <f:description><b>Enter correct AWS Keys to auto-load SQS Queue List</b></f:description>
     </f:entry>
+
     <f:entry title="${%Access Key}" field="accessKey">
         <f:textbox autocomplete="off"/>
     </f:entry>

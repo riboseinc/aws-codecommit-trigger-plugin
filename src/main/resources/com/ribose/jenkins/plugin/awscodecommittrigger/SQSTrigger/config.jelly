@@ -28,22 +28,30 @@
                              title="Auto-detect CodeCommit URL and branches from SCM / Pipeline script"
                              checked="${instance.subscribeInternalScm}">
                 <f:entry>
-                    <j:if test="${instance.workflowJob}">
-                        <div class="warning">Trigger will read the SCM Steps defined in the
-                            <a href="/jenkins/job/${instance.jobName}/lastBuild/flowGraphTable/">last build</a>
-                        </div>
-                    </j:if>
+                    <!--<p>${it}</p>-->
+                    <!--<p>${instance}</p>-->
+                    <!--<p>${descriptor.getRepoInfo(it)}</p>-->
+                    <j:set var="repoInfo" value="${descriptor.getRepoInfo(it)}"/>
 
-                    <j:set var="repoInfo" value="${instance.repoInfo}"/>
+                    <j:if test="${not repoInfo.noUrlFound and instance.workflowJob}">
+                        <f:block>
+                        <p class="warning" style="margin-top: 0px;">Trigger will read the SCM Steps defined in the
+                            <a href="/jenkins/job/${instance.jobName}/lastBuild/flowGraphTable/">last build</a>
+                        </p>
+                        </f:block>
+                    </j:if>
 
                     <j:choose>
                         <j:when test="${repoInfo.noUrlFound}">
                             <div class="error">No Repo URL detected</div>
                         </j:when>
                         <j:otherwise>
-                            <f:block>
-                                <h3 style="margin-top: 0px;">Subscribed to</h3>
-                            </f:block>
+                            <j:if test="${repoInfo.hasCodeCommit or repoInfo.hasNonCodeCommit}">
+                                <f:block>
+                                    <h4 style="font-style: italic; margin-top: 0px;">Subscribed to Auto-Detected CodeCommit Repos</h4>
+                                </f:block>
+                            </j:if>
+
                             <j:if test="${repoInfo.hasCodeCommit}">
                                 <f:entry title="Detected code commit repository">
                                     <j:forEach var="url" items="${repoInfo.codeCommitUrls}">
@@ -54,6 +62,7 @@
                                     <div class="info">${repoInfo.branchesString}</div>
                                 </f:entry>
                             </j:if>
+
                             <j:if test="${repoInfo.hasNonCodeCommit}">
                                 <f:entry title="Detected non code commit repository">
                                     <j:forEach var="url" items="${repoInfo.nonCodeCommitUrls}">

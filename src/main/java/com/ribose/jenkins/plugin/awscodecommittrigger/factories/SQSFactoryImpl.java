@@ -1,4 +1,5 @@
 /*
+ * Copyright 2017 Ribose Inc. <https://www.ribose.com>
  * Copyright 2016 M-Way Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +19,11 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.factories;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.PredefinedClientConfigurations;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
@@ -59,31 +62,47 @@ public class SQSFactoryImpl implements SQSFactory {
 
     @Override
     public AmazonSQS createSQSAsync(final SQSQueue queue) {
-        ClientConfiguration clientConfiguration = this.getClientConfiguration(queue);
-        AmazonSQSAsyncClientBuilder sqsAsyncBuilder = AmazonSQSAsyncClientBuilder.standard()
-            .withClientConfiguration(clientConfiguration)
-            .withCredentials(queue.hasCredentials() ? queue : DefaultAWSCredentialsProviderChain.getInstance())
-            .withExecutorFactory(this.SQSExecutorFactory);
-
+        AWSCredentialsProvider credentials = queue.hasCredentials() ? queue : DefaultAWSCredentialsProviderChain.getInstance();
+        AmazonSQSAsyncClientBuilder sqsAsyncBuilder = createStandardAsyncClientBuilder(queue, credentials);
         final QueueBufferConfig queueBufferConfig = this.getQueueBufferConfig(queue);
         final AmazonSQSBufferedAsyncClient sqsBufferedAsync = new AmazonSQSBufferedAsyncClient(sqsAsyncBuilder.build(), queueBufferConfig);
-
         return sqsBufferedAsync;
     }
 
 
     @Override
     public AmazonSQS createSQSAsync(String accessKey, String secretKey) {
-        ClientConfiguration clientConfiguration = this.getClientConfiguration(null);
-        AmazonSQSAsyncClientBuilder sqsAsyncBuilder = AmazonSQSAsyncClientBuilder.standard()
-            .withClientConfiguration(clientConfiguration)
-            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
-            .withExecutorFactory(this.SQSExecutorFactory);
-
+        AmazonSQSAsyncClientBuilder sqsAsyncBuilder = createStandardAsyncClientBuilder(null, new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
         final QueueBufferConfig queueBufferConfig = this.getQueueBufferConfig(null);
         final AmazonSQSBufferedAsyncClient sqsBufferedAsync = new AmazonSQSBufferedAsyncClient(sqsAsyncBuilder.build(), queueBufferConfig);
-
         return sqsBufferedAsync;
+    }
+
+    public AmazonSQS createSQSAsync(String accessKey, String secretKey, String region) {//TODO check region is Enum?
+        AmazonSQSAsyncClientBuilder sqsAsyncBuilder = createStandardAsyncClientBuilder(null, new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
+        if (StringUtils.isNotBlank(region)) {
+            sqsAsyncBuilder.withRegion(Regions.valueOf(region));
+        }
+        final QueueBufferConfig queueBufferConfig = this.getQueueBufferConfig(null);
+        final AmazonSQSBufferedAsyncClient sqsBufferedAsync = new AmazonSQSBufferedAsyncClient(sqsAsyncBuilder.build(), queueBufferConfig);
+        return sqsBufferedAsync;
+    }
+
+    private AmazonSQSAsyncClientBuilder createStandardAsyncClientBuilder(SQSQueue queue, AWSCredentialsProvider credentials) {
+        ClientConfiguration clientConfiguration = this.getClientConfiguration(queue);
+        AmazonSQSAsyncClientBuilder builder = AmazonSQSAsyncClientBuilder.standard()
+            .withClientConfiguration(clientConfiguration)
+            .withCredentials(credentials)
+            .withExecutorFactory(this.SQSExecutorFactory);
+
+        if (queue != null) {
+            Regions region = queue.getRegion();
+            if (region != null) {
+                builder.withRegion(region);
+            }
+        }
+
+        return builder;
     }
 
     private SQSChannel createChannel(final SQSQueue queue) {
@@ -119,7 +138,7 @@ public class SQSFactoryImpl implements SQSFactory {
         ProxyConfiguration proxyConfig = jenkins.proxy;
         Proxy proxy = proxyConfig == null ?
             Proxy.NO_PROXY :
-            proxyConfig.createProxy( queue == null ? "sqs.*.amazonaws.com" : com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsEndpoint(queue.getUrl()));
+            proxyConfig.createProxy(queue == null ? "sqs.*.amazonaws.com" : com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsEndpoint(queue.getUrl()));
         if (!proxy.equals(Proxy.NO_PROXY) && proxy.address() instanceof InetSocketAddress) {
             InetSocketAddress address = (InetSocketAddress) proxy.address();
             config.setProxyHost(address.getHostName());

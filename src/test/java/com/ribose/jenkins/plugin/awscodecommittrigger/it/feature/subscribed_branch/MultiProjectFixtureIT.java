@@ -7,6 +7,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import hudson.scm.SCM;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 
+@Ignore
 @RunWith(Parameterized.class)
 public class MultiProjectFixtureIT extends AbstractJenkinsIT {
 

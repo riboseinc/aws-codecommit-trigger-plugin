@@ -89,7 +89,7 @@ public abstract class AbstractJenkinsIT {
         project.setScm(scm);
 
         final String uuid = this.sqsQueue.getUuid();
-        final SQSTrigger trigger = new SQSTrigger(uuid, fixture.getScmConfigs());
+        final SQSTrigger trigger = new SQSTrigger(uuid, Boolean.TRUE, fixture.getScmConfigs());
 
         final OneShotEvent event = new OneShotEvent();
         project.getBuildersList().add(new TestBuilder() {

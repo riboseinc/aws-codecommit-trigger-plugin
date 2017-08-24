@@ -28,9 +28,6 @@
                              title="Auto-detect CodeCommit URL and branches from SCM / Pipeline script"
                              checked="${instance.subscribeInternalScm}">
                 <f:entry>
-                    <!--<p>${it}</p>-->
-                    <!--<p>${instance}</p>-->
-                    <!--<p>${descriptor.getRepoInfo(it)}</p>-->
                     <j:set var="repoInfo" value="${descriptor.getRepoInfo(it)}"/>
 
                     <j:if test="${not repoInfo.noUrlFound and instance.workflowJob}">

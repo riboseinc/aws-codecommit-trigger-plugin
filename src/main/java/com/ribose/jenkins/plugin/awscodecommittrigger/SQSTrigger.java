@@ -251,6 +251,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         public DescriptorImpl() {
             super(SQSTrigger.class);
+            this.sqsJobFactory = Context.injector().getBinding(SQSJobFactory.class).getProvider().get();
         }
 
         @Override
@@ -265,7 +266,6 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         public synchronized void load() {
             super.load();
             this.initQueueMap();
-            this.sqsJobFactory = Context.injector().getBinding(SQSJobFactory.class).getProvider().get();
             this.isLoaded = true;
         }
 
@@ -357,5 +357,9 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                 this.sqsQueueMap.put(queue.getUuid(), queue);
             }
         }
+
+//        public String getSqsTriggerQueueConfigPage() {
+//            return new SQSTriggerQueue.DescriptorImpl().getConfigPage();
+//        }
     }
 }

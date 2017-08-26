@@ -235,7 +235,6 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             return Messages.displayName();
         }
 
-
         public FormValidation doCheckWaitTimeSeconds(@QueryParameter final String value) {
             return this.validateNumber(
                 value,

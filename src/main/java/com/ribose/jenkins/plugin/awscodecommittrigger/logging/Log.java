@@ -59,7 +59,7 @@ public class Log {
     }
 
     public void error(String message, final SQSJob job, final Object... args) {
-        error(message, job.getJenkinsJob(), args);
+        error(message, (Job) job.getJenkinsJob(), args);
     }
 
     public void error(String message, final Job job, final Object... args) {
@@ -75,7 +75,7 @@ public class Log {
     }
 
     public void info(String message, final SQSJob job, final Object... args) {
-        this.info(message, job.getJenkinsJob(), args);
+        this.info(message, (Job) job.getJenkinsJob(), args);
     }
 
     public void debug(final String message, final Object... args) {
@@ -87,7 +87,7 @@ public class Log {
     }
 
     public void debug(String message, final SQSJob job, final Object... args) {
-        debug(message, job.getJenkinsJob(), args);
+        debug(message, (Job) job.getJenkinsJob(), args);
     }
 
     public void warning(final String message, final Object... args) {

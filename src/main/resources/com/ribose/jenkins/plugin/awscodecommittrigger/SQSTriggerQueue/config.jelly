@@ -39,7 +39,7 @@
         <f:password autocomplete="off"/>
     </f:entry>
 
-    <f:validateButton title="${%Test access}" with="url,accessKey,secretKey" method="validate"/>
+    <f:validateButton title="${%Test access}" with="region,url,accessKey,secretKey" method="validate"/>
 
     <f:advanced title="${%Advanced}">
         <f:entry title="${%Request wait time [s]}" field="waitTimeSeconds">

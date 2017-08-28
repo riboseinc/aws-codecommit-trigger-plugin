@@ -19,8 +19,9 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstriggerqueue.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
@@ -50,19 +51,26 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
     private final Integer waitTimeSeconds;
     private final Integer maxNumberOfMessages;
     private final String url;
+    private Regions region = null;
 
-    private transient SQSFactory factory;
+    private transient SQSFactory sqsFactory;
     private transient AmazonSQS sqs;
 
     @DataBoundConstructor
     public SQSTriggerQueue(
         final String uuid,
+        final String region,
         final String url,
         final String accessKey,
         final Secret secretKey,
         final Integer waitTimeSeconds,
         final Integer maxNumberOfMessages) {
         this.uuid = StringUtils.isBlank(uuid) ? UUID.randomUUID().toString() : uuid;
+
+        if (StringUtils.isNotBlank(region)) {
+            this.region = Regions.valueOf(region);
+        }
+
         this.url = url;
 
         this.accessKey = accessKey;
@@ -85,21 +93,28 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
     public AmazonSQS getSQSClient() {
         if (this.sqs == null) {
-            this.sqs = this.getFactory().createSQSAsync(this);
+            this.sqs = this.getSqsFactory().createSQSAsync(this);
         }
         return this.sqs;
     }
 
-    @Inject
-    public void setFactory(final SQSFactory factory) {
-        this.factory = factory;
+    public SQSFactory getSqsFactory() {
+//        if (this.sqsFactory == null) {
+//            this.sqsFactory = Context.injector().getBinding(SQSFactory.class).getProvider().get();
+//        }
+        return this.sqsFactory;
     }
 
-    public SQSFactory getFactory() {
-        if (this.factory == null) {
-            Context.injector().injectMembers(this);
-        }
-        return this.factory;
+    public void setRegion(Regions region) {
+        this.region = region;
+    }
+
+    public void setSqsFactory(SQSFactory sqsFactory) {
+        this.sqsFactory = sqsFactory;
+    }
+
+    public void setSqs(AmazonSQS sqs) {
+        this.sqs = sqs;
     }
 
     @Override
@@ -160,6 +175,11 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
     }
 
     @Override
+    public Regions getRegion() {
+        return region;
+    }
+
+    @Override
     public int hashCode() {
         return this.uuid.hashCode();
     }
@@ -212,7 +232,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
         public DescriptorImpl() {
             super();
-            this.factory = Context.injector().getBinding(SQSFactory.class).getProvider().get();
+            this.factory = Context.injector().getBinding(SQSFactory.class).getProvider().get();//TODO remove injector()
             this.load();
         }
 
@@ -220,7 +240,6 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         public String getDisplayName() {
             return Messages.displayName();
         }
-
 
         public FormValidation doCheckWaitTimeSeconds(@QueryParameter final String value) {
             return this.validateNumber(
@@ -238,7 +257,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 Messages.errorMaxNumberOfMessages());
         }
 
-        public FormValidation doValidate(@QueryParameter final String url, @QueryParameter final String accessKey, @QueryParameter final Secret secretKey) throws IOException, ServletException {
+        public FormValidation doValidate(@QueryParameter final String region, @QueryParameter final String url, @QueryParameter final String accessKey, @QueryParameter final Secret secretKey) throws IOException, ServletException {
             try {
                 if (StringUtils.isBlank(accessKey)) {
                     return FormValidation.warning("AWS access key ID must be set.");
@@ -248,7 +267,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                     return FormValidation.warning("AWS secret key must be set.");
                 }
 
-                AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText());
+                AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText(), region);
                 if (client != null) {
                     String queueUrl = client.getQueueUrl(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(url)).getQueueUrl();
                     if (queueUrl.equalsIgnoreCase(url)) {
@@ -264,14 +283,22 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             }
         }
 
-        public void setFactory(SQSFactory factory) {
-            this.factory = factory;
+        public ListBoxModel doFillRegionItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add("", "");
+            for (Regions region : Regions.values()) {
+                Region r = Region.getRegion(region);
+                if (r.isServiceSupported(AmazonSQS.ENDPOINT_PREFIX) && r.isServiceSupported("codecommit")) {
+                    items.add(region.getName(), region.name());
+                }
+            }
+            return items;
         }
 
-        public ListBoxModel doFillUrlItems(@QueryParameter final String accessKey, @QueryParameter final Secret secretKey) {
+        public ListBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String accessKey, @QueryParameter final Secret secretKey) {
             ListBoxModel items = new ListBoxModel();
             try {
-                AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText());
+                AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText(), region);
                 List<String> queueUrls = client.listQueues().getQueueUrls();
                 for (String queueUrl : queueUrls) {
                     items.add(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(queueUrl), queueUrl);
@@ -295,10 +322,13 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 }
 
                 return FormValidation.ok();
-
             } catch (final NumberFormatException e) {
                 return FormValidation.error(message);
             }
+        }
+
+        public void setFactory(SQSFactory factory) {
+            this.factory = factory;
         }
     }
 }

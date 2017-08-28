@@ -26,14 +26,15 @@ import hudson.util.OneShotEvent;
 import java.util.List;
 
 
-public class ProjectFixture {
+public class ProjectFixture implements MarkIndex {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
     private List<SQSScmConfig> scmConfigs;
+    private boolean subscribeInternalScm;
     private SCM scm;
 
     private String[] sendBranches;
-    private Boolean shouldStarted;
+    private boolean shouldStarted;
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
     private String sqsMessage;
@@ -41,6 +42,8 @@ public class ProjectFixture {
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
+
+    private int index;
 
 
     public List<SQSScmConfig> getScmConfigs() {
@@ -52,11 +55,11 @@ public class ProjectFixture {
         return this;
     }
 
-    public Boolean getShouldStarted() {
+    public boolean getShouldStarted() {
         return shouldStarted;
     }
 
-    public ProjectFixture setShouldStarted(Boolean shouldStarted) {
+    public ProjectFixture setShouldStarted(boolean shouldStarted) {
         this.shouldStarted = shouldStarted;
         return this;
     }
@@ -111,4 +114,23 @@ public class ProjectFixture {
         return gson.toJson(this);
     }
 
+    @Override
+    public MarkIndex setIndex(int index) {
+        this.index = index;
+        return this;
+    }
+
+    @Override
+    public int getIndex() {
+        return this.index;
+    }
+
+    public boolean isSubscribeInternalScm() {
+        return subscribeInternalScm;
+    }
+
+    public ProjectFixture setSubscribeInternalScm(boolean subscribeInternalScm) {
+        this.subscribeInternalScm = subscribeInternalScm;
+        return this;
+    }
 }

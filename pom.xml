@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>1.13</version>
+    <version>1.14</version>
     <packaging>hpi</packaging>
 
     <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
@@ -33,6 +33,7 @@
         <jenkins.version>1.651.2</jenkins.version>
         <java.level>7</java.level>
         <jenkins-test-harness.version>2.23</jenkins-test-harness.version>
+        <sqs.version>1.11.179</sqs.version>
     </properties>
 
     <licenses>
@@ -77,27 +78,8 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sqs</artifactId>
-            <version>1.11.169</version>
+            <version>${sqs.version}</version>
         </dependency>
-
-        <!--dependency>
-            <groupId>org.ocpsoft.prettytime</groupId>
-            <artifactId>prettytime</artifactId>
-            <version>3.2.7.Final</version>
-        </dependency-->
-
-        <!--dependency>
-            <groupId>org.clapper</groupId>
-            <artifactId>javautil</artifactId>
-            <version>3.2.0</version>
-        </dependency-->
-
-        <!--dependency>
-            <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-aggregator</artifactId>
-            <optional>true</optional>
-            <version>2.4</version>
-        </dependency-->
 
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -111,12 +93,6 @@
             <optional>true</optional>
             <version>2.14</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-scm-step</artifactId>
-            <optional>true</optional>
-            <version>2.6</version>
-        </dependency-->
 
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -202,18 +178,18 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-cps</artifactId>
-            <version>2.38</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>script-security</artifactId>
-            <version>1.21</version>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.jenkins-ci.plugins.workflow</groupId>-->
+            <!--<artifactId>workflow-cps</artifactId>-->
+            <!--<version>2.38</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.jenkins-ci.plugins</groupId>-->
+            <!--<artifactId>script-security</artifactId>-->
+            <!--<version>1.33</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -273,6 +249,15 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <profile>
+            <id>jenkins-274</id>
+            <properties>
+                <jenkins.version>2.7.4</jenkins.version>
+                <java.level>8</java.level>
+                <jenkins-test-harness.version>2.24</jenkins-test-harness.version>
+            </properties>
         </profile>
     </profiles>
 </project>

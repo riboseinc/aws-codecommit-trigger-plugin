@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger_-DescriptorImpl plugin="aws-codecommit-trigger@1.14-SNAPSHOT">
+  <sqsQueues>
+    <com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
+      <uuid>9335184b-dd37-4135-a1e6-dc58c22915be</uuid>
+      <accessKey>sample</accessKey>
+      <secretKey>sample</secretKey>
+      <waitTimeSeconds>20</waitTimeSeconds>
+      <maxNumberOfMessages>10</maxNumberOfMessages>
+      <url>${URL}</url>
+      <region>US_WEST_2</region>
+    </com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
+  </sqsQueues>
+</com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger_-DescriptorImpl>

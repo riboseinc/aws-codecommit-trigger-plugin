@@ -116,7 +116,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         monitor.add(listener);
     }
 
-    private void reconfigure(final Iterator<Entry<String, SQSQueueMonitor>> entries, final Entry<String, SQSQueueMonitor> entry) {
+    private synchronized void reconfigure(final Iterator<Entry<String, SQSQueueMonitor>> entries, final Entry<String, SQSQueueMonitor> entry) {
         final String uuid = entry.getKey();
         SQSQueueMonitor monitor = entry.getValue();
         final SQSQueue queue = this.provider.getSqsQueue(uuid);

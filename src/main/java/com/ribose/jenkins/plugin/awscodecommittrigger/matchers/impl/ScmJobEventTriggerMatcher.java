@@ -28,6 +28,7 @@ import hudson.plugins.git.GitSCM;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
 import jenkins.model.Jenkins;
+import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.jenkinsci.plugins.multiplescms.MultiSCM;
@@ -43,7 +44,15 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     @Override
     public boolean matches(List<Event> events, SQSJob job) {//TODO load scm list
         SQSTrigger trigger = job.getTrigger();
-        List<SQSScmConfig> scmConfigs = trigger.getSqsScmConfig();
+        List<SQSScmConfig> scmConfigs = new ArrayList<>();
+
+        List<SQSScmConfig> triggerScms = trigger.getSqsScmConfigs();
+        if (CollectionUtils.isNotEmpty(triggerScms)) {
+            scmConfigs.addAll(triggerScms);
+        }
+        if (trigger.isSubscribeInternalScm()) {
+            scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.IR, null, null));
+        }
 
         List<SCM> scms = new ArrayList<>();
         for (SQSScmConfig scmConfig : scmConfigs) {

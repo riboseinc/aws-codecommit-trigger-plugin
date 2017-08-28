@@ -52,12 +52,7 @@ public class MockGitSCM extends GitSCM {
         return fromSqsMessage(url, branches);
     }
 
-    public static MockGitSCM fromSqsMessage(String sqsMessage, String branches) {
-        String url = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitUrl__");
-        List<BranchSpec> branchSpecs = new ArrayList<>();
-        for (String branch : branches.split(",")) {
-            branchSpecs.add(new BranchSpec(branch));
-        }
+    public static MockGitSCM fromUrlAndBranchSpecs(String url, List<BranchSpec> branchSpecs) {
         return new MockGitSCM(
             GitSCM.createRepoList(url, null),
             branchSpecs,
@@ -67,5 +62,14 @@ public class MockGitSCM extends GitSCM {
             null,
             Collections.<GitSCMExtension>emptyList()
         );
+    }
+
+    public static MockGitSCM fromSqsMessage(String sqsMessage, String branches) {
+        String url = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitUrl__");
+        List<BranchSpec> branchSpecs = new ArrayList<>();
+        for (String branch : branches.split(",")) {
+            branchSpecs.add(new BranchSpec(branch));
+        }
+        return fromUrlAndBranchSpecs(url, branchSpecs);
     }
 }

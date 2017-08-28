@@ -20,6 +20,10 @@ public class RepoInfo {
     private RepoInfo(){}
 
     public static RepoInfo fromSqsJob(SQSJob sqsJob) {
+        if (sqsJob == null) {
+            return null;
+        }
+
         RepoInfo repoInfo = new RepoInfo();
 
         List<SCM> scms = sqsJob.getScmList();
@@ -61,6 +65,10 @@ public class RepoInfo {
 
     public List<String> getBranches() {
         return branches;
+    }
+
+    public String getBranchesString() {
+        return org.apache.commons.lang3.StringUtils.join(branches,", ");
     }
 
     public List<String> getNonCodeCommitUrls() {

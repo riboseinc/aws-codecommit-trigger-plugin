@@ -49,6 +49,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.CheckForNull;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,7 +60,8 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private static final Log log = Log.get(SQSTrigger.class);
 
     private String queueUuid;
-    private List<SQSScmConfig> sqsScmConfig;
+    private List<SQSScmConfig> sqsScmConfigs;
+    private boolean subscribeInternalScm;
 
     @Inject
     private transient SQSQueueMonitorScheduler scheduler;
@@ -80,9 +82,10 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private transient List<SQSActivityAction> actions;
 
     @DataBoundConstructor
-    public SQSTrigger(final String queueUuid, final List<SQSScmConfig> sqsScmConfig) {
+    public SQSTrigger(final String queueUuid, boolean subscribeInternalScm, final List<SQSScmConfig> sqsScmConfigs) {
         this.queueUuid = queueUuid;
-        this.sqsScmConfig = sqsScmConfig;
+        this.sqsScmConfigs = sqsScmConfigs;
+        this.subscribeInternalScm = subscribeInternalScm;
     }
 
     public Collection<? extends Action> getProjectActions() {
@@ -154,15 +157,13 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         return this.queueUuid;
     }
 
-//    @Override
-//    public String getSubscribedBranches() {
-////        return this.subscribedBranches;
-////        return this.sqsScmConfig.getSubscribedBranches();
-//        return null;
-//    }
+    @CheckForNull
+    public List<SQSScmConfig> getSqsScmConfigs() {
+        return sqsScmConfigs;
+    }
 
-    public List<SQSScmConfig> getSqsScmConfig() {
-        return sqsScmConfig;
+    public boolean isSubscribeInternalScm() {
+        return subscribeInternalScm;
     }
 
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF")
@@ -208,26 +209,6 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         return this.job instanceof WorkflowJob;
     }
 
-    public RepoInfo getRepoInfo() {
-        return RepoInfo.fromSqsJob(this.sqsJob);
-    }
-
-//    public boolean hasCodeCommitRepo() {
-//        List<SQSScmConfig> scmConfigs = this.getScms();
-//        for (SQSScmConfig scmConfig : scmConfigs) {
-//            //TODO return false if no scmConfig is CodeCommit Repo
-//        }
-//        return true;
-//    }
-
-//    public List<SQSScmConfig> getScms() {
-//        List<SQSScmConfig> scms = Collections.emptyList();
-//        this.sqsJob.getScmList()
-//        return scms;
-//    }
-
-
-
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     public String getJobName() {
         return this.job.getName();
@@ -253,6 +234,22 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         this.executor = executor;
     }
 
+    public void setSqsScmConfigs(List<SQSScmConfig> sqsScmConfigs) {
+        this.sqsScmConfigs = sqsScmConfigs;
+    }
+
+    public void setSubscribeInternalScm(boolean subscribeInternalScm) {
+        this.subscribeInternalScm = subscribeInternalScm;
+    }
+
+    public void setSqsJob(SQSJob sqsJob) {
+        this.sqsJob = sqsJob;
+    }
+
+    public void setQueueUuid(String queueUuid) {
+        this.queueUuid = queueUuid;
+    }
+
     @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
 
@@ -263,6 +260,8 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         private transient final SequentialExecutionQueue queue = new SequentialExecutionQueue(Executors.newSingleThreadExecutor());
 
+        private transient SQSJobFactory sqsJobFactory;
+
         public static DescriptorImpl get() {
             final DescriptorExtensionList<Trigger<?>, TriggerDescriptor> triggers = Trigger.all();
             return triggers.get(DescriptorImpl.class);
@@ -270,6 +269,15 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         public DescriptorImpl() {
             super(SQSTrigger.class);
+            this.sqsJobFactory = Context.injector().getBinding(SQSJobFactory.class).getProvider().get();
+        }
+
+        @Override
+        public Trigger newInstance(StaplerRequest req, JSONObject jsonObject) throws FormException {
+            if (jsonObject.has("subscribeInternalScm")) {
+                jsonObject.put("subscribeInternalScm", Boolean.TRUE);
+            }
+            return super.newInstance(req, jsonObject);
         }
 
         @Override
@@ -287,6 +295,11 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         @Override
         public String getDisplayName() {
             return Messages.displayName();
+        }
+
+        public RepoInfo getRepoInfo(Job job) {
+            SQSJob sqsJob = this.sqsJobFactory.createSqsJob(job, null);
+            return RepoInfo.fromSqsJob(sqsJob);
         }
 
         public ListBoxModel doFillQueueUuidItems() {
@@ -362,5 +375,9 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                 this.sqsQueueMap.put(queue.getUuid(), queue);
             }
         }
+
+//        public String getSqsTriggerQueueConfigPage() {
+//            return new SQSTriggerQueue.DescriptorImpl().getConfigPage();
+//        }
     }
 }

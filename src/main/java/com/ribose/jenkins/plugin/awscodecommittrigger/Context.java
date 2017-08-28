@@ -18,10 +18,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.MessageParserFactoryImpl;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.SQSExecutorFactoryImpl;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.SQSFactoryImpl;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.ThreadFactoryImpl;
+import com.ribose.jenkins.plugin.awscodecommittrigger.factories.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.EventTriggerMatcherImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.SQSQueueProviderImpl;
@@ -31,6 +28,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactoryImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.ExecutorProviderImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorSchedulerImpl;
+import jenkins.model.Jenkins;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -41,6 +39,12 @@ public class Context extends com.google.inject.AbstractModule {
     private static Injector injector;
 
     public synchronized static Injector injector() {
+        Jenkins jenkins = Jenkins.getInstance();//TODO optimize this code
+        if (jenkins != null) {
+            InternalInjector internalInjector = jenkins.lookup.setIfNull(InternalInjector.class, new InternalInjector());
+            injector = internalInjector.resolve();
+        }
+
         if (injector == null) {
             injector = Guice.createInjector(new Context());
         }
@@ -50,47 +54,51 @@ public class Context extends com.google.inject.AbstractModule {
     @Override
     protected void configure() {
         this.bind(ThreadFactory.class)
-                .to(ThreadFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(ThreadFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSExecutorFactory.class)
-                .to(SQSExecutorFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSExecutorFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(ExecutorProvider.class)
-                .to(ExecutorProviderImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(ExecutorProviderImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(ExecutorService.class)
-                .toProvider(ExecutorProvider.class)
-                .in(com.google.inject.Singleton.class);
+            .toProvider(ExecutorProvider.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSFactory.class)
-                .to(SQSFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(RequestFactory.class)
-                .to(RequestFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(RequestFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSQueueProvider.class)
-                .to(SQSQueueProviderImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSQueueProviderImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSQueueMonitorScheduler.class)
-                .to(SQSQueueMonitorSchedulerImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSQueueMonitorSchedulerImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(MessageParserFactory.class)
-                .to(MessageParserFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(MessageParserFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(EventTriggerMatcher.class)
-                .to(EventTriggerMatcherImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(EventTriggerMatcherImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSJobFactory.class)
             .to(SQSJobFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
+
+        this.bind(ScmFactory.class)
+            .to(ScmFactoryImpl.class)
             .in(com.google.inject.Singleton.class);
     }
 }

@@ -18,6 +18,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.regions.Regions;
 
 
 /**
@@ -71,14 +72,7 @@ public interface SQSQueue extends AWSCredentials, AWSCredentialsProvider {
      */
     int getMaxNumberOfMessages();
 
-    /**
-     * Returns a value indicating whether the configuration is valid.
-     * <p>
-     * A configuration is considered valid if all information required to access the associated
-     * queue has been defined.
-     * @return {@code true} if the configuration is valid; otherwise, {@code false}.
-     */
-//    boolean isValid();
-
     boolean hasCredentials();
+
+    Regions getRegion();
 }

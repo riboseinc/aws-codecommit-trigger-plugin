@@ -67,7 +67,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
 
     @Parameters(name = "{0}")
     public static List<Object[]> fixtures() {
-        String scmUrl = ((MockGitSCM)defaultSCM).getUrl();
+        String scmUrl = ((MockGitSCM) defaultSCM).getUrl();
 
         return Arrays.asList(new Object[][]{
             {
@@ -167,7 +167,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
                 new ProjectFixture()// "**"
                     .setSendBranches("refs/heads/foo/bar", "refs/heads/foo-bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(scmUrl, Collections.singletonList(new BranchSpec("foo**"))))
-                    .setShouldStarted(false)
+                    .setShouldStarted(true)
             },
             {
                 "should_trigger_all_branches",

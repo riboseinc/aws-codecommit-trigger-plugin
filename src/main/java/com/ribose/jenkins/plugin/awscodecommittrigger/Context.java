@@ -18,10 +18,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.MessageParserFactoryImpl;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.SQSExecutorFactoryImpl;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.SQSFactoryImpl;
-import com.ribose.jenkins.plugin.awscodecommittrigger.factories.ThreadFactoryImpl;
+import com.ribose.jenkins.plugin.awscodecommittrigger.factories.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.matchers.EventTriggerMatcherImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.SQSQueueProviderImpl;
@@ -31,6 +28,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactoryImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.ExecutorProviderImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorSchedulerImpl;
+import jenkins.model.Jenkins;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -91,6 +89,10 @@ public class Context extends com.google.inject.AbstractModule {
 
         this.bind(SQSJobFactory.class)
             .to(SQSJobFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
+
+        this.bind(ScmFactory.class)
+            .to(ScmFactoryImpl.class)
             .in(com.google.inject.Singleton.class);
     }
 }

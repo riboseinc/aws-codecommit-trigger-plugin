@@ -74,7 +74,7 @@
         </table>
 
         <p>
-            <f:repeatableProperty add="Manually enter CodeCommit URL and branches" field="sqsScmConfig" />
+            <f:repeatableProperty add="Manually enter CodeCommit URL and branches" field="sqsScmConfigs" />
         </p>
     </f:entry>
 </j:jelly>

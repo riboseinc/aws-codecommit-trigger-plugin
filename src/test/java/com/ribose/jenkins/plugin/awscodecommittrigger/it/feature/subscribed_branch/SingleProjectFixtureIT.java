@@ -42,119 +42,119 @@ public class SingleProjectFixtureIT extends AbstractJenkinsIT {
         String scmUrl = MockGitSCM.class.cast(defaultSCM).getUrl();
 
         return Arrays.asList(new Object[][]{
+//            {
+//                "should_trigger_branches_without_wildcard_1",
+//                new ProjectFixture()//without wildcard
+//                    .setSendBranches("refs/heads/foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo"))
+//                    .setShouldStarted(Boolean.TRUE)
+//            },
+//            {
+//                "should_trigger_branches_without_wildcard_2",
+//                new ProjectFixture()//without wildcard
+//                    .setSendBranches("refs/heads/foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo"))
+//                    .setShouldStarted(Boolean.TRUE)
+//            },
+//            {
+//                "should_trigger_branches_without_wildcard_3",
+//                new ProjectFixture()//without wildcard
+//                    .setSendBranches("refs/heads/foo/bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo/bar"))
+//                    .setShouldStarted(Boolean.TRUE)
+//            },
+//            {
+//                "should_trigger_branches_without_wildcard_4",
+//                new ProjectFixture()//without wildcard
+//                    .setSendBranches("refs/heads/foo/bar/foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo/bar/foo"))
+//                    .setShouldStarted(Boolean.TRUE)
+//            },
+//            {
+//                "should_trigger_branches_without_wildcard_5",
+//                new ProjectFixture()//without wildcard
+//                    .setSendBranches("refs/heads/foo/bar/foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo/bar/foo"))
+//                    .setShouldStarted(Boolean.TRUE)
+//            },
             {
-                "should_trigger_branches_without_wildcard_1",
-                new ProjectFixture()//without wildcard
-                    .setSendBranches("refs/heads/foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo"))
-                    .setShouldStarted(Boolean.TRUE)
-            },
-            {
-                "should_trigger_branches_without_wildcard_2",
-                new ProjectFixture()//without wildcard
-                    .setSendBranches("refs/heads/foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo"))
-                    .setShouldStarted(Boolean.TRUE)
-            },
-            {
-                "should_trigger_branches_without_wildcard_3",
-                new ProjectFixture()//without wildcard
-                    .setSendBranches("refs/heads/foo/bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo/bar"))
-                    .setShouldStarted(Boolean.TRUE)
-            },
-            {
-                "should_trigger_branches_without_wildcard_4",
-                new ProjectFixture()//without wildcard
-                    .setSendBranches("refs/heads/foo/bar/foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo/bar/foo"))
-                    .setShouldStarted(Boolean.TRUE)
-            },
-            {
-                "should_trigger_branches_without_wildcard_5",
-                new ProjectFixture()//without wildcard
-                    .setSendBranches("refs/heads/foo/bar/foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo/bar/foo"))
-                    .setShouldStarted(Boolean.TRUE)
-            },
-        {
                 "should_not_trigger_prefix_wildcard_branches_1",
                 new ProjectFixture()//without wildcard
                     .setSendBranches("refs/heads/foo/bar/foo")
                     .setScmConfigs(scmConfigFactory.createERs(scmUrl, "refs/heads/foo/bar"))
                     .setShouldStarted(Boolean.FALSE)
-        },
-            {
-                "should_not_trigger_prefix_wildcard_branches_2",
-                new ProjectFixture()//prefix wildcard
-                    .setSendBranches("refs/heads/foo-bar", "refs/heads/bar/foo", "refs/heads/foo/bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*foo"))
-                    .setShouldStarted(Boolean.FALSE)
             },
-            {
-                "should_trigger_prefix_wildcard_branches",
-                new ProjectFixture()//prefix wildcard
-                    .setSendBranches("refs/heads/bar/foo", "refs/heads/bar-foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*foo"))
-                    .setShouldStarted(Boolean.TRUE),//triggered because of msg "refs/heads/bar-foo"
-
-            },
-            {
-                "should_not_trigger_suffix_wildcard_branches",
-                new ProjectFixture()//suffix wildcard
-                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar-foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo*"))
-                    .setShouldStarted(Boolean.FALSE)
-            },
-            {
-                "should_trigger_suffix_wildcard_branches",
-                new ProjectFixture()//suffix wildcard
-                    .setSendBranches("refs/heads/bar/foo", "refs/heads/foo-bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo*"))
-                    .setShouldStarted(Boolean.TRUE),//triggered because of msg "refs/heads/foo-bar"
-            },
-            {
-                "should_not_trigger_single_star_branches",
-                new ProjectFixture()// "*"
-                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*"))
-                    .setShouldStarted(Boolean.FALSE),
-            },
-            {
-                "should_trigger_single_star_branches",
-                new ProjectFixture()// "*"
-                    .setSendBranches("refs/heads/foo", "refs/heads/foo-bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*"))
-                    .setShouldStarted(Boolean.TRUE),
-            },
-            {
-                "should_not_trigger_double_stars_branches",
-                new ProjectFixture()// "**"
-                    .setSendBranches("refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/bar/foo-bar", "refs/heads/bar/foo/bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo**"))
-                    .setShouldStarted(Boolean.FALSE),
-            },
-            {
-                "should_trigger_double_stars_branches",
-                new ProjectFixture()// "**"
-                    .setSendBranches("refs/heads/foo/bar", "refs/heads/foo-bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo**"))
-                    .setShouldStarted(Boolean.TRUE)
-            },
-            {
-                "should_trigger_all_branches",
-                new ProjectFixture()// "**"
-                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
-                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "**"))
-                    .setShouldStarted(Boolean.TRUE),
-            },
-            {
-                "should_trigger_internal_scm",
-                new ProjectFixture()// "**"
-                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
-                    .setScmConfigs(scmConfigFactory.createIR())
-                    .setShouldStarted(Boolean.TRUE),
-            }
+//            {
+//                "should_not_trigger_prefix_wildcard_branches_2",
+//                new ProjectFixture()//prefix wildcard
+//                    .setSendBranches("refs/heads/foo-bar", "refs/heads/bar/foo", "refs/heads/foo/bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*foo"))
+//                    .setShouldStarted(Boolean.FALSE)
+//            },
+//            {
+//                "should_trigger_prefix_wildcard_branches",
+//                new ProjectFixture()//prefix wildcard
+//                    .setSendBranches("refs/heads/bar/foo", "refs/heads/bar-foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*foo"))
+//                    .setShouldStarted(Boolean.TRUE),//triggered because of msg "refs/heads/bar-foo"
+//
+//            },
+//            {
+//                "should_not_trigger_suffix_wildcard_branches",
+//                new ProjectFixture()//suffix wildcard
+//                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar-foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo*"))
+//                    .setShouldStarted(Boolean.FALSE)
+//            },
+//            {
+//                "should_trigger_suffix_wildcard_branches",
+//                new ProjectFixture()//suffix wildcard
+//                    .setSendBranches("refs/heads/bar/foo", "refs/heads/foo-bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo*"))
+//                    .setShouldStarted(Boolean.TRUE),//triggered because of msg "refs/heads/foo-bar"
+//            },
+//            {
+//                "should_not_trigger_single_star_branches",
+//                new ProjectFixture()// "*"
+//                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*"))
+//                    .setShouldStarted(Boolean.FALSE),
+//            },
+//            {
+//                "should_trigger_single_star_branches",
+//                new ProjectFixture()// "*"
+//                    .setSendBranches("refs/heads/foo", "refs/heads/foo-bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "*"))
+//                    .setShouldStarted(Boolean.TRUE),
+//            },
+//            {
+//                "should_not_trigger_double_stars_branches",
+//                new ProjectFixture()// "**"
+//                    .setSendBranches("refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/bar/foo-bar", "refs/heads/bar/foo/bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo**"))
+//                    .setShouldStarted(Boolean.FALSE),
+//            },
+//            {
+//                "should_trigger_double_stars_branches",
+//                new ProjectFixture()// "**"
+//                    .setSendBranches("refs/heads/foo/bar", "refs/heads/foo-bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "foo**"))
+//                    .setShouldStarted(Boolean.TRUE)
+//            },
+//            {
+//                "should_trigger_all_branches",
+//                new ProjectFixture()// "**"
+//                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
+//                    .setScmConfigs(scmConfigFactory.createERs(scmUrl, "**"))
+//                    .setShouldStarted(Boolean.TRUE),
+//            },
+//            {
+//                "should_trigger_internal_scm",
+//                new ProjectFixture()// "**"
+//                    .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
+//                    .setScmConfigs(scmConfigFactory.createIR())
+//                    .setShouldStarted(Boolean.TRUE),
+//            }
         });
     }
 

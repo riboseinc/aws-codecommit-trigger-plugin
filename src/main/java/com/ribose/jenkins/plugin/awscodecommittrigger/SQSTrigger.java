@@ -49,6 +49,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.CheckForNull;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,8 +60,8 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private static final Log log = Log.get(SQSTrigger.class);
 
     private String queueUuid;
-    private List<SQSScmConfig> sqsScmConfig;
-    private Boolean subscribeInternalScm;
+    private List<SQSScmConfig> sqsScmConfigs;
+    private boolean subscribeInternalScm;
 
     @Inject
     private transient SQSQueueMonitorScheduler scheduler;
@@ -81,9 +82,9 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     private transient List<SQSActivityAction> actions;
 
     @DataBoundConstructor
-    public SQSTrigger(final String queueUuid, Boolean subscribeInternalScm, final List<SQSScmConfig> sqsScmConfig) {
+    public SQSTrigger(final String queueUuid, boolean subscribeInternalScm, final List<SQSScmConfig> sqsScmConfigs) {
         this.queueUuid = queueUuid;
-        this.sqsScmConfig = sqsScmConfig;
+        this.sqsScmConfigs = sqsScmConfigs;
         this.subscribeInternalScm = subscribeInternalScm;
     }
 
@@ -156,11 +157,12 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         return this.queueUuid;
     }
 
-    public List<SQSScmConfig> getSqsScmConfig() {
-        return sqsScmConfig;
+    @CheckForNull
+    public List<SQSScmConfig> getSqsScmConfigs() {
+        return sqsScmConfigs;
     }
 
-    public Boolean getSubscribeInternalScm() {
+    public boolean getSubscribeInternalScm() {
         return subscribeInternalScm;
     }
 

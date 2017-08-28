@@ -1,13 +1,13 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
+import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqsscmconfig.Messages;
+import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.ScmFactory;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
-import hudson.plugins.git.SubmoduleConfig;
-import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,7 +18,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -32,6 +31,9 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
     private String url;
 
     private transient List<BranchSpec> branchSpecs;
+
+    @Inject
+    private transient ScmFactory scmFactory;
 
     @DataBoundConstructor
     public SQSScmConfig(Type type, String url, String subscribedBranches) {
@@ -56,6 +58,13 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
         return url;
     }
 
+    public ScmFactory getScmFactory() {
+        if (scmFactory == null) {
+            scmFactory = Context.injector().getBinding(ScmFactory.class).getProvider().get();
+        }
+        return scmFactory;
+    }
+
     public List<BranchSpec> getBranchSpecs() {
         if (CollectionUtils.isEmpty(branchSpecs)) {
             branchSpecs = new ArrayList<>();
@@ -68,15 +77,16 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
     }
 
     public GitSCM toGitSCM() {
-        return new GitSCM(
-            GitSCM.createRepoList(this.url, null),
-            getBranchSpecs(),
-            false,
-            Collections.<SubmoduleConfig>emptyList(),
-            null,
-            null,
-            Collections.<GitSCMExtension>emptyList()
-        );
+        return getScmFactory().createGit(this.url, getBranchSpecs());
+//        return new GitSCM(
+//            GitSCM.createRepoList(this.url, null),
+//            getBranchSpecs(),
+//            false,
+//            Collections.<SubmoduleConfig>emptyList(),
+//            null,
+//            null,
+//            Collections.<GitSCMExtension>emptyList()
+//        );
     }
 
     @Extension

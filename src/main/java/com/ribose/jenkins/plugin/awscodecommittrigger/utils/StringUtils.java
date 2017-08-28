@@ -19,6 +19,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 import com.amazonaws.services.sqs.model.Message;
 
+import javax.annotation.CheckForNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,6 +62,7 @@ public final class StringUtils {
      * @param uniqueKey  unique key in jsonString, can not null
      * @return value of <code>jsonString.uniqueKey</code>, or <code>null</code>  if not found
      */
+    @CheckForNull
     public static String findByUniqueJsonKey(String jsonString, String uniqueKey) {
         jsonString = jsonString.trim();
         uniqueKey = uniqueKey.trim();
@@ -110,6 +112,7 @@ public final class StringUtils {
      * @param message
      * @return Message Id
      * */
+    @CheckForNull
     public static String getMessageId(Message message) {
         String body = message.getBody();
         return StringUtils.findByUniqueJsonKey(body, "MessageId");

@@ -12,6 +12,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ScmConfigFactor
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockAwsSqs;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockSQSFactory;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockScmFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorSchedulerImpl;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -43,6 +44,7 @@ public abstract class AbstractJenkinsIT {
     protected SQSTriggerQueue sqsQueue;
 
     protected final MockSQSFactory mockSQSFactory = MockSQSFactory.get();
+    protected final MockScmFactory mockScmFactory = MockScmFactory.get();
 
     protected static final ScmConfigFactory scmConfigFactory = ScmConfigFactory.get();
     protected static final GitSCM defaultSCM;

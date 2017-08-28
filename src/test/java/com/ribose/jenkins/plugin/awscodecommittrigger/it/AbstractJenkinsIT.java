@@ -1,14 +1,16 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.*;
+import com.ribose.jenkins.plugin.awscodecommittrigger.InternalInjector;
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
+import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue;
+import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ScmConfigFactory;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.*;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockAwsSqs;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockContext;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleProject;
-import hudson.plugins.git.GitSCM;
 import hudson.scm.NullSCM;
 import hudson.util.OneShotEvent;
 import org.apache.commons.io.FileUtils;
@@ -24,7 +26,6 @@ import org.jvnet.hudson.test.TestBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.logging.Logger;
 

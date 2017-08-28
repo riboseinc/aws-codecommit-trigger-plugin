@@ -1,7 +1,5 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
 import com.ribose.jenkins.plugin.awscodecommittrigger.InternalInjector;

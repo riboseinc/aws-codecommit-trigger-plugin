@@ -164,7 +164,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
         return true;
     }
 
-    public synchronized void setFactory(SQSFactory factory) {
+    public void setFactory(SQSFactory factory) {
         this.factory = factory;
     }
 }

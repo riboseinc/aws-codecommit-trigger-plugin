@@ -1,6 +1,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.factories;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.ScmFactory;
+import hudson.Extension;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.SubmoduleConfig;

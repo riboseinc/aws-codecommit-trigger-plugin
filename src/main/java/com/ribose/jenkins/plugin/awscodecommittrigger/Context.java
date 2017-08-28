@@ -39,6 +39,12 @@ public class Context extends com.google.inject.AbstractModule {
     private static Injector injector;
 
     public synchronized static Injector injector() {
+        Jenkins jenkins = Jenkins.getInstance();//TODO optimize this code
+        if (jenkins != null) {
+            InternalInjector internalInjector = jenkins.lookup.setIfNull(InternalInjector.class, new InternalInjector());
+            injector = internalInjector.resolve();
+        }
+
         if (injector == null) {
             injector = Guice.createInjector(new Context());
         }
@@ -48,44 +54,44 @@ public class Context extends com.google.inject.AbstractModule {
     @Override
     protected void configure() {
         this.bind(ThreadFactory.class)
-                .to(ThreadFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(ThreadFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSExecutorFactory.class)
-                .to(SQSExecutorFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSExecutorFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(ExecutorProvider.class)
-                .to(ExecutorProviderImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(ExecutorProviderImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(ExecutorService.class)
-                .toProvider(ExecutorProvider.class)
-                .in(com.google.inject.Singleton.class);
+            .toProvider(ExecutorProvider.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSFactory.class)
-                .to(SQSFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(RequestFactory.class)
-                .to(RequestFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(RequestFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSQueueProvider.class)
-                .to(SQSQueueProviderImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSQueueProviderImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSQueueMonitorScheduler.class)
-                .to(SQSQueueMonitorSchedulerImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(SQSQueueMonitorSchedulerImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(MessageParserFactory.class)
-                .to(MessageParserFactoryImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(MessageParserFactoryImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(EventTriggerMatcher.class)
-                .to(EventTriggerMatcherImpl.class)
-                .in(com.google.inject.Singleton.class);
+            .to(EventTriggerMatcherImpl.class)
+            .in(com.google.inject.Singleton.class);
 
         this.bind(SQSJobFactory.class)
             .to(SQSJobFactoryImpl.class)

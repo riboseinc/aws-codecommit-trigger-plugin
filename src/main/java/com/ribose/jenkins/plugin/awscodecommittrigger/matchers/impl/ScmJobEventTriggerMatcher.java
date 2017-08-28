@@ -48,7 +48,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         if (CollectionUtils.isNotEmpty(trigger.getSqsScmConfigs())) {
             scmConfigs.addAll(trigger.getSqsScmConfigs());
         }
-        if (trigger.getSubscribeInternalScm()) {
+        if (trigger.isSubscribeInternalScm()) {
             scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.IR, null, null));
         }
 

@@ -162,7 +162,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         return sqsScmConfigs;
     }
 
-    public boolean getSubscribeInternalScm() {
+    public boolean isSubscribeInternalScm() {
         return subscribeInternalScm;
     }
 
@@ -232,6 +232,22 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
     public void setExecutor(ExecutorService executor) {
         this.executor = executor;
+    }
+
+    public void setSqsScmConfigs(List<SQSScmConfig> sqsScmConfigs) {
+        this.sqsScmConfigs = sqsScmConfigs;
+    }
+
+    public void setSubscribeInternalScm(boolean subscribeInternalScm) {
+        this.subscribeInternalScm = subscribeInternalScm;
+    }
+
+    public void setSqsJob(SQSJob sqsJob) {
+        this.sqsJob = sqsJob;
+    }
+
+    public void setQueueUuid(String queueUuid) {
+        this.queueUuid = queueUuid;
     }
 
     @Extension

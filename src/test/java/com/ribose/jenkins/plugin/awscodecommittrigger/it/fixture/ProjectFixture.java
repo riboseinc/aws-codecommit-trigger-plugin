@@ -30,10 +30,11 @@ public class ProjectFixture implements MarkIndex {
     private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
     private List<SQSScmConfig> scmConfigs;
+    private boolean subscribeInternalScm;
     private SCM scm;
 
     private String[] sendBranches;
-    private Boolean shouldStarted;
+    private boolean shouldStarted;
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
     private String sqsMessage;
@@ -54,11 +55,11 @@ public class ProjectFixture implements MarkIndex {
         return this;
     }
 
-    public Boolean getShouldStarted() {
+    public boolean getShouldStarted() {
         return shouldStarted;
     }
 
-    public ProjectFixture setShouldStarted(Boolean shouldStarted) {
+    public ProjectFixture setShouldStarted(boolean shouldStarted) {
         this.shouldStarted = shouldStarted;
         return this;
     }
@@ -122,5 +123,14 @@ public class ProjectFixture implements MarkIndex {
     @Override
     public int getIndex() {
         return this.index;
+    }
+
+    public boolean isSubscribeInternalScm() {
+        return subscribeInternalScm;
+    }
+
+    public ProjectFixture setSubscribeInternalScm(boolean subscribeInternalScm) {
+        this.subscribeInternalScm = subscribeInternalScm;
+        return this;
     }
 }

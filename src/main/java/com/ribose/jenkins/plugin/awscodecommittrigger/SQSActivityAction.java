@@ -1,5 +1,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Action;
@@ -105,6 +106,14 @@ public class SQSActivityAction implements Action {
     public File getActivityLogFile() {
         String date = df.format(new Date());
         String logPath = String.format("%s/activities-on-%s.log", this.getActivityDir().getPath(), date);
-        return new File(logPath);
+        File logFile = new File(logPath);
+        if (!logFile.exists()) {
+            try {
+                FileUtils.write(logFile, "", "UTF-8");
+            } catch (IOException e) {
+                throw new UnexpectedException("Unable to create activity file: " + logPath, e);
+            }
+        }
+        return logFile;
     }
 }

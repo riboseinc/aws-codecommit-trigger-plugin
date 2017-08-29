@@ -57,7 +57,7 @@
                     <relocations>
                         <relocation>
                             <pattern>com.fasterxml</pattern>
-                            <shadedPattern>shaded.com.fasterxml</shadedPattern>
+                            <shadedPattern>com.ribose.jenkins.plugin.awscodecommittrigger.shaded.com.fasterxml</shadedPattern>
                         </relocation>
                     </relocations>
                     <promoteTransitiveDependencies>true</promoteTransitiveDependencies>

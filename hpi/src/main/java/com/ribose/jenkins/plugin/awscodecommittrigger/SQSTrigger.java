@@ -17,7 +17,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
-import shaded.com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.Message;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;

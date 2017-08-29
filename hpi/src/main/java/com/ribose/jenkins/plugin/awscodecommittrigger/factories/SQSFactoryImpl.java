@@ -17,17 +17,17 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.factories;
 
-import shaded.com.amazonaws.ClientConfiguration;
-import shaded.com.amazonaws.PredefinedClientConfigurations;
-import shaded.com.amazonaws.auth.AWSCredentialsProvider;
-import shaded.com.amazonaws.auth.AWSStaticCredentialsProvider;
-import shaded.com.amazonaws.auth.BasicAWSCredentials;
-import shaded.com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import shaded.com.amazonaws.regions.Regions;
-import shaded.com.amazonaws.services.sqs.AmazonSQS;
-import shaded.com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
-import shaded.com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
-import shaded.com.amazonaws.services.sqs.buffered.QueueBufferConfig;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.PredefinedClientConfigurations;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
+import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import com.amazonaws.services.sqs.buffered.QueueBufferConfig;
 import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSExecutorFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;

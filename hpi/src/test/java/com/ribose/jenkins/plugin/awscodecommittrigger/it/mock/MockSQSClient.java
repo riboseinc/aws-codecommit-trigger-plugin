@@ -16,9 +16,9 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
-import shaded.com.amazonaws.auth.AWSCredentials;
-import shaded.com.amazonaws.services.sqs.AmazonSQSClient;
-import shaded.com.amazonaws.services.sqs.model.*;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.*;
 
 import java.util.Collections;
 

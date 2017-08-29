@@ -17,11 +17,11 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
-import shaded.com.amazonaws.AmazonServiceException;
-import shaded.com.amazonaws.auth.AWSCredentials;
-import shaded.com.amazonaws.regions.Region;
-import shaded.com.amazonaws.regions.Regions;
-import shaded.com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstriggerqueue.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;

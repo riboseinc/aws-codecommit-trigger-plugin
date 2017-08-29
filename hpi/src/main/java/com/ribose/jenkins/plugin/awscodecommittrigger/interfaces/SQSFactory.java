@@ -16,8 +16,8 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
-import shaded.com.amazonaws.services.sqs.AmazonSQS;
-import shaded.com.amazonaws.services.sqs.AmazonSQSAsync;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSAsync;
 
 import java.util.concurrent.ExecutorService;
 

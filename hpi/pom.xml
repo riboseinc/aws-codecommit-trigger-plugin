@@ -73,21 +73,6 @@
     </pluginRepositories>
 
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>com.amazonaws</groupId>-->
-            <!--<artifactId>aws-java-sdk-sqs</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-            <!--<artifactId>jackson-databind</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml.jackson.dataformat</groupId>-->
-            <!--<artifactId>jackson-dataformat-cbor</artifactId>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>shaded</artifactId>
@@ -98,6 +83,13 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sqs</artifactId>
+            <version>${sqs.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -199,39 +191,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>shade</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>com.fasterxml*:*</include>
-                            <include>com.amazonaws*:*</include>
-                        </includes>
-                    </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>com.fasterxml</pattern>
-                            <shadedPattern>shaded.com.fasterxml</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.amazonaws</pattern>
-                            <shadedPattern>shaded.com.amazonaws</shadedPattern>
-                        </relocation>
-                    </relocations>
-                    <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <configuration>
@@ -260,6 +219,9 @@
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <java.level>8</java.level>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

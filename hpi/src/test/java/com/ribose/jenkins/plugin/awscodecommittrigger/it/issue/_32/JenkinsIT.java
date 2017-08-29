@@ -26,11 +26,11 @@ public class JenkinsIT extends AbstractJenkinsIT {
             .setSqsMessage(sqsMessage)
             .setSubscribeInternalScm(true)
             .setScm(this.scm)
-            .setShouldStarted(Boolean.TRUE);
+            .setShouldStarted(true);
     }
 
     @Test
-    public void shouldPassIR() throws IOException, InterruptedException {
+    public void shouldPassIt() throws IOException, InterruptedException {
         this.mockAwsSqs.sendMessage(this.fixture.getSqsMessage());
         this.submitAndAssertFixture(fixture);
     }

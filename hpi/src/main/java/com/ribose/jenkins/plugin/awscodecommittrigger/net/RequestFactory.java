@@ -1,9 +1,9 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.net;
 
-import shaded.com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
-import shaded.com.amazonaws.services.sqs.model.Message;
-import shaded.com.amazonaws.services.sqs.model.ReceiveMessageRequest;
+import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
+import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 
 import java.util.List;

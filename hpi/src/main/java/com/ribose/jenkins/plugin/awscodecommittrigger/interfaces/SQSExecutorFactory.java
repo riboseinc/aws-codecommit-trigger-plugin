@@ -16,5 +16,5 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
-public interface SQSExecutorFactory extends shaded.com.amazonaws.client.builder.ExecutorFactory {
+public interface SQSExecutorFactory extends com.amazonaws.client.builder.ExecutorFactory {
 }

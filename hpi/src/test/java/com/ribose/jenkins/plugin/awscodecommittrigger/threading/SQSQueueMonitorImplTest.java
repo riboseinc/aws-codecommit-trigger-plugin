@@ -16,7 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.threading;
 
-import shaded.com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.Message;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueListener;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;

@@ -16,11 +16,11 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
-import shaded.com.amazonaws.auth.AWSCredentials;
-import shaded.com.amazonaws.auth.AnonymousAWSCredentials;
-import shaded.com.amazonaws.services.sqs.AmazonSQS;
-import shaded.com.amazonaws.services.sqs.AmazonSQSClient;
-import shaded.com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.Message;
 import io.findify.sqsmock.SQSService;
 import org.assertj.core.api.Assertions;
 
@@ -40,6 +40,7 @@ public class MockAwsSqs {
     private SQSService api;
     private AmazonSQSClient sqsClient;
     private String sqsUrl;
+    private String endpoint;
 
     private MockAwsSqs() {
     }
@@ -61,7 +62,7 @@ public class MockAwsSqs {
         AWSCredentials credentials = new AnonymousAWSCredentials();
         this.sqsClient = new MockSQSClient(credentials);
 
-        String endpoint = String.format("http://localhost:%s", this.port);
+        this.endpoint = String.format("http://localhost:%s", this.port);
         this.sqsClient.setEndpoint(endpoint);
 
         this.sqsUrl = this.sqsClient.createQueue(this.getClass().getSimpleName()).getQueueUrl();
@@ -138,5 +139,9 @@ public class MockAwsSqs {
     public MockAwsSqs setSqsMessageTemplate(String sqsMessageTemplate) {
         this.sqsMessageTemplate = sqsMessageTemplate;
         return this;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
     }
 }

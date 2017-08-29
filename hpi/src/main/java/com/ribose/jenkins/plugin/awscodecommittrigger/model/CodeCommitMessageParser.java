@@ -17,7 +17,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.model;
 
-import shaded.com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.Message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;

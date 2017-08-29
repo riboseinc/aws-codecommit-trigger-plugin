@@ -17,7 +17,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
-import shaded.com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.Message;
 
 import javax.annotation.CheckForNull;
 import java.util.ArrayList;

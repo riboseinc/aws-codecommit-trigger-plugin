@@ -59,14 +59,6 @@
                             <pattern>com.fasterxml</pattern>
                             <shadedPattern>shaded.com.fasterxml</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>com.amazonaws</pattern>
-                            <shadedPattern>shaded.com.amazonaws</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>software</pattern>
-                            <shadedPattern>shaded.software</shadedPattern>
-                        </relocation>
                     </relocations>
                     <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
                 </configuration>

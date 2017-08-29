@@ -33,6 +33,8 @@ public class ProjectFixture implements MarkIndex {
     private boolean subscribeInternalScm;
     private SCM scm;
 
+    private String pipelineScript;
+
     private String[] sendBranches;
     private boolean shouldStarted;
     private Long timeout = TIMEOUT;
@@ -131,6 +133,15 @@ public class ProjectFixture implements MarkIndex {
 
     public ProjectFixture setSubscribeInternalScm(boolean subscribeInternalScm) {
         this.subscribeInternalScm = subscribeInternalScm;
+        return this;
+    }
+
+    public String getPipelineScript() {
+        return pipelineScript;
+    }
+
+    public ProjectFixture setPipelineScript(String pipelineScript) {
+        this.pipelineScript = pipelineScript;
         return this;
     }
 }

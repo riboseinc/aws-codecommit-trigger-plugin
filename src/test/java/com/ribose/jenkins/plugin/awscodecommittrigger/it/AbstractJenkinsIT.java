@@ -64,17 +64,17 @@ public abstract class AbstractJenkinsIT {
     protected void subscribeFreestyleProject(ProjectFixture fixture) throws IOException {
         String name = UUID.randomUUID().toString();
 
-        final FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, name);
-        project.setScm(new NullSCM());
+        final FreeStyleProject job = jenkinsRule.getInstance().createProject(FreeStyleProject.class, name);
+        job.setScm(new NullSCM());
         if (fixture.getScm() != null) {
-            project.setScm(fixture.getScm());
+            job.setScm(fixture.getScm());
         }
 
         final String uuid = this.sqsQueue.getUuid();
         final SQSTrigger trigger = new SQSTrigger(uuid, fixture.isSubscribeInternalScm(), fixture.getScmConfigs());
 
         final OneShotEvent event = new OneShotEvent();
-        project.getBuildersList().add(new TestBuilder() {
+        job.getBuildersList().add(new TestBuilder() {
 
             @Override
             public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
@@ -83,10 +83,10 @@ public abstract class AbstractJenkinsIT {
                 return true;
             }
         });
-        project.setQuietPeriod(0);
+        job.setQuietPeriod(0);
 
-        trigger.start(project, false);
-        project.addTrigger(trigger);
+        trigger.start(job, false);
+        job.addTrigger(trigger);
 
         fixture.setEvent(event);
     }
@@ -98,11 +98,10 @@ public abstract class AbstractJenkinsIT {
         Assertions.assertThat(event.isSignaled()).isEqualTo(fixture.getShouldStarted());
     }
 
-//    protected void subscribePipelineProject(String pipelineDefinition, ProjectFixture fixture) throws IOException {
-////        String name = UUID.randomUUID().toString();
-////        fixture.setJenkinsProjectName(name);
+    protected void subscribePipelineProject(ProjectFixture fixture) throws IOException {
+//        String name = UUID.randomUUID().toString();
 //
-////        WorkflowJob project = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
-////        project.setDefinition(new Cps);
-//    }
+//        WorkflowJob job = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
+//        job.setDefinition(new CpsFlowDefinition(fixture.getPipelineScript(), false));
+    }
 }

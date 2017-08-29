@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>aws-codecommit-trigger-parent</artifactId>
+        <version>1.15-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>shaded</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sqs</artifactId>
+            <version>${sqs.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>shade</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>com.fasterxml*:*</include>
+                            <include>com.amazonaws*:*</include>
+                            <include>software.amazon*:*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.fasterxml</pattern>
+                            <shadedPattern>shaded.com.fasterxml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.amazonaws</pattern>
+                            <shadedPattern>shaded.com.amazonaws</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>software</pattern>
+                            <shadedPattern>shaded.software</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

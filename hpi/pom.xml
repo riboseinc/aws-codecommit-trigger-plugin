@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>aws-codecommit-trigger-parent</artifactId>
+        <version>1.15-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>aws-codecommit-trigger</artifactId>
+    <packaging>hpi</packaging>
+
+    <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
+    <name>AWS CodeCommit Trigger Plugin</name>
+    <description>
+        This plugin triggers jobs on repo update events by AWS CodeCommit,
+        through the AWS Simple Queue Service (SQS) and Simple Notification
+        Service (SNS).
+    </description>
+
+    <scm>
+        <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
+        </developerConnection>
+        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    </scm>
+
+    <!--<properties>-->
+        <!--<jenkins.version>1.651.2</jenkins.version>-->
+        <!--<java.level>7</java.level>-->
+        <!--<jenkins-test-harness.version>2.23</jenkins-test-harness.version>-->
+        <!--<sqs.version>1.11.179</sqs.version>-->
+    <!--</properties>-->
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>ronaldtse</id>
+            <name>Ronald Tse</name>
+            <email>open.source@ribose.com</email>
+        </developer>
+        <developer>
+            <id>phuonghqh</id>
+            <name>Phuong Huynh</name>
+            <email>open.source@ribose.com</email>
+        </developer>
+    </developers>
+
+    <repositories>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
+        <repository>
+            <id>findify</id>
+            <url>https://dl.bintray.com/findify/maven/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>com.amazonaws</groupId>-->
+            <!--<artifactId>aws-java-sdk-sqs</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-databind</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.dataformat</groupId>-->
+            <!--<artifactId>jackson-dataformat-cbor</artifactId>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>shaded</artifactId>
+            <version>${parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-job</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-support</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>git</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>multiple-scms</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>display-url-api</artifactId>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>structs</artifactId>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>junit</artifactId>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.findify</groupId>
+            <artifactId>sqsmock_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.jenkins-ci.plugins.workflow</groupId>-->
+            <!--<artifactId>workflow-cps</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.jenkins-ci.plugins</groupId>-->
+            <!--<artifactId>script-security</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>shade</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>com.fasterxml*:*</include>
+                            <include>com.amazonaws*:*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.fasterxml</pattern>
+                            <shadedPattern>shaded.com.fasterxml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.amazonaws</pattern>
+                            <shadedPattern>shaded.com.amazonaws</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <configuration>
+                    <enableSshAgent>true</enableSshAgent>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushReleases>true</pushReleases>
+                    <useReleaseProfile>true</useReleaseProfile>
+                    <flowInitContext>
+                        <masterBranchName>release</masterBranchName>
+                        <developBranchName>master</developBranchName>
+                        <versionTagPrefix>v</versionTagPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                    </flowInitContext>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- for running integration test if needed, disabled by default -->
+            <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.20</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

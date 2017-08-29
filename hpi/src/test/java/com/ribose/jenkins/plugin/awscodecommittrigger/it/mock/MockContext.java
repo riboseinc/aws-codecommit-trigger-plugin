@@ -11,8 +11,6 @@ public class MockContext extends com.google.inject.AbstractModule {
 
     @Override
     protected void configure() {
-//        super.configure();
-
         this.bind(ScmFactory.class)
             .to(MockScmFactory.class)
             .in(com.google.inject.Singleton.class);

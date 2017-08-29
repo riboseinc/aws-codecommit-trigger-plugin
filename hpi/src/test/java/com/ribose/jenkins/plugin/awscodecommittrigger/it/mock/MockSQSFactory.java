@@ -34,18 +34,9 @@ public class MockSQSFactory implements SQSFactory {
     @Inject
     private RequestFactory factory;
 
-//    @Inject
-//    private SQSExecutorFactory SQSExecutorFactory;
-
-//    private final static MockSQSFactory instance = new MockSQSFactory();
-
     public MockSQSFactory() {
         Context.injector().injectMembers(this);
     }
-
-//    public static MockSQSFactory get() {
-//        return instance;
-//    }
 
     @Override
     public AmazonSQS createSQSAsync(SQSQueue queue) {

@@ -8,14 +8,8 @@ import java.util.List;
 
 public class MockScmFactory implements ScmFactory {
 
-//    private final static MockScmFactory instance = new MockScmFactory();
-
     public MockScmFactory() {
     }
-
-//    public static MockScmFactory get() {
-//        return instance;
-//    }
 
     @Override
     public GitSCM createGit(String url, List<BranchSpec> branchSpecs) {

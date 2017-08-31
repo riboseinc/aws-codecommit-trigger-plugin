@@ -1,0 +1,8 @@
+= Changelog
+
+== v1.15
+* Fixes bugs https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/37[#37], https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/36[#36]
+* Allow the region selection in the user interface https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/39[#39]
+* Support for Pipeline projects https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/29[#29]
+* UX enhancements https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/38[#38]
+* Fixes Class Loader issue in Jenkins v2x https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/40[#40]

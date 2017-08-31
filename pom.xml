@@ -211,6 +211,7 @@
                 <artifactId>gitflow-maven-plugin</artifactId>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
+                    <releaseRebase>true</releaseRebase>
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
                         <developmentBranch>master</developmentBranch>

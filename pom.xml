@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger-parent</artifactId>
-    <version>1.15-SNAPSHOT</version>
+    <version>1.15</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -210,6 +210,7 @@
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
                 <configuration>
+                    <skipTestProject>true</skipTestProject>
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
                         <developmentBranch>master</developmentBranch>

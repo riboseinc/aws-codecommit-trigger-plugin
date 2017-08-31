@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger-parent</artifactId>
-    <version>1.15-SNAPSHOT</version>
+    <version>1.15</version>
     <packaging>pom</packaging>
 
     <modules>

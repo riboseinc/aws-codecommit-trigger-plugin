@@ -9,8 +9,46 @@
         <version>1.15-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
+
     <artifactId>aws-codecommit-trigger</artifactId>
     <packaging>hpi</packaging>
+
+    <url>https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin</url>
+    <name>AWS CodeCommit Trigger Plugin</name>
+    <description>
+        This plugin triggers jobs on repo update events by AWS CodeCommit,
+        through the AWS Simple Queue Service (SQS) and Simple Notification
+        Service (SNS).
+    </description>
+
+    <scm>
+        <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>ronaldtse</id>
+            <name>Ronald Tse</name>
+            <email>open.source@ribose.com</email>
+        </developer>
+        <developer>
+            <id>phuonghqh</id>
+            <name>Phuong Huynh</name>
+            <email>open.source@ribose.com</email>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>

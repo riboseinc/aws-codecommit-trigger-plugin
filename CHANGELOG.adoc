@@ -1,5 +1,8 @@
 = Changelog
 
+== v2.0
+* Add new Kind of Credentials "Standard AWS Credentials" to support reuse Queue Keys, https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/27[#27]
+
 == v1.15
 * Fixes bugs https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/37[#37], https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/36[#36]
 * Allow the region selection in the user interface https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/39[#39]

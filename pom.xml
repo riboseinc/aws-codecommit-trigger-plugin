@@ -186,9 +186,9 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>com.amashchenko.maven.plugin</groupId>
+                    <groupId>com.github.phuonghuynh</groupId>
                     <artifactId>gitflow-maven-plugin</artifactId>
-                    <version>1.6.0</version>
+                    <version>1.6.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -218,7 +218,7 @@
             </plugin>
 
             <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
+                <groupId>com.github.phuonghuynh</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
@@ -229,6 +229,9 @@
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
+                    <releaseFinish>
+                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
+                    </releaseFinish>
                 </configuration>
             </plugin>
 

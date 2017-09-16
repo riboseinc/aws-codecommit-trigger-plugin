@@ -27,7 +27,7 @@ import java.util.List;
 
 
 public class ProjectFixture implements MarkIndex {
-    private static final Long TIMEOUT = 60_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
+    private static final Long TIMEOUT = 90_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
     private List<SQSScmConfig> scmConfigs;
     private boolean subscribeInternalScm;
@@ -40,13 +40,13 @@ public class ProjectFixture implements MarkIndex {
     private Long timeout = TIMEOUT;
     private OneShotEvent event;
     private String sqsMessage;
+    private boolean hasTrigger = true;
 
     private static final Gson gson = new GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
 
     private int index;
-
 
     public List<SQSScmConfig> getScmConfigs() {
         return scmConfigs;
@@ -142,6 +142,15 @@ public class ProjectFixture implements MarkIndex {
 
     public ProjectFixture setPipelineScript(String pipelineScript) {
         this.pipelineScript = pipelineScript;
+        return this;
+    }
+
+    public boolean isHasTrigger() {
+        return hasTrigger;
+    }
+
+    public ProjectFixture setHasTrigger(boolean hasTrigger) {
+        this.hasTrigger = hasTrigger;
         return this;
     }
 }

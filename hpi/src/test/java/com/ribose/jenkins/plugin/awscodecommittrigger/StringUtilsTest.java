@@ -94,4 +94,12 @@ public class StringUtilsTest {
         Assertions.assertThat(StringUtils.getCodeCommitRepoName("http://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins")).isNullOrEmpty();
         Assertions.assertThat(StringUtils.getCodeCommitRepoName("http://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins")).isNotEqualToIgnoringCase("testjenkins");
     }
+
+    @Test
+    public void testCompatible() {
+        Assertions.assertThat(StringUtils.checkCompatibility("1.16", "1.7")).isTrue();
+        Assertions.assertThat(StringUtils.checkCompatibility("1.16", "2.0")).isFalse();
+        Assertions.assertThat(StringUtils.checkCompatibility("1.16", "1.15")).isTrue();
+        Assertions.assertThat(StringUtils.checkCompatibility("2.0-SNAPSHOT", "2.0")).isTrue();
+    }
 }

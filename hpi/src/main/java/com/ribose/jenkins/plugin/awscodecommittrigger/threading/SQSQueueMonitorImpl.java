@@ -18,7 +18,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.threading;
 
 import com.amazonaws.services.sqs.model.Message;
-import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueListener;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueueMonitor;

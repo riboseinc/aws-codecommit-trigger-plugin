@@ -24,9 +24,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParser;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.*;
-import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.MessageBody;
-import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Record;
-import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Records;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;

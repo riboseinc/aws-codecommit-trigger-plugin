@@ -141,11 +141,7 @@ public class SQSQueueMonitorSchedulerImpl implements SQSQueueMonitorScheduler {
                 return true;
             }
 
-            if (!StringUtils.equals(current.getAWSAccessKeyId(), queue.getAWSAccessKeyId())) {
-                return true;
-            }
-
-            if (!StringUtils.equals(current.getAWSSecretKey(), queue.getAWSSecretKey())) {
+            if (!StringUtils.equals(current.getCredentialsId(), queue.getCredentialsId())) {
                 return true;
             }
 

@@ -17,7 +17,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
 import com.amazonaws.services.sqs.model.Message;
-
 import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannel;
 
 

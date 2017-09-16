@@ -18,24 +18,30 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
+import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
+import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;
 import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstriggerqueue.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
+import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
@@ -45,26 +51,35 @@ import java.util.UUID;
 public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> implements SQSQueue {
     private static final Log log = Log.get(SQSTriggerQueue.class);
 
-    private final String uuid;
-    private final String accessKey;
-    private final Secret secretKey;
-    private final Integer waitTimeSeconds;
-    private final Integer maxNumberOfMessages;
-    private final String url;
+    private String version;
+    private String uuid;
+    private Integer waitTimeSeconds;
+    private Integer maxNumberOfMessages;
+    private String url;
+    private String credentialsId;
+
     private Regions region = null;
 
     private transient SQSFactory sqsFactory;
     private transient AmazonSQS sqs;
+    private transient boolean compatible;
+
+    @Deprecated/*since 2.0*/
+    private transient String accessKey;
+
+    @Deprecated/*since 2.0*/
+    private transient Secret secretKey;
 
     @DataBoundConstructor
-    public SQSTriggerQueue(
-        final String uuid,
-        final String region,
-        final String url,
-        final String accessKey,
-        final Secret secretKey,
-        final Integer waitTimeSeconds,
-        final Integer maxNumberOfMessages) {
+    public SQSTriggerQueue(final String uuid,
+                           final String region,
+                           final String url,
+                           final String credentialsId,
+                           final Integer waitTimeSeconds,
+                           final Integer maxNumberOfMessages,
+                           final String version) {
+        this.version = version;
+
         this.uuid = StringUtils.isBlank(uuid) ? UUID.randomUUID().toString() : uuid;
 
         if (StringUtils.isNotBlank(region)) {
@@ -73,8 +88,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
         this.url = url;
 
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+        this.credentialsId = credentialsId;
 
         this.waitTimeSeconds = this.limit(
             waitTimeSeconds,
@@ -99,9 +113,6 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
     }
 
     public SQSFactory getSqsFactory() {
-//        if (this.sqsFactory == null) {
-//            this.sqsFactory = Context.injector().getBinding(SQSFactory.class).getProvider().get();
-//        }
         return this.sqsFactory;
     }
 
@@ -117,17 +128,66 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         this.sqs = sqs;
     }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setWaitTimeSeconds(Integer waitTimeSeconds) {
+        this.waitTimeSeconds = waitTimeSeconds;
+    }
+
+    public void setMaxNumberOfMessages(Integer maxNumberOfMessages) {
+        this.maxNumberOfMessages = maxNumberOfMessages;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setCredentialsId(String credentialsId) {
+        this.credentialsId = credentialsId;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setCompatible(boolean compatible) {
+        this.compatible = compatible;
+    }
+
+    public boolean isCompatible() {
+        return compatible;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public Secret getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(Secret secretKey) {
+        this.secretKey = secretKey;
+    }
+
     @Override
     public String getUuid() {
         return this.uuid;
     }
 
-    public String getAccessKey() {
-        return this.accessKey;
-    }
-
-    public Secret getSecretKey() {
-        return this.secretKey;
+    @Override
+    public String getCredentialsId() {
+        return credentialsId;
     }
 
     @Override
@@ -156,22 +216,18 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         return com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(this.url);
     }
 
+    @CheckForNull
     @Override
-    public String getAWSAccessKeyId() {
-        return this.accessKey;
-    }
-
-    @Override
-    public String getAWSSecretKey() {
-        if (this.secretKey == null) {
+    public AwsCredentials lookupAwsCredentials() {
+        if (this.credentialsId == null) {
             return null;
         }
-        return this.secretKey.getPlainText();
+        return AwsCredentialsHelper.getCredentials(this.credentialsId);
     }
 
     @Override
     public boolean hasCredentials() {
-        return StringUtils.isNotBlank(this.getAWSAccessKeyId()) && StringUtils.isNotBlank(this.getAWSSecretKey());
+        return StringUtils.isNotBlank(this.credentialsId);
     }
 
     @Override
@@ -206,23 +262,12 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         return true;
     }
 
-    //TODO review this function
     private int limit(final Integer value, final int min, final int max, final int fallbackValue) {
         if (value == null || value < min || value > max) {
             return fallbackValue;
         } else {
             return value;
         }
-    }
-
-    @Override
-    public AWSCredentials getCredentials() {
-        return this;
-    }
-
-    @Override
-    public void refresh() {
-        log.debug("no-op method");
     }
 
     @Extension
@@ -257,21 +302,22 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 Messages.errorMaxNumberOfMessages());
         }
 
-        public FormValidation doValidate(@QueryParameter final String region, @QueryParameter final String url, @QueryParameter final String accessKey, @QueryParameter final Secret secretKey) throws IOException, ServletException {
+        public FormValidation doValidate(@QueryParameter final String region,
+                                         @QueryParameter final String url,
+                                         @QueryParameter final String credentialsId) throws IOException, ServletException {
             try {
-                if (StringUtils.isBlank(accessKey)) {
-                    return FormValidation.warning("AWS access key ID must be set.");
+                if (StringUtils.isBlank(credentialsId)) {
+                    return FormValidation.warning("No Credential selected");
                 }
 
-                if (StringUtils.isBlank(secretKey.getPlainText())) {
-                    return FormValidation.warning("AWS secret key must be set.");
-                }
+                AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
+                assert credentials != null;
 
-                AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText(), region);
+                AmazonSQS client = this.factory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
                 if (client != null) {
                     String queueUrl = client.getQueueUrl(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(url)).getQueueUrl();
                     if (queueUrl.equalsIgnoreCase(url)) {
-                        return FormValidation.ok("Access to SQS successful");
+                        return FormValidation.okWithMarkup("<span class=\"info\">Access to SQS successful</span>");
                     }
                 }
 
@@ -295,10 +341,13 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             return items;
         }
 
-        public ListBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String accessKey, @QueryParameter final Secret secretKey) {
+        public ListBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String credentialsId) {
             ListBoxModel items = new ListBoxModel();
             try {
-                AmazonSQS client = this.factory.createSQSAsync(accessKey, secretKey.getPlainText(), region);
+                AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
+                assert credentials != null;
+
+                AmazonSQS client = this.factory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
                 List<String> queueUrls = client.listQueues().getQueueUrls();
                 for (String queueUrl : queueUrls) {
                     items.add(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(queueUrl), queueUrl);
@@ -325,6 +374,13 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             } catch (final NumberFormatException e) {
                 return FormValidation.error(message);
             }
+        }
+
+        public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item context, @QueryParameter String credentialsId) {
+            return new StandardListBoxModel()
+                .includeEmptyValue()
+                .includeAs(ACL.SYSTEM, context, AwsCredentials.class)
+                .includeCurrentValue(credentialsId);
         }
 
         public void setFactory(SQSFactory factory) {

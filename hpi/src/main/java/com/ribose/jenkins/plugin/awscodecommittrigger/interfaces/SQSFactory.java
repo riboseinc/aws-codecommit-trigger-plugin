@@ -16,9 +16,11 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 
+import java.net.Proxy;
 import java.util.concurrent.ExecutorService;
 
 
@@ -62,4 +64,6 @@ public interface SQSFactory {
      * that has the same listeners as the specified monitor.
      */
     SQSQueueMonitor createMonitor(final SQSQueueMonitor monitor, final SQSQueue queue);
+
+    ClientConfiguration getClientConfiguration(final Proxy proxy);
 }

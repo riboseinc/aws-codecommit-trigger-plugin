@@ -3,8 +3,7 @@
   <sqsQueues>
     <com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
       <uuid>9335184b-dd37-4135-a1e6-dc58c22915be</uuid>
-      <accessKey>sample</accessKey>
-      <secretKey>sample</secretKey>
+      <credentialsId>sample</credentialsId>
       <waitTimeSeconds>20</waitTimeSeconds>
       <maxNumberOfMessages>10</maxNumberOfMessages>
       <url>${URL}</url>

@@ -1,7 +1,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._32;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractJenkinsIT;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractFreestyleIT;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import hudson.plugins.git.GitSCM;
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 
 @Issue("riboseinc/aws-codecommit-trigger-plugin/issues/32")
-public class JenkinsIT extends AbstractJenkinsIT {
+public class JenkinsIT extends AbstractFreestyleIT {
 
     private final GitSCM scm;
     private final ProjectFixture fixture;
@@ -30,7 +30,7 @@ public class JenkinsIT extends AbstractJenkinsIT {
     }
 
     @Test
-    public void shouldPassIt() throws IOException, InterruptedException {
+    public void shouldPassIt() throws Exception {
         this.mockAwsSqs.sendMessage(this.fixture.getSqsMessage());
         this.submitAndAssertFixture(fixture);
     }

@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger-parent</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -25,8 +25,9 @@
         <java.level>7</java.level>
         <jenkins-test-harness.version>2.23</jenkins-test-harness.version>
         <sqs.version>1.11.179</sqs.version>
-
         <maven.deploy.skip>true</maven.deploy.skip>
+
+        <compatible.since.version>2.0</compatible.since.version>
     </properties>
 
     <repositories>
@@ -37,6 +38,10 @@
         <repository>
             <id>findify</id>
             <url>https://dl.bintray.com/findify/maven/</url>
+        </repository>
+        <repository>
+            <id>maven2</id>
+            <url>http://central.maven.org/maven2</url>
         </repository>
     </repositories>
 
@@ -70,14 +75,12 @@
             <dependency>
                 <groupId>org.jenkins-ci.plugins.workflow</groupId>
                 <artifactId>workflow-job</artifactId>
-                <optional>true</optional>
-                <version>2.6</version>
+                <version>2.9</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jenkins-ci.plugins.workflow</groupId>
                 <artifactId>workflow-support</artifactId>
-                <optional>true</optional>
                 <version>2.14</version>
             </dependency>
 
@@ -96,39 +99,37 @@
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>git</artifactId>
-                <optional>true</optional>
                 <version>3.3.1</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>workflow-scm-step</artifactId>
+                <groupId>org.jenkins-ci.plugins.workflow</groupId>
+                <version>2.3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>multiple-scms</artifactId>
-                <optional>true</optional>
                 <version>0.6</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>display-url-api</artifactId>
-                <optional>true</optional>
                 <version>2.0</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>structs</artifactId>
-                <optional>true</optional>
                 <version>1.9</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>junit</artifactId>
-                <optional>true</optional>
                 <version>1.20</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -141,42 +142,37 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>2.8.47</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>2.8.0</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
                 <version>1.3</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>io.findify</groupId>
                 <artifactId>sqsmock_2.11</artifactId>
                 <version>0.3.2</version>
-                <scope>test</scope>
             </dependency>
 
-            <!--<dependency>-->
-            <!--<groupId>org.jenkins-ci.plugins.workflow</groupId>-->
-            <!--<artifactId>workflow-cps</artifactId>-->
-            <!--<version>2.38</version>-->
-            <!--<scope>test</scope>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--<groupId>org.jenkins-ci.plugins</groupId>-->
-            <!--<artifactId>script-security</artifactId>-->
-            <!--<version>1.33</version>-->
-            <!--<scope>test</scope>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>org.jenkins-ci.plugins.workflow</groupId>
+                <artifactId>workflow-cps</artifactId>
+                <version>2.28</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jenkinsci.plugins</groupId>
+                <artifactId>pipeline-model-definition</artifactId>
+                <version>1.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -207,6 +203,21 @@
             </plugin>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
                 <configuration>
@@ -218,6 +229,15 @@
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <compatibleSinceVersion>${compatible.since.version}</compatibleSinceVersion>
                 </configuration>
             </plugin>
         </plugins>

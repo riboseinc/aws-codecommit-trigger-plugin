@@ -20,6 +20,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 import com.amazonaws.services.sqs.model.Message;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +35,8 @@ public final class StringUtils {
         .compile("^(?:http(?:s)?://)?(?<endpoint>sqs\\..+?\\.amazonaws\\.com)/(?<id>.+?)/(?<name>.*)$");
 
     public static final Pattern CODE_COMMIT_PATTERN = Pattern.compile("^(?:(https|ssh)?://)?(?<endpoint>git-codecommit\\..+?\\.amazonaws\\.com)/(?<version>.+?)/repos/(?<repoName>.*)$");
+
+    private static final Pattern VERSION_PATTERN = Pattern.compile("\\d*\\^.|\\d+");
 
     /**
      * Parse csv string and return list of trimmed strings
@@ -132,5 +135,31 @@ public final class StringUtils {
             return false;
         }
         return true;
+    }
+
+    // return true if "sourceVersion" compatible with "destVersion"
+    public static boolean checkCompatibility(@Nullable String sourceVersion, @Nullable String destVersion) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(sourceVersion) || org.apache.commons.lang3.StringUtils.isBlank(destVersion)) {
+            return false;
+        }
+
+        Matcher dest = VERSION_PATTERN.matcher(destVersion);
+        Matcher source = VERSION_PATTERN.matcher(sourceVersion);
+
+        Boolean compatible = null;
+        while (compatible == null && dest.find()) {
+            int destv = Integer.parseInt(dest.group());
+            source.find();
+            int sourcev = Integer.parseInt(source.group());
+
+            if (destv > sourcev) {
+                compatible = false;
+            }
+            else if (destv <= sourcev) {
+                compatible = true;
+            }
+        }
+
+        return compatible != null && compatible;
     }
 }

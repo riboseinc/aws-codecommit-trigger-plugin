@@ -16,6 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Context;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
@@ -27,7 +28,9 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.net.SQSChannelImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.threading.SQSQueueMonitorImpl;
 
 import javax.inject.Inject;
+import java.net.Proxy;
 import java.util.concurrent.ExecutorService;
+
 
 public class MockSQSFactory implements SQSFactory {
 
@@ -64,6 +67,11 @@ public class MockSQSFactory implements SQSFactory {
     public SQSQueueMonitor createMonitor(SQSQueueMonitor monitor, SQSQueue queue) {
         final SQSChannel channel = this.createChannel(queue);
         return monitor.clone(queue, channel);
+    }
+
+    @Override
+    public ClientConfiguration getClientConfiguration(Proxy proxy) {
+        return null;
     }
 
     private SQSChannel createChannel(final SQSQueue queue) {

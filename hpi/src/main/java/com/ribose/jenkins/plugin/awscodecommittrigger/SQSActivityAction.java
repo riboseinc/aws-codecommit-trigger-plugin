@@ -2,7 +2,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.util.FormValidation;
@@ -15,6 +14,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RespondSuccess;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,13 +48,13 @@ public class SQSActivityAction implements Action {
         return "clipboard.png";
     }
 
+    @Nonnull
     @Override
     public String getDisplayName() {
         return "SQS Activity";
     }
 
     @Override
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public String getUrlName() {
         return getDisplayName().toLowerCase().replace(" ", "-");
     }
@@ -63,13 +63,14 @@ public class SQSActivityAction implements Action {
         return activityDir;
     }
 
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public List<String> getLogNames() {
         List<String> names = new ArrayList<>();
         File[] files = this.activityDir.listFiles();
-        Arrays.sort(files, NameFileComparator.NAME_REVERSE);
-        for (File file : files) {
-            names.add(file.getName());
+        if (files != null) {
+            Arrays.sort(files, NameFileComparator.NAME_REVERSE);
+            for (File file : files) {
+                names.add(file.getName());
+            }
         }
         return names;
     }
@@ -83,7 +84,7 @@ public class SQSActivityAction implements Action {
         File file = new File(this.activityDir.getPath() + "/" + name);
         if (file.exists()) {
             FileInputStream is = FileUtils.openInputStream(file);
-            response.serveFile(request, is, 0L, 60000L, file.length(), name);
+            response.serveFile(request, is, 0L, 60_000L, file.length(), name);
         } else {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             response.getOutputStream().println("sorry, we not found it " + name.replace("/", ""));

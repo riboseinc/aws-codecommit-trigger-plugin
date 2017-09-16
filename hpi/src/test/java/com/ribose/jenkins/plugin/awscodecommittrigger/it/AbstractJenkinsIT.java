@@ -7,11 +7,8 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockAwsSqs;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockContext;
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.FreeStyleProject;
-import hudson.scm.NullSCM;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
+import hudson.plugins.git.GitSCM;
 import hudson.util.OneShotEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -21,22 +18,37 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.TestBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 public abstract class AbstractJenkinsIT {
+    protected static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
-    protected static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
 
     protected MockAwsSqs mockAwsSqs;
+
     protected SQSTriggerQueue sqsQueue;
+
+    protected static final GitSCM defaultSCM;
+    protected static final String defaultSqsMessageTemplate;
+    protected static final String defaultSCMUrl;
+
+    static {
+        try {
+            defaultSqsMessageTemplate = IOUtils.toString(Utils.getResource(AbstractJenkinsIT.class, "sqsmsg.json.tpl", true), StandardCharsets.UTF_8);
+            defaultSCM = MockGitSCM.fromSqsMessage(defaultSqsMessageTemplate);
+
+            defaultSCMUrl = ((MockGitSCM) defaultSCM).getUrl();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     @Before
     public void before() throws Exception {
@@ -53,7 +65,9 @@ public abstract class AbstractJenkinsIT {
         String config = IOUtils.toString(configFile.toURI(), "UTF-8").replace("${URL}", mockAwsSqs.getSqsUrl());
         IOUtils.write(config, new FileOutputStream(configFile), "UTF-8");
 
-        this.sqsQueue = SQSTrigger.DescriptorImpl.get().getSqsQueues().get(0);
+        this.sqsQueue = ((SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class)).getSqsQueues().get(0);//SQSTrigger.DescriptorImpl.get().getSqsQueues().get(0);
+
+        this.mockAwsSqs.setSqsMessageTemplate(defaultSqsMessageTemplate);
     }
 
     @After
@@ -61,47 +75,12 @@ public abstract class AbstractJenkinsIT {
         this.mockAwsSqs.clearAndShutdown();
     }
 
-    protected void subscribeFreestyleProject(ProjectFixture fixture) throws IOException {
-        String name = UUID.randomUUID().toString();
+    protected abstract void subscribeProject(ProjectFixture fixture) throws Exception;
 
-        final FreeStyleProject job = jenkinsRule.getInstance().createProject(FreeStyleProject.class, name);
-        job.setScm(new NullSCM());
-        if (fixture.getScm() != null) {
-            job.setScm(fixture.getScm());
-        }
-
-        final String uuid = this.sqsQueue.getUuid();
-        final SQSTrigger trigger = new SQSTrigger(uuid, fixture.isSubscribeInternalScm(), fixture.getScmConfigs());
-
-        final OneShotEvent event = new OneShotEvent();
-        job.getBuildersList().add(new TestBuilder() {
-
-            @Override
-            public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-                event.signal();
-                trigger.stop();
-                return true;
-            }
-        });
-        job.setQuietPeriod(0);
-
-        trigger.start(job, false);
-        job.addTrigger(trigger);
-
-        fixture.setEvent(event);
-    }
-
-    protected void submitAndAssertFixture(ProjectFixture fixture) throws InterruptedException, IOException {
-        this.subscribeFreestyleProject(fixture);
+    protected void submitAndAssertFixture(ProjectFixture fixture) throws Exception {
+        this.subscribeProject(fixture);
         OneShotEvent event = fixture.getEvent();
         event.block(fixture.getTimeout());
         Assertions.assertThat(event.isSignaled()).isEqualTo(fixture.getShouldStarted());
-    }
-
-    protected void subscribePipelineProject(ProjectFixture fixture) throws IOException {
-//        String name = UUID.randomUUID().toString();
-//
-//        WorkflowJob job = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
-//        job.setDefinition(new CpsFlowDefinition(fixture.getPipelineScript(), false));
     }
 }

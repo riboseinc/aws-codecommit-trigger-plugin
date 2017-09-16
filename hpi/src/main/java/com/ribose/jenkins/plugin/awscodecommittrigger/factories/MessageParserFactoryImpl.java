@@ -17,7 +17,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.factories;
 
 import com.amazonaws.services.sqs.model.Message;
-
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParser;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParserFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.CodeCommitMessageParser;

@@ -17,7 +17,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
 import com.google.common.eventbus.Subscribe;
-
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.events.ConfigurationChangedEvent;
 
 

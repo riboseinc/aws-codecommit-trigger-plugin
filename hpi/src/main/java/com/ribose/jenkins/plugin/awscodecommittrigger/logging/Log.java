@@ -24,8 +24,12 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
-import java.util.logging.*;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 
 public class Log {
@@ -129,7 +133,8 @@ public class Log {
     }
 
     private void write(final Level level, final String message, final Job job, final Object... args) {
-        this.write(level, message, job.getName(), args);
+        String name = job == null ? "--no-name--" : job.getName();
+        this.write(level, message, name, args);
     }
 
     private void write(final Level level, final String message, final Object... args) {

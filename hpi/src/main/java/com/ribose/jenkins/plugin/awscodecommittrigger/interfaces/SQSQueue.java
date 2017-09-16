@@ -16,16 +16,15 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.regions.Regions;
+import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 
 
 /**
  * Interface definition for classes that represent the necessary configuration that is required to
  * access an Amazon SQS queue.
  */
-public interface SQSQueue extends AWSCredentials, AWSCredentialsProvider {
+public interface SQSQueue {
 
     int WAIT_TIME_SECONDS_DEFAULT = 20;
     int WAIT_TIME_SECONDS_MIN = 1;
@@ -53,11 +52,6 @@ public interface SQSQueue extends AWSCredentials, AWSCredentialsProvider {
      */
     String getName();
 
-    /**
-     * Returns the endpoint of the queue the configuration is associated with.
-     * @return The endpoint of a queue.
-     */
-//    String getEndpoint();
 
     /**
      * Returns the time, in seconds, requests should wait for new messages to arrive in the queue.
@@ -75,4 +69,8 @@ public interface SQSQueue extends AWSCredentials, AWSCredentialsProvider {
     boolean hasCredentials();
 
     Regions getRegion();
+
+    String getCredentialsId();
+
+    AwsCredentials lookupAwsCredentials();
 }

@@ -2,13 +2,19 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.pipeline
 
 node {
     stage('Preparation') {
-        git url: 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins', branch: 'master', credentials: 'ext-phuong-huynh-at-239062223385'
-
+//        git url: 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins', branch: 'master', credentials: 'sample'
+        checkout([
+            $class: 'com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM',
+            branches: [[name: 'refs/heads/master']],
+            userRemoteConfigs: [[credentialsId: 'batman', url: 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins']]
+        ])
     }
+
     stage('Build') {
         sh "echo 'Heee'"
     }
     stage('Results') {
         sh "echo 'Heee Result'"
+        ${EmitEvent}
     }
 }

@@ -12,6 +12,7 @@ import hudson.plugins.git.UserRemoteConfig;
 import hudson.plugins.git.browser.GitRepositoryBrowser;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.scm.SCMRevisionState;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class MockGitSCM extends GitSCM {
         this.url = repositoryUrl;
     }
 
+    @DataBoundConstructor
     public MockGitSCM(List<UserRemoteConfig> userRemoteConfigs, List<BranchSpec> branches, Boolean doGenerateSubmoduleConfigurations, Collection<SubmoduleConfig> submoduleCfg, GitRepositoryBrowser browser, String gitTool, List<GitSCMExtension> extensions) {
         super(userRemoteConfigs, branches, doGenerateSubmoduleConfigurations, submoduleCfg, browser, gitTool, extensions);
         this.url = userRemoteConfigs.get(0).getUrl();

@@ -1,39 +1,25 @@
-<!--
-   Copyright 2017 Ribose Inc. <https://www.ribose.com>
-   Copyright 2016 M-Way Solutions GmbH
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
--->
 <?jelly escape-by-default='true'?>
-<j:jelly
-    xmlns:j="jelly:core"
-    xmlns:st="jelly:stapler"
-    xmlns:d="jelly:define"
-    xmlns:l="/lib/layout"
-    xmlns:t="/lib/hudson"
-    xmlns:f="/lib/form">
-    <f:section title="${%AWS Code Commit Trigger SQS Plugin}">
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+    <f:section title="${%AWS Code Commit Trigger SQS Plugin}" name="AwsCodeCommitTriggerPlugin">
+        <f:block>
+            <j:if test="${not descriptor.checkCompatible()}">
+                <p>${%detectedMigration}</p>
+                <div>
+                    <input type="button" value="Migration" class="yui-button validate-button"
+                           onclick="validateButton('descriptorByName/SQSTrigger/migration', '', this)"/>
+                </div>
+                <div><!-- this is where the error message goes --></div>
+                <a href=""></a>
+            </j:if>
+        </f:block>
+
         <f:nested>
             <table style="width:100%">
                 <f:block>
-                    <f:repeatable
-                        field="sqsQueues"
-                        minimum="${1}"
-                        noAddButton="true">
+                    <f:repeatable field="sqsQueues" minimum="${1}" noAddButton="true">
                         <table style="width:100%">
-                            <st:include
-                                from="${descriptor}"
-                                page="${descriptor.configPage}"/>
+                            <st:include from="${descriptor}" page="${descriptor.configPage}"/>
                             <f:entry>
                                 <div align="right">
                                     <input type="button" value="${%Add}" class="repeatable-add show-if-last"/>

@@ -85,15 +85,11 @@ public class SQSQueueMonitorSchedulerImplTest {
 
         Mockito.when(this.queueA.getUuid()).thenReturn(UUID_A);
         Mockito.when(this.queueA.getUrl()).thenReturn("url-a");
-        Mockito.when(this.queueA.getAWSAccessKeyId()).thenReturn("access-key-a");
-        Mockito.when(this.queueA.getAWSSecretKey()).thenReturn("secret-key-a");
         Mockito.when(this.queueA.getMaxNumberOfMessages()).thenReturn(20);
         Mockito.when(this.queueA.getWaitTimeSeconds()).thenReturn(10);
 
         Mockito.when(this.queueB.getUuid()).thenReturn(UUID_B);
         Mockito.when(this.queueB.getUrl()).thenReturn("url-b");
-        Mockito.when(this.queueB.getAWSAccessKeyId()).thenReturn("access-key-b");
-        Mockito.when(this.queueB.getAWSSecretKey()).thenReturn("secret-key-b");
         Mockito.when(this.queueB.getMaxNumberOfMessages()).thenReturn(20);
         Mockito.when(this.queueB.getWaitTimeSeconds()).thenReturn(10);
 
@@ -283,8 +279,6 @@ public class SQSQueueMonitorSchedulerImplTest {
         Mockito.when(this.factory.createMonitor(this.monitorA, queueA_)).thenReturn(monitorA_);
         Mockito.when(queueA_.getUuid()).thenReturn(UUID_A);
         Mockito.when(queueA_.getUrl()).thenReturn("url-a");
-        Mockito.when(queueA_.getAWSAccessKeyId()).thenReturn("access-key-a");
-        Mockito.when(queueA_.getAWSSecretKey()).thenReturn("secret-key-a");
         Mockito.when(queueA_.getMaxNumberOfMessages()).thenReturn(20);
         Mockito.when(queueA_.getWaitTimeSeconds()).thenReturn(10);
 

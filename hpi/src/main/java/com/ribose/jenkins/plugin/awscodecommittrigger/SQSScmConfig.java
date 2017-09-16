@@ -17,6 +17,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,22 +79,13 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
     public GitSCM toGitSCM() {
         return getScmFactory().createGit(this.url, getBranchSpecs());
-//        return new GitSCM(
-//            GitSCM.createRepoList(this.url, null),
-//            getBranchSpecs(),
-//            false,
-//            Collections.<SubmoduleConfig>emptyList(),
-//            null,
-//            null,
-//            Collections.<GitSCMExtension>emptyList()
-//        );
     }
 
     @Extension
     public static class DescriptorImpl extends Descriptor<SQSScmConfig> {
 
         @Override
-        public SQSScmConfig newInstance(StaplerRequest req, JSONObject jsonObject) throws FormException {
+        public SQSScmConfig newInstance(StaplerRequest req, @Nonnull JSONObject jsonObject) throws FormException {
             JSONObject json = jsonObject.getJSONObject("type");
             json.put("type", json.getString("value"));
             json.remove("value");
@@ -108,9 +100,5 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
                 ? FormValidation.ok()
                 : FormValidation.error(Messages.errorCodeCommitUrlInvalid());
         }
-
-//        public String getSubscribeBranchPage() {
-//            return getViewPage(clazz, "subscribedBranches.jelly");
-//        }
     }
 }

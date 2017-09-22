@@ -267,11 +267,6 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         private transient SQSJobFactory sqsJobFactory;
 
-//        public static DescriptorImpl get() {
-//            final DescriptorExtensionList<Trigger<?>, TriggerDescriptor> triggers = Trigger.all();
-//            return triggers.get(DescriptorImpl.class);
-//        }
-
         public DescriptorImpl() {
             super(SQSTrigger.class);
             this.sqsJobFactory = Context.injector().getBinding(SQSJobFactory.class).getProvider().get();
@@ -394,7 +389,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             }
 
             if (this.sqsQueues == null) {
-                return false;
+                return true;
             }
 
             for (SQSTriggerQueue sqsQueue : this.sqsQueues) {

@@ -1,4 +1,4 @@
 #!groovy
 
-// copied from https://github.com/jenkinsci/git-plugin/blob/master/Jenkinsfile
-buildPlugin(jenkinsVersions: [null, '2.63'], failFast: false)
+// https://github.com/jenkins-infra/pipeline-library
+buildPlugin(jenkinsVersions: [null, '1.651.2', '2.63'], findbugs: [], failFast: false)

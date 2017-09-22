@@ -25,6 +25,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 
 import java.util.List;
 
+
 public class EventTriggerMatcherImpl implements EventTriggerMatcher {
 
     private static final Log log = Log.get(EventTriggerMatcherImpl.class);

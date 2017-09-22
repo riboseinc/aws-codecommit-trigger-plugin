@@ -6,6 +6,7 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.recipes.WithPlugin;
 
 import java.io.IOException;
 

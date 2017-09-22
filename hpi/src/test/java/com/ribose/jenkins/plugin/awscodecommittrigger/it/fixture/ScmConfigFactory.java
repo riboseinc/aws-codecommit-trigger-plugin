@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 public class ScmConfigFactory {
 
     private static final ScmConfigFactory instance = new ScmConfigFactory();

@@ -17,16 +17,14 @@ public class AbstractPipelineIT extends AbstractJenkinsIT {
 
     protected void subscribeProject(ProjectFixture fixture) throws Exception {
         String name = UUID.randomUUID().toString();
-
         WorkflowJob job = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
-        CpsFlowDefinition flowDefinition = new CpsFlowDefinition(
-            fixture.getPipelineScript().replace("${EmitEvent}", AbstractPipelineIT.class.getName() + ".emitBuildEvent()"),
-            true
-        );
+
+        String script = fixture.getPipelineScript().replace("${EmitEvent}", AbstractPipelineIT.class.getName() + ".emitBuildEvent()");
+        CpsFlowDefinition flowDefinition = new CpsFlowDefinition(script, true);
         job.setDefinition(flowDefinition);
 
         QueueTaskFuture<WorkflowRun> run = job.scheduleBuild2(0);
-        jenkinsRule.assertBuildStatusSuccess(run);
+        jenkinsRule.assertBuildStatusSuccess(run.get());
 
         resetPipelineBuildEvent(fixture);
 
@@ -36,18 +34,18 @@ public class AbstractPipelineIT extends AbstractJenkinsIT {
 
         final String uuid = this.sqsQueue.getUuid();
         SQSTrigger trigger = new SQSTrigger(uuid, fixture.isSubscribeInternalScm(), fixture.getScmConfigs());
-        trigger.start(job, false);
         job.addTrigger(trigger);
+        trigger.start(job, false);
     }
 
     @Whitelisted
-    public synchronized static void emitBuildEvent() {
+    public static void emitBuildEvent() {
         if (buildEvent != null) {
             buildEvent.signal();
         }
     }
 
-    public static synchronized void resetPipelineBuildEvent(ProjectFixture fixture) {
+    public synchronized static void resetPipelineBuildEvent(ProjectFixture fixture) {
         buildEvent = new OneShotEvent();
         fixture.setEvent(buildEvent);
     }

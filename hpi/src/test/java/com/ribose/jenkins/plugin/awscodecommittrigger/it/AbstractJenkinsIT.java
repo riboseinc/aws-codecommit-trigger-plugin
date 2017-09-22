@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+
 public abstract class AbstractJenkinsIT {
     protected static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
 

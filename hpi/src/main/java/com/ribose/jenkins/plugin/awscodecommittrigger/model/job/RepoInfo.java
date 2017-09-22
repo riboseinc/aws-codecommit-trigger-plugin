@@ -11,6 +11,7 @@ import org.eclipse.jgit.transport.URIish;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class RepoInfo {
 
     private List<String> codeCommitUrls;

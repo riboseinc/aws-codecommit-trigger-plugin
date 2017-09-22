@@ -22,19 +22,32 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+
 public class MigrateTo2xJenkinsIT {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
 
-    @Before
-    public void before() throws IOException {
-        String v1File = Utils.getResource(MigrateTo2xJenkinsIT.class, "com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger.xml", true).getFile();
-        FileUtils.copyFileToDirectory(new File(v1File), jenkinsRule.getInstance().getRootDir());
+    @Test
+    public void shouldNotSeeMigrationButton() throws IOException, SAXException {
+        JenkinsRule.WebClient webClient = jenkinsRule.createWebClient();
+        DomElement configureSection = webClient.goTo("configure").getElementsByName("AwsCodeCommitTriggerPlugin").get(0);
+        List<?> buttons = configureSection.getByXPath("//button[contains(.,'Migration')]");
+        Assertions.assertThat(buttons).isEmpty();
     }
 
     @Test
     public void shouldMigrateSQSTriggerQueue() throws IOException, SAXException {
+        String v1File = Utils.getResource(MigrateTo2xJenkinsIT.class, "com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger.xml", true).getFile();
+        FileUtils.copyFileToDirectory(new File(v1File), jenkinsRule.getInstance().getRootDir());
+
+        SQSTrigger.DescriptorImpl desc = (SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class);
+        List<SQSTriggerQueue> queues = desc.getSqsQueues();
+        for (SQSTriggerQueue queue : queues) {
+            String version = queue.getVersion();
+            Assertions.assertThat(StringUtils.checkCompatibility(version, PluginInfo.version)).isFalse();
+        }
+
         JenkinsRule.WebClient webClient = jenkinsRule.createWebClient();
         HtmlPage configurePage = webClient.goTo("configure");
         webClient.setAjaxController(new AjaxController() {
@@ -44,14 +57,7 @@ public class MigrateTo2xJenkinsIT {
         });
 
         DomElement configureSection = configurePage.getElementsByName("AwsCodeCommitTriggerPlugin").get(0);
-        SQSTrigger.DescriptorImpl desc = (SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class);
-        List<SQSTriggerQueue> queues = desc.getSqsQueues();
-        for (SQSTriggerQueue queue : queues) {
-            String version = queue.getVersion();
-            Assertions.assertThat(StringUtils.checkCompatibility(version, PluginInfo.version)).isFalse();
-        }
-
-        HtmlButton migrationButton = (HtmlButton) configureSection.getByXPath("//button[contains(.,\"Migration\")]").get(0);
+        HtmlButton migrationButton = (HtmlButton) configureSection.getByXPath("//button[contains(.,'Migration')]").get(0);
         migrationButton.click();
 
         desc = (SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class);

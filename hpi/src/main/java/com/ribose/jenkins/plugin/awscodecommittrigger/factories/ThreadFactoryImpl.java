@@ -25,7 +25,6 @@ public class ThreadFactoryImpl implements ThreadFactory {
     public Thread newThread(final Runnable r) {
         final Thread thread = new Thread(r);
         thread.setPriority(Thread.MIN_PRIORITY);
-
         return thread;
     }
 }

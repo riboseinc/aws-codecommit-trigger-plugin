@@ -18,7 +18,7 @@
 
     <f:description>Support only <b>"Standard Aws Credentials"</b></f:description>
     <f:entry field="credentialsId" title="Credentials">
-        <c:select context="com.ribose.jenkins.plugin.awscodecommittrigger.credentials.StandardAwsCredentials" />
+        <c:select context="com.ribose.jenkins.plugins.awscodecommittrigger.credentials.StandardAwsCredentials" />
     </f:entry>
 
     <f:validateButton title="${%Test access}" with="region,url,credentialsId" method="validate"/>

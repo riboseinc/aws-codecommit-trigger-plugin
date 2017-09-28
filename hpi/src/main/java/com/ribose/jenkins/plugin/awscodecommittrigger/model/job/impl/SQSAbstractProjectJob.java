@@ -1,6 +1,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.model.job.impl;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
+import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.model.TaskListener;

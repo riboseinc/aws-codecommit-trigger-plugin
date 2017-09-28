@@ -3,7 +3,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials" xmlns:st="jelly:stapler" >
     <f:invisibleEntry>
         <f:readOnlyTextbox field="uuid"/>
-        <f:readOnlyTextbox field="version"/>
+        <f:readOnlyTextbox field="version" value="${descriptor.version}"/>
     </f:invisibleEntry>
 
     <f:entry title="AWS Region" field="region">

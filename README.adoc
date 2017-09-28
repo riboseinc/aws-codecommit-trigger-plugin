@@ -59,8 +59,7 @@ General steps to config your Amazon Services:
 3. Configure a queue
 
     * Select the name of the queue you just created (the list auto-loaded using _Access key ID_ & _Secret key_)
-    * Enter the _Access key ID_ of the Jenkins user on AWS
-    * Enter the _Secret key_ of the Jenkins user on AWS
+    * Select "Standard Aws Credentials" from the list or click on button "Add Credentials" to create one
 
 4. Click on *Test access*
 

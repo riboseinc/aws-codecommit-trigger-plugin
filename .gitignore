@@ -23,3 +23,5 @@ buildNumber.properties
 workflow/
 docker/
 ruby/
+
+AwsFunctionsIT.java

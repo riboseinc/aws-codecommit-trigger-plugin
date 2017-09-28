@@ -334,8 +334,11 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         @Override
         public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
-            final Object sqsQueues = json.get("sqsQueues");
-
+            Object sqsQueues = json.get("sqsQueues");
+            if (json.size() == 1) {
+                String key = json.keys().next().toString();
+                sqsQueues = json.getJSONObject(key).get("sqsQueues");
+            }
             this.sqsQueues = req.bindJSONToList(SQSTriggerQueue.class, sqsQueues);
             this.initQueueMap();
 

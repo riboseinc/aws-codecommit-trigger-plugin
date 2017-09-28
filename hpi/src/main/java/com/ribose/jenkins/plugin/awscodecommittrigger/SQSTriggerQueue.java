@@ -311,7 +311,9 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 }
 
                 AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
-                assert credentials != null;
+                if (credentials == null) {
+                    return FormValidation.error("Credentials is null");
+                }
 
                 AmazonSQS client = this.factory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
                 if (client != null) {
@@ -381,6 +383,10 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 .includeEmptyValue()
                 .includeAs(ACL.SYSTEM, context, AwsCredentials.class)
                 .includeCurrentValue(credentialsId);
+        }
+
+        public String getVersion() {
+            return PluginInfo.version;
         }
 
         public void setFactory(SQSFactory factory) {

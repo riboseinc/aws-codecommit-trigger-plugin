@@ -1,5 +1,12 @@
 = Changelog
 
+
+== v2.0.2
+* Fix Queues not saved https://github.com/jenkinsci/aws-codecommit-trigger-plugin/issues/37[#37]
+
+== v2.0.1
+* Fix for dependencies loading https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/42[#42]
+
 == v2.0
 * Add new Kind of Credentials "Standard AWS Credentials" to support reuse Queue Keys, https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/27[#27]
 

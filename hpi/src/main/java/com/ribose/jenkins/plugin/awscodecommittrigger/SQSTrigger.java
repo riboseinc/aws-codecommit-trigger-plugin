@@ -259,12 +259,10 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
     public static final class DescriptorImpl extends TriggerDescriptor {
 
         private volatile List<SQSTriggerQueue> sqsQueues;
-
         private volatile transient Map<String, SQSTriggerQueue> sqsQueueMap;
+
         private transient boolean isLoaded;
-
         private transient final SequentialExecutionQueue queue = new SequentialExecutionQueue(Executors.newSingleThreadExecutor());
-
         private transient SQSJobFactory sqsJobFactory;
 
         public DescriptorImpl() {

@@ -18,9 +18,11 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.*;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;
@@ -28,22 +30,24 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstriggerqueue.Messa
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import com.ribose.jenkins.plugin.awscodecommittrigger.net.RequestFactory;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.security.ACL;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
-import hudson.util.Secret;
+import hudson.util.*;
+import hudson.util.HttpResponses;
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.kohsuke.stapler.*;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -273,11 +277,13 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
     @Extension
     public static class DescriptorImpl extends Descriptor<SQSTriggerQueue> {
 
-        private transient SQSFactory factory;
+        private transient SQSFactory sqsFactory;
+        private transient RequestFactory requestFactory;
 
         public DescriptorImpl() {
             super();
-            this.factory = Context.injector().getBinding(SQSFactory.class).getProvider().get();//TODO remove injector()
+            this.sqsFactory = Context.injector().getBinding(SQSFactory.class).getProvider().get();//TODO remove injector()
+            this.requestFactory = Context.injector().getBinding(RequestFactory.class).getProvider().get();
             this.load();
         }
 
@@ -302,33 +308,54 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 Messages.errorMaxNumberOfMessages());
         }
 
+        //TODO implement https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/44
         public FormValidation doValidate(@QueryParameter final String region,
                                          @QueryParameter final String url,
                                          @QueryParameter final String credentialsId) throws IOException, ServletException {
-            try {
-                if (StringUtils.isBlank(credentialsId)) {
-                    return FormValidation.warning("No Credential selected");
-                }
-
-                AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
-                if (credentials == null) {
-                    return FormValidation.error("Credentials is null");
-                }
-
-                AmazonSQS client = this.factory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
-                if (client != null) {
-                    String queueUrl = client.getQueueUrl(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(url)).getQueueUrl();
-                    if (queueUrl.equalsIgnoreCase(url)) {
-                        return FormValidation.okWithMarkup("<span class=\"info\">Access to SQS successful</span>");
-                    }
-                }
-
-                return FormValidation.error("Failed to access to SQS");
-            } catch (final AmazonServiceException ase) {
-                return FormValidation.error(ase, ase.getMessage());
-            } catch (final Exception ex) {
-                return FormValidation.error(ex, "Error validating SQS access");
+            if (StringUtils.isBlank(credentialsId)) {
+                return FormValidation.warning("No Credential selected");
             }
+
+            AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
+            if (credentials == null) {
+                return FormValidation.error("Credentials is null");
+            }
+
+            AmazonSQS client = this.sqsFactory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
+
+            boolean hasReadPermission = false;
+
+            try {
+                ReceiveMessageRequest receiveMessageRequest = this.requestFactory.createReceiveMessageRequest(url, 1, SQSTriggerQueue.WAIT_TIME_SECONDS_MAX);
+                client.receiveMessage(receiveMessageRequest);
+                hasReadPermission = true;
+
+                DeleteMessageBatchRequest deleteMessageBatchRequest = this.requestFactory.createDeleteMessageBatchRequest(url, Collections.singletonList(new Message()));
+                client.deleteMessageBatch(deleteMessageBatchRequest);
+            } catch (final AmazonServiceException e) {
+                log.debug(e.getMessage(), e);
+                switch (e.getStatusCode()) {//84937356886
+                    case HttpStatus.SC_FORBIDDEN:
+                        if (hasReadPermission) {
+                            return FormValidation.okWithMarkup("<span class=\"error\">User not has permission <i>sqs:DeleteMessageBatch</i></span>");
+                        }
+                        return FormValidation.okWithMarkup("<span class=\"error\">User not has permission <i>sqs:ReceiveMessage</i></span>");
+
+                    case HttpStatus.SC_BAD_REQUEST:
+                        return FormValidation.okWithMarkup("<span class=\"info\">Access to SQS successful</span>");
+
+                    default:
+                        return FormValidation.error(e, e.getMessage());
+                }
+            } catch (final Exception e) {
+                log.error(e.getMessage(), e);
+                return FormValidation.error(e, "Error validating SQS access");
+            }
+            finally {
+                client.shutdown();
+            }
+
+            return FormValidation.error("Unknown error");
         }
 
         public ListBoxModel doFillRegionItems() {
@@ -343,22 +370,45 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             return items;
         }
 
-        public ListBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String credentialsId) {
+        public ListBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String credentialsId) throws IOException {
             ListBoxModel items = new ListBoxModel();
             try {
                 AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
                 assert credentials != null;
 
-                AmazonSQS client = this.factory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
+                AmazonSQS client = this.sqsFactory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
                 List<String> queueUrls = client.listQueues().getQueueUrls();
                 for (String queueUrl : queueUrls) {
                     items.add(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(queueUrl), queueUrl);
                 }
-            } catch (Exception e) {
+            } catch (AmazonServiceException e) {//com.amazonaws.SdkClientException: Unable to find a region via the region provider chain. Must provide an explicit region in the builder or setup environment to supply a region.
+                //TODO detect default Region setting in http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+                Stapler.getCurrentResponse().sendError(e.getStatusCode(), e.getErrorMessage());
+            } catch (Exception e) {//com.amazonaws.services.sqs.model.AmazonSQSException: Access to the resource https://sqs.us-west-2.amazonaws.com/ is denied. (Service: AmazonSQS; Status Code: 403; Error Code: AccessDenied; Request ID: 165762d0-bd84-5b9a-aaaa-308446528a6d)
                 items.clear();
             }
             return items;
         }
+
+//        public ComboBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String credentialsId) throws IOException {
+//            ComboBoxModel items = new ComboBoxModel();
+//            try {
+//                AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
+//                assert credentials != null;
+//
+//                AmazonSQS client = this.sqsFactory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
+//                List<String> queueUrls = client.listQueues().getQueueUrls();
+//                for (String queueUrl : queueUrls) {
+//                    items.add(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(queueUrl));
+//                }
+//            } catch (AmazonServiceException e) {//com.amazonaws.SdkClientException: Unable to find a region via the region provider chain. Must provide an explicit region in the builder or setup environment to supply a region.
+//                //TODO detect default Region setting in http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+//                Stapler.getCurrentResponse().sendError(e.getStatusCode(), e.getErrorMessage());
+//            } catch (Exception e) {//com.amazonaws.services.sqs.model.AmazonSQSException: Access to the resource https://sqs.us-west-2.amazonaws.com/ is denied. (Service: AmazonSQS; Status Code: 403; Error Code: AccessDenied; Request ID: 165762d0-bd84-5b9a-aaaa-308446528a6d)
+//                items.clear();
+//            }
+//            return items;
+//        }
 
         private FormValidation validateNumber(final String value, final int min, final int max, final String message) {
             try {
@@ -389,8 +439,12 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             return PluginInfo.version;
         }
 
-        public void setFactory(SQSFactory factory) {
-            this.factory = factory;
+        public void setSqsFactory(SQSFactory sqsFactory) {
+            this.sqsFactory = sqsFactory;
+        }
+
+        public void setRequestFactory(RequestFactory requestFactory) {
+            this.requestFactory = requestFactory;
         }
     }
 }

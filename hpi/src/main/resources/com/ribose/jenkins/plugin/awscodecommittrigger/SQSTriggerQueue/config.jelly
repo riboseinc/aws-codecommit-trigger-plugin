@@ -6,22 +6,44 @@
         <f:readOnlyTextbox field="version" value="${descriptor.version}"/>
     </f:invisibleEntry>
 
+    <f:description>Support only <b>"Standard Aws Credentials"</b></f:description>
+
+    <f:entry field="credentialsId" title="Credentials">
+        <c:select context="com.ribose.jenkins.plugins.awscodecommittrigger.credentials.StandardAwsCredentials" />
+    </f:entry>
+
     <f:entry title="AWS Region" field="region">
         <f:select />
         <tr/>
     </f:entry>
+
+    <!--<f:entry title="${%SQS Queue}" field="url">-->
+
+        <!--<f:radioBlock title="Enter queue url" name="abc" checked="true" value="true">-->
+            <!--<f:block>-->
+                <!--<f:select />-->
+            <!--</f:block>-->
+        <!--</f:radioBlock>-->
+        <!--<p>-->
+            <!--<input type="button" value="Enter Queue url" class="yui-button validate-button" />-->
+
+            <!--<f:radioBlock title="Enter queue url" name="abc" checked="false" value="false">-->
+                <!--<f:block>-->
+                <!--<f:textbox />-->
+                <!--</f:block>-->
+            <!--</f:radioBlock>-->
+            <!--<a href="">Click to enter Queue url if the list is empy</a>-->
+        <!--</p>-->
+    <!--</f:entry>-->
 
     <f:entry title="${%SQS Queue}" field="url">
         <f:select />
         <tr/>
     </f:entry>
 
-    <f:description>Support only <b>"Standard Aws Credentials"</b></f:description>
-    <f:entry field="credentialsId" title="Credentials">
-        <c:select context="com.ribose.jenkins.plugins.awscodecommittrigger.credentials.StandardAwsCredentials" />
-    </f:entry>
+        <f:validateButton title="${%Test access}" with="region,url,credentialsId" method="validate"/>
 
-    <f:validateButton title="${%Test access}" with="region,url,credentialsId" method="validate"/>
+
 
     <f:advanced title="${%Advanced}">
         <f:entry title="${%Request wait time [s]}" field="waitTimeSeconds">

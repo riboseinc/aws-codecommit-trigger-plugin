@@ -1,0 +1,18 @@
+<div>
+The maximum number of messages to receive per request. Amazon SQS never returns more messages than
+this value but may return fewer. Values can be from 1 to 10. Default is 10.
+<p/>
+All of the messages are not necessarily returned.
+<p/>
+Larger values can reduce the number of requests that need to be sent if multiple messages are
+available. It is recommended to use the maximum value. Reduce the value only if you experience
+issues and are certain that a smaller number fixes them.
+<p/>
+See also:
+<a href="http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html">
+API ReceiveMessage</a>
+<br/>
+See also:
+<a href="https://aws.amazon.com/blogs/aws/amazon-sqs-long-polling-batching/">Amazon SQS – Long
+Polling and Request Batching / Client-Side Buffering</a>
+</div>

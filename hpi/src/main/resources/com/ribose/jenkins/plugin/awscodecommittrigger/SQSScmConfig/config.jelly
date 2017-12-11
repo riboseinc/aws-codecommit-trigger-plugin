@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:block>
+        <h4 style="font-style: italic; margin-top: 0px;">Manual Subscription</h4>
+    </f:block>
+
+    <f:invisibleEntry>
+        <f:readOnlyTextbox default="ER" field="type"/>
+    </f:invisibleEntry>
+
+    <f:entry title="Code commit repository URL" field="url">
+        <f:textbox placeholder="ex: https://git-codecommit.us-west-2.amazonaws.com/v1/repos/sample-repo"/>
+        <f:description>only Git supported</f:description>
+    </f:entry>
+
+    <f:entry title="Subscribed branches (blank for 'any')" field="subscribedBranches">
+        <f:textbox placeholder="ex: development, master, *feature, feature/**"/>
+        <f:description>csv format, more details in help button</f:description>
+    </f:entry>
+
+    <f:entry>
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
+    </f:entry>
+</j:jelly>

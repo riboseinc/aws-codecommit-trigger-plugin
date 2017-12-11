@@ -1,6 +1,5 @@
 = AWS CodeCommit Trigger Plugin
 
-
 image:https://img.shields.io/travis/jenkinsci/aws-codecommit-trigger-plugin.svg?style=flat-square[link=https://travis-ci.org/jenkinsci/aws-codecommit-trigger-plugin]
 image:https://img.shields.io/:license-apache-blue.svg?style=flat-square[link=https://www.apache.org/licenses/LICENSE-2.0.html]
 
@@ -28,6 +27,8 @@ GmbH.
 Our Jenkins Wiki Page is located here:
 https://wiki.jenkins.io/display/JENKINS/AWS+CodeCommit+Trigger+Plugin
 
+Use https://issues.jenkins-ci.org[JIRA] to report issues / feature requests
+
 
 == Quick Setup With Terraform
 
@@ -49,17 +50,16 @@ General steps to config your Amazon Services:
    read/delete message from the SQS Queue.
 
 
-== Jenkins System Configuration
+=== Jenkins System Configuration
 
 1. Go to `Jenkins > Manage Jenkins > Configure System` on your Jenkins
 
-2. Go to `AWS CodeCommit Trigger SQS Plugin`
+2. Go to `AWS Code Commit Trigger SQS Plugin`
 
 3. Configure a queue
 
     * Select the name of the queue you just created (the list auto-loaded using _Access key ID_ & _Secret key_)
-    * Enter the _Access key ID_ of the Jenkins user on AWS
-    * Enter the _Secret key_ of the Jenkins user on AWS
+    * Select "Standard Aws Credentials" from the list or click on button "Add Credentials" to create one
 
 4. Click on *Test access*
 
@@ -70,13 +70,24 @@ on Amazon Web Services.
 
 image::doc/images/global-config.png["Jenkins configuration test"]
 
+If you get the error `Unable to find a region via the region provider chain`,
+create the directory `.aws` inside the Jenkins home directory.
+Then inside the `.aws` directory add the `config` file with the following configuration.
+
+```
+[default]
+output = json
+region = <region where is your repository>
+```
+
+image::doc/images/region-not-found.png["Region not found error"]
 
 == Jenkins Job Configuration
 
 1. Go to `Jenkins > $job`
 2. Click on `Configure`
 3. Scroll down to `Build Triggers`
-4. Check `Build when a matching AWS CodeCommit SNS message is published to the configured Amazon SQS queue`
+4. Check `Build when a message is published to an SQS queue`
 5. Select the queue you created previously
 
 For cost savings, the plugin does not start monitoring a queue until at
@@ -110,6 +121,7 @@ image::doc/images/job-triggers.png[Build trigger configuration]
 6. Push to the branch (`git push origin my-new-feature`)
 7. Create new pull request
 
+
 == Authors
 
 AWS CodeCommit Trigger Plugin is provided by
@@ -120,4 +132,3 @@ https://www.ribose.com[Ribose Inc.]
 == License
 
 Full text: link:LICENSE[Apache License]
-

@@ -1,7 +1,13 @@
+dist: precise
 sudo: required
 
-jdk:
-  - oraclejdk8
-  - oraclejdk7
+cache:
+  directories:
+    - $HOME/.m2
+
+jdk: [oraclejdk8, oraclejdk7]
 
 language: java
+
+script:
+  - mvn clean verify -P$TRAVIS_BRANCH

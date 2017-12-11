@@ -1,0 +1,6 @@
+<?jelly escape-by-default='true'?>
+
+<div>
+    This plugin triggers builds on all events received via Amazon Web
+    Services Simple Queue Service (AWS SQS) on a specified Queue.
+</div>

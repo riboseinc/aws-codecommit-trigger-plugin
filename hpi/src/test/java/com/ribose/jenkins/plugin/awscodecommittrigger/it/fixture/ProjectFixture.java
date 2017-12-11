@@ -20,6 +20,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
+import hudson.model.FreeStyleBuild;
 import hudson.scm.SCM;
 import hudson.util.OneShotEvent;
 
@@ -47,6 +48,7 @@ public class ProjectFixture implements MarkIndex {
         .create();
 
     private int index;
+    private FreeStyleBuild lastBuild;
 
     public List<SQSScmConfig> getScmConfigs() {
         return scmConfigs;
@@ -152,5 +154,13 @@ public class ProjectFixture implements MarkIndex {
     public ProjectFixture setHasTrigger(boolean hasTrigger) {
         this.hasTrigger = hasTrigger;
         return this;
+    }
+
+    public FreeStyleBuild getLastBuild() {
+        return lastBuild;
+    }
+
+    public void setLastBuild(FreeStyleBuild lastBuild) {
+        this.lastBuild = lastBuild;
     }
 }

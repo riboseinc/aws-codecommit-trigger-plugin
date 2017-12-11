@@ -27,6 +27,7 @@ import hudson.util.StreamTaskListener;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 
 public class SQSTriggerBuilder implements Runnable {
@@ -35,8 +36,9 @@ public class SQSTriggerBuilder implements Runnable {
     private final TaskListener listener;
     private final Message message;
     private final String messageId;
+    private final String userarns;
 
-    public SQSTriggerBuilder(final SQSJob job, final Message message) throws IOException {
+    public SQSTriggerBuilder(final SQSJob job, final Message message, List<String> userarns) throws IOException {
         this.job = job;
         this.message = message;
 
@@ -45,6 +47,7 @@ public class SQSTriggerBuilder implements Runnable {
         this.log = Log.get(SQSTriggerBuilder.class, this.listener.getLogger(), true);
 
         this.messageId = StringUtils.getMessageId(message);
+        this.userarns = org.apache.commons.lang3.StringUtils.join(userarns);
         this.log.info("Try to trigger the build for message: %s", messageId);
         this.log.debug("Print out message-body: %s", message.getBody());
     }
@@ -63,7 +66,7 @@ public class SQSTriggerBuilder implements Runnable {
     }
 
     private void startJob() {
-        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("Start job for SQS Message: %s", StringUtils.getMessageId(message)));
+        Cause cause = new Cause.RemoteCause("SQSTrigger", String.format("User invoked: %s", this.userarns));
 
         //Job Build can be triggered by 1+ SQS messages because of quiet-period in Jenkins, @see https://jenkins.io/blog/2010/08/11/quiet-period-feature/
         boolean scheduled = job.scheduleBuild(cause);

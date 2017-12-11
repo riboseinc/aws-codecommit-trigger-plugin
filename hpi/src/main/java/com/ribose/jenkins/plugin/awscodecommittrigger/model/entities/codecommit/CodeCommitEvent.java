@@ -34,6 +34,7 @@ public class CodeCommitEvent implements Event {
     private final String path;
     private final String branch;
     private final String arn;
+    private final String user;
 
     public CodeCommitEvent(final Record record, final Reference reference) {
         this.arn = record.getEventSourceARN();
@@ -43,6 +44,7 @@ public class CodeCommitEvent implements Event {
         this.path = String.format(PATH, tokens[5]);
 
         this.branch = reference.getName();
+        this.user = record.getUserIdentityARN();
     }
 
     @Override
@@ -57,7 +59,7 @@ public class CodeCommitEvent implements Event {
 
     @Override
     public String getUser() {
-        return null;
+        return this.user;
     }
 
     @Override

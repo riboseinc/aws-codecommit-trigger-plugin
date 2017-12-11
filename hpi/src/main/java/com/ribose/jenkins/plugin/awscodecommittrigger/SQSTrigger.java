@@ -49,7 +49,9 @@ import hudson.util.SequentialExecutionQueue;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -175,28 +177,34 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
         log.debug("Parse and do match against events, message: %s", this.job, message.getBody());
 
         final MessageParser parser = this.messageParserFactory.createParser(message);
-        final EventTriggerMatcher matcher = this.eventTriggerMatcher;
         final List<Event> events = parser.parseMessage(message);
 
-        boolean matched = matcher.matches(events, this.sqsJob);
+        boolean matched = this.eventTriggerMatcher.matches(events, this.sqsJob);
         String messageId = com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getMessageId(message);
         log.info("Any event matched? %s. Message: %s", this.job, matched, messageId);
         if (matched) {
             log.debug("Hurray! Execute it", this.job);
-            this.execute(message);
+
+            //TODO use java8 lambda for this loop
+            List<String> userarns = new ArrayList<>();
+            for (Event event : events) {
+                userarns.add(event.getUser());
+            }
+
+            this.execute(message, userarns);
             return true;
         }
 
         return false;
     }
 
-    private void execute(@Nonnull final Message message) {
+    private void execute(@Nonnull final Message message, final List<String> userarns) {
         this.executor.execute(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    new SQSTriggerBuilder(SQSTrigger.this.sqsJob, message).run();
+                    new SQSTriggerBuilder(SQSTrigger.this.sqsJob, message, userarns).run();
                 } catch (Exception e) {
                     UnexpectedException error = new UnexpectedException(e);
                     SQSTrigger.log.error("Unable to execute job for this message %s, cause: %s", SQSTrigger.this.job, message.getMessageId(), error);

@@ -15,11 +15,4 @@ public class Utils {
     public static URL getResource(Class clazz, String name, boolean includeClassName) {
         return clazz.getResource((includeClassName ? clazz.getSimpleName() + "/" : "") + name);
     }
-
-    public static List asList(MarkIndex... args) {
-        for (int i = 0; i < args.length; i++) {
-            args[i].setIndex(i);
-        }
-        return Arrays.asList(args);
-    }
 }

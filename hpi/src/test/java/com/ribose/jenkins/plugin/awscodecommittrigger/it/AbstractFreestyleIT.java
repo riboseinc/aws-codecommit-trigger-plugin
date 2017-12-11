@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class AbstractFreestyleIT extends AbstractJenkinsIT {
 
-    protected void subscribeProject(ProjectFixture fixture) throws Exception {
+    protected void subscribeProject(final ProjectFixture fixture) throws Exception {
         String name = UUID.randomUUID().toString();
 
         final FreeStyleProject job = jenkinsRule.getInstance().createProject(FreeStyleProject.class, name);
@@ -38,6 +38,7 @@ public class AbstractFreestyleIT extends AbstractJenkinsIT {
             @Override
             public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
                 event.signal();
+                fixture.setLastBuild(job.getLastBuild());
                 return true;
             }
         });

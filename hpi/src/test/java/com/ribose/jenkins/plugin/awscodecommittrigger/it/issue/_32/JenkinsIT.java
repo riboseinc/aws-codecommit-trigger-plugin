@@ -16,16 +16,15 @@ import java.nio.charset.StandardCharsets;
 @Issue("riboseinc/aws-codecommit-trigger-plugin/issues/32")
 public class JenkinsIT extends AbstractFreestyleIT {
 
-    private final GitSCM scm;
     private final ProjectFixture fixture;
 
     public JenkinsIT() throws IOException {
         String sqsMessage = IOUtils.toString(Utils.getResource(this.getClass(), "us-east-1.json"), StandardCharsets.UTF_8);
-        this.scm = MockGitSCM.fromSqsMessage(sqsMessage, "refs/heads/master");
+        GitSCM scm = MockGitSCM.fromSqsMessage(sqsMessage, "refs/heads/master");
         this.fixture = new ProjectFixture()
             .setSqsMessage(sqsMessage)
             .setSubscribeInternalScm(true)
-            .setScm(this.scm)
+            .setScm(scm)
             .setShouldStarted(true);
     }
 

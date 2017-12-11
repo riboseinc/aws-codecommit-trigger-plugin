@@ -1,0 +1,64 @@
+<?jelly escape-by-default='true'?>
+
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="${%SQS queue to monitor}" field="queueUuid">
+        <f:select/>
+    </f:entry>
+
+
+    <f:entry title="Config SCM subscription">
+        <table>
+            <f:optionalBlock field="subscribeInternalScm"
+                             title="Auto-detect CodeCommit URL and branches from SCM / Pipeline script"
+                             checked="${instance.subscribeInternalScm}">
+                <f:entry>
+                    <j:set var="repoInfo" value="${descriptor.getRepoInfo(it)}"/>
+
+                    <j:if test="${not repoInfo.noUrlFound and instance.workflowJob}">
+                        <f:block>
+                        <p class="warning" style="margin-top: 0px;">Trigger will read the SCM Steps defined in the
+                            <a href="/jenkins/job/${instance.jobName}/lastBuild/flowGraphTable/">last build</a>
+                        </p>
+                        </f:block>
+                    </j:if>
+
+                    <j:choose>
+                        <j:when test="${repoInfo.noUrlFound}">
+                            <div class="error">No Repo URL detected</div>
+                        </j:when>
+                        <j:otherwise>
+                            <j:if test="${repoInfo.hasCodeCommit or repoInfo.hasNonCodeCommit}">
+                                <f:block>
+                                    <h4 style="font-style: italic; margin-top: 0px;">Subscribed to Auto-Detected CodeCommit Repos</h4>
+                                </f:block>
+                            </j:if>
+
+                            <j:if test="${repoInfo.hasCodeCommit}">
+                                <f:entry title="Detected code commit repository">
+                                    <j:forEach var="url" items="${repoInfo.codeCommitUrls}">
+                                        <div class="info">${url}</div>
+                                    </j:forEach>
+                                </f:entry>
+                                <f:entry title="Detected branches">
+                                    <div class="info">${repoInfo.branchesString}</div>
+                                </f:entry>
+                            </j:if>
+
+                            <j:if test="${repoInfo.hasNonCodeCommit}">
+                                <f:entry title="Detected non code commit repository">
+                                    <j:forEach var="url" items="${repoInfo.nonCodeCommitUrls}">
+                                        <div class="error">${url}</div>
+                                    </j:forEach>
+                                </f:entry>
+                            </j:if>
+                        </j:otherwise>
+                    </j:choose>
+                </f:entry>
+            </f:optionalBlock>
+        </table>
+
+        <p>
+            <f:repeatableProperty add="Manually enter CodeCommit URL and branches" field="sqsScmConfigs" />
+        </p>
+    </f:entry>
+</j:jelly>

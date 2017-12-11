@@ -20,3 +20,8 @@ buildNumber.properties
 *.iws
 
 .me/
+workflow/
+docker/
+ruby/
+
+AwsFunctionsIT.java

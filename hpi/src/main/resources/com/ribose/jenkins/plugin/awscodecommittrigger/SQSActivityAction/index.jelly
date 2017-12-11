@@ -1,0 +1,26 @@
+<?jelly escape-by-default='true'?>
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout"
+         xmlns:f="/lib/form">
+    <l:layout title="SQS Activity">
+        <l:side-panel>
+            <st:include it="${it.job}" page="sidepanel.jelly"/>
+        </l:side-panel>
+
+        <l:main-panel>
+            <f:entry>
+                <div>
+                    <input type="button" value="${%clear}" class="yui-button validate-button"
+                           onclick="validateButton('clear', '', this)"/>
+                </div>
+                <div><!-- this is where the error message goes --></div>
+                <a href=""></a>
+            </f:entry>
+            <f:entry>
+                <j:forEach var="name" items="${it.logNames}">
+                    <l:task icon="icon-document icon-md" href="download/${name}" title="${name}"/>
+                </j:forEach>
+            </f:entry>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

@@ -16,14 +16,24 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
+import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Record;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.assertj.core.api.Assertions;
+import org.eclipse.jgit.transport.URIish;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,5 +111,21 @@ public class StringUtilsTest {
         Assertions.assertThat(StringUtils.checkCompatibility("1.16", "2.0")).isFalse();
         Assertions.assertThat(StringUtils.checkCompatibility("1.16", "1.15")).isTrue();
         Assertions.assertThat(StringUtils.checkCompatibility("2.0-SNAPSHOT", "2.0")).isTrue();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelects() {
+        Record r = new Record();
+        r.setUserIdentityARN("arn:sample");
+        List<Record> records = Arrays.asList(r, new Record());
+        Collection<Record> sample = CollectionUtils.select(records, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                return o instanceof Record && ((Record) o).getUserIdentityARN() != null &&  ((Record) o).getUserIdentityARN().contains("sample");
+            }
+        });
+
+        Assertions.assertThat(sample).hasSize(1);
     }
 }

@@ -49,6 +49,8 @@ public interface Event {
      */
     String getBranch();
 
+    String getNoPrefixBranch();
+
     /**
      * Returns a value indicating whether the specified URI matches the events host and path
      * information.

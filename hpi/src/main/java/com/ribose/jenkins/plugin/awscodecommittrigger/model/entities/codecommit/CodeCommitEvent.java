@@ -33,6 +33,7 @@ public class CodeCommitEvent implements Event {
     private final String host;
     private final String path;
     private final String branch;
+    private final String noPrefixBranch;
     private final String arn;
     private final String user;
 
@@ -43,7 +44,8 @@ public class CodeCommitEvent implements Event {
         this.host = String.format(HOST, tokens[3]);
         this.path = String.format(PATH, tokens[5]);
 
-        this.branch = reference.getName().replaceAll("(refs/heads|refs/remotes|remotes)", ""); //truncate all possible git remote prefix, ref hudson.plugins.git.BranchSpec.getPattern
+        this.branch = reference.getName();
+        this.noPrefixBranch = reference.getName().replaceAll("(refs/heads|refs/remotes|remotes)", ""); //truncate all possible git remote prefix, ref hudson.plugins.git.BranchSpec.getPattern
         this.user = record.getUserIdentityARN();
     }
 
@@ -65,6 +67,11 @@ public class CodeCommitEvent implements Event {
     @Override
     public String getBranch() {
         return this.branch;
+    }
+
+    @Override
+    public String getNoPrefixBranch() {
+        return this.noPrefixBranch;
     }
 
     @Override

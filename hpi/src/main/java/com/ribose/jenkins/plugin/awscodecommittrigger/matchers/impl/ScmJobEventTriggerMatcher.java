@@ -142,7 +142,11 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     private boolean matchBranch(final Event event, final List<BranchSpec> branchSpecs) {//TODO use it
         for (BranchSpec branchSpec : branchSpecs) {
             if (branchSpec.matches(event.getBranch())) {
-                log.debug("Event %s matched branch %s", event.getArn(), branchSpec.getName());
+                log.debug("Event branch: %s matched branch: %s", event.getBranch(), branchSpec.getName());
+                return true;
+            }
+            else if (branchSpec.matches(event.getNoPrefixBranch())) {
+                log.debug("Event no-prefix-branch: %s matched branch: %s", event.getNoPrefixBranch(), branchSpec.getName());
                 return true;
             }
         }

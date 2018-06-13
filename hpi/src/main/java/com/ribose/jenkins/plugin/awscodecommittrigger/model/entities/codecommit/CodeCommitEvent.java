@@ -43,7 +43,7 @@ public class CodeCommitEvent implements Event {
         this.host = String.format(HOST, tokens[3]);
         this.path = String.format(PATH, tokens[5]);
 
-        this.branch = reference.getName();
+        this.branch = reference.getName().replaceAll("(refs/heads|refs/remotes|remotes)", ""); //truncate all possible git remote prefix, ref hudson.plugins.git.BranchSpec.getPattern
         this.user = record.getUserIdentityARN();
     }
 

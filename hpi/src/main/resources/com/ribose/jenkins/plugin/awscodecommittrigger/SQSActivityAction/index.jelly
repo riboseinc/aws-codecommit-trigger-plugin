@@ -11,7 +11,7 @@
             <f:entry>
                 <div>
                     <input type="button" value="${%clear}" class="yui-button validate-button"
-                           onclick="validateButton('clear', '', this)"/>
+                           onclick="validateButton('clear', '', this)" />
                 </div>
                 <div><!-- this is where the error message goes --></div>
                 <a href=""></a>

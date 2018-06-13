@@ -86,16 +86,19 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
         @Override
         public SQSScmConfig newInstance(StaplerRequest req, @Nonnull JSONObject jsonObject) throws FormException {
-            JSONObject json = jsonObject.getJSONObject("type");
-            json.put("type", json.getString("value"));
-            json.remove("value");
-            return super.newInstance(req, json);//req.bindJSON(SQSScmConfig.class, json);
+            Object typeObject = jsonObject.get("type");
+            if (typeObject.getClass().isAssignableFrom(JSONObject.class)) {
+                JSONObject jsonType = jsonObject.getJSONObject("type");
+                jsonObject.put("type", jsonType.getString("value"));
+            }
+            return super.newInstance(req, jsonObject);
         }
 
         public FormValidation doCheckUrl(@QueryParameter final String url) {
             if (StringUtils.isBlank(url)) {
                 return FormValidation.warning(Messages.warningBlankUrl());
             }
+
             return com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.isCodeCommitRepo(url)
                 ? FormValidation.ok()
                 : FormValidation.error(Messages.errorCodeCommitUrlInvalid());

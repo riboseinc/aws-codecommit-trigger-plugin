@@ -21,7 +21,7 @@ public class JenkinsIT extends AbstractFreestyleIT {
 
     public JenkinsIT() {
         projectFixtures = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 2; i++) {
             String branch = String.format("%s_%s", i, UUID.randomUUID().toString());
             projectFixtures.add(
                 new ProjectFixture()

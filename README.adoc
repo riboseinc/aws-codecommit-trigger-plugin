@@ -1,8 +1,7 @@
 = AWS CodeCommit Trigger Plugin
 
-image:https://img.shields.io/travis/jenkinsci/aws-codecommit-trigger-plugin.svg?style=flat-square[link=https://travis-ci.org/jenkinsci/aws-codecommit-trigger-plugin]
+image:https://img.shields.io/travis/jenkinsci/aws-codecommit-trigger-plugin.svg?style=flat-square[link=https://travis-ci.org/jenkinsci/aws-codecommit-trigger-plugin.svg?branch=master]
 image:https://img.shields.io/:license-apache-blue.svg?style=flat-square[link=https://www.apache.org/licenses/LICENSE-2.0.html]
-
 
 == Introduction
 

@@ -19,6 +19,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Record;
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
+import hudson.plugins.git.BranchSpec;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.Predicate;
@@ -127,5 +128,13 @@ public class StringUtilsTest {
         });
 
         Assertions.assertThat(sample).hasSize(1);
+    }
+
+    @Test
+    public void testGitBranchSpec() {
+        BranchSpec gitBranchSpec = new BranchSpec("master");
+        String fetchBranch = "refs/heads/master";
+        boolean matched = gitBranchSpec.matches(fetchBranch);
+        Assertions.assertThat(matched).isTrue();
     }
 }

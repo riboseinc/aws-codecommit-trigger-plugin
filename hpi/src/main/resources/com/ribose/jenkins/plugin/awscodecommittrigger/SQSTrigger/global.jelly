@@ -19,6 +19,8 @@
             <ul>
                 <li>sqs:ReceiveMessage</li>
                 <li>sqs:DeleteMessageBatch</li>
+                <li>sqs:GetQueueAttributes</li>
+                <li>sqs:ListQueues <b>(optional - to query ListQueues)</b></li>
             </ul>
         </f:block>
 

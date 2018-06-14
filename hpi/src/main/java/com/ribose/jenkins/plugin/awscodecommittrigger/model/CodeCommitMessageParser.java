@@ -44,11 +44,14 @@ public class CodeCommitMessageParser implements MessageParser {
         List<Event> events = Collections.emptyList();
 
         try {
-            MessageBody body = gson.fromJson(message.getBody(), MessageBody.class);
-            final String json = body.getMessage();
-            log.debug("Parse message %s", json);
+            String messageBody = message.getBody();
+            log.info("Retrieved message-id: %s", message.getMessageId());
+            log.debug("Parse Message:\n%s", message.toString());
 
-            if (StringUtils.isEmpty(json)) {
+            MessageBody body = gson.fromJson(messageBody, MessageBody.class);
+            final String json = body.getMessage();
+
+            if (StringUtils.isBlank(json)) {
                 log.warning("Message contains no text");
                 return Collections.emptyList();
             }

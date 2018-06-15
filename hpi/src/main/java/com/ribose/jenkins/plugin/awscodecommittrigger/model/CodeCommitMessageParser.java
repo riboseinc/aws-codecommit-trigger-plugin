@@ -51,24 +51,28 @@ public class CodeCommitMessageParser implements MessageParser {
             log.debug("Retrieved message-body: %s", messageBody);
 
             MessageBody body = gson.fromJson(messageBody, MessageBody.class);
-            final String json = body.getMessage();
+            String recordsJson = body.getMessage();
 
-            if (StringUtils.isBlank(json)) {
-                log.warning("Message contains no text");
-                return Collections.emptyList();
+            if (StringUtils.isBlank(recordsJson)) {
+                log.warning("Message contains no text => Try to parse message-body to records");
+                recordsJson = messageBody;
             }
 
-            if (!json.startsWith("{") || !json.endsWith("}")) {
-                log.warning("Message text is no JSON");
-                return Collections.emptyList();
-            }
-
-            events = this.parseRecords(json);
+            events = this.parseEvents(StringUtils.defaultString(recordsJson));
         } catch (final com.google.gson.JsonSyntaxException e) {
             log.error("JSON syntax exception, cannot parse message: %s", e);
         }
 
         return events;
+    }
+
+    private List<Event> parseEvents(final String recordsJson) {
+        if (!recordsJson.startsWith("{") || !recordsJson.endsWith("}")) {
+            log.warning("Message text is no JSON");
+            return Collections.emptyList();
+        }
+
+        return this.parseRecords(recordsJson);
     }
 
     private List<Event> parseRecords(final String json) {

@@ -85,7 +85,7 @@ public class CodeCommitMessageParser implements MessageParser {
             return;
         }
 
-        final CodeCommit codeCommit = record.getCodeCommit();
+        final CodeCommit codeCommit = record.getCodecommit();
 
         for (final Reference reference : codeCommit.getReferences()) {
             final Event event = new CodeCommitEvent(record, reference);

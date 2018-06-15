@@ -26,7 +26,7 @@ import java.util.List;
 public class CodeCommit {
 
     @Expose
-    @SerializedName("references")
+//    @SerializedName("references")
     private List<Reference> references;
 
 //    public List<Reference> getReferences() {

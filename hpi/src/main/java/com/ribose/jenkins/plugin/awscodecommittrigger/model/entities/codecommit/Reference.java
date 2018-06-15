@@ -25,7 +25,7 @@ import lombok.Data;
 public class Reference {
 
     @Expose
-    @SerializedName("commit")
+//    @SerializedName("commit")
     private String commit;
 
     @Expose

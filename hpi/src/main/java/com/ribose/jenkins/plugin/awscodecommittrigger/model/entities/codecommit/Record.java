@@ -29,12 +29,11 @@ public class Record {
 //    private String awsRegion;
 
     @Expose
-    @SerializedName("codecommit")
-    private CodeCommit codeCommit;
+    private CodeCommit codecommit;
 
-    @Expose
-    @SerializedName("eventId")
-    private String eventId;
+//    @Expose
+//    @SerializedName("eventId")
+//    private String eventId;
 
 //    @Expose
 //    @SerializedName("eventName")
@@ -45,11 +44,9 @@ public class Record {
 //    private int eventPartNumber;
 //
     @Expose
-    @SerializedName("eventSource")
     private String eventSource;
 
     @Expose
-    @SerializedName("eventSourceARN")
     private String eventSourceARN;
 
 //    @Expose
@@ -73,6 +70,6 @@ public class Record {
 //    private String eventVersion;
 
     @Expose
-    @SerializedName("userIdentityARN")
+//    @SerializedName("userIdentityARN")
     private String userIdentityARN;
 }

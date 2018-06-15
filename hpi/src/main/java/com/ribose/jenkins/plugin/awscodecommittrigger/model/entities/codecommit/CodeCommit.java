@@ -18,21 +18,22 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
 import java.util.List;
 
-
+@Data
 public class CodeCommit {
 
     @Expose
     @SerializedName("references")
     private List<Reference> references;
 
-    public List<Reference> getReferences() {
-        return this.references;
-    }
-
-    public void setReferences(List<Reference> references) {
-        this.references = references;
-    }
+//    public List<Reference> getReferences() {
+//        return this.references;
+//    }
+//
+//    public void setReferences(List<Reference> references) {
+//        this.references = references;
+//    }
 }

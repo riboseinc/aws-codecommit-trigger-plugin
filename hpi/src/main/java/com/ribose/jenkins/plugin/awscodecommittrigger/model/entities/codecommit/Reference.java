@@ -18,8 +18,10 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
 
+@Data
 public class Reference {
 
     @Expose
@@ -30,19 +32,19 @@ public class Reference {
     @SerializedName("ref")
     private String reference;
 
-    public String getCommit() {
-        return this.commit;
-    }
-
-    public String getName() {
+//    public String getCommit() {
+//        return this.commit;
+//    }
+//
+/*    public String getName() {
         return this.reference;
-    }
+    }*/
 
-    public void setCommit(String commit) {
-        this.commit = commit;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
+//    public void setCommit(String commit) {
+//        this.commit = commit;
+//    }
+//
+//    public void setReference(String reference) {
+//        this.reference = reference;
+//    }
 }

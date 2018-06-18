@@ -20,6 +20,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParser;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -54,12 +55,12 @@ public class CodeCommitMessageParser implements MessageParser {
             String recordsJson = body.getMessage();
 
             if (StringUtils.isBlank(recordsJson)) {
-                log.warning("Message contains no text => Try to parse message-body to records");
+                log.warning("Message contains no text => Try to parse message-body instead");
                 recordsJson = messageBody;
             }
 
             events = this.parseEvents(StringUtils.defaultString(recordsJson));
-        } catch (final com.google.gson.JsonSyntaxException e) {
+        } catch (final JsonSyntaxException e) {
             log.error("JSON syntax exception, cannot parse message: %s", e);
         }
 

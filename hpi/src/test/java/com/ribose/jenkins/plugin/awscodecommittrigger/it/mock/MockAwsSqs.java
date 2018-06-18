@@ -82,7 +82,7 @@ public class MockAwsSqs {
         return instance;
     }
 
-    public void clearAndShutdown() {
+    public synchronized void clearAndShutdown() {
         this.sqsMessageTemplate = null;
         List<Message> messages = this.sqsClient.receiveMessage(this.sqsUrl).getMessages();
         for (Message message : messages) {

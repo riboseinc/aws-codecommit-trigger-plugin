@@ -114,21 +114,21 @@ public class StringUtilsTest {
         Assertions.assertThat(StringUtils.checkCompatibility("2.0-SNAPSHOT", "2.0")).isTrue();
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testSelects() {
-        Record r = new Record();
-        r.setUserIdentityARN("arn:sample");
-        List<Record> records = Arrays.asList(r, new Record());
-        Collection<Record> sample = CollectionUtils.select(records, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return o instanceof Record && ((Record) o).getUserIdentityARN() != null &&  ((Record) o).getUserIdentityARN().contains("sample");
-            }
-        });
-
-        Assertions.assertThat(sample).hasSize(1);
-    }
+//    @Test
+//    @SuppressWarnings("unchecked")
+//    public void testSelects() {
+//        Record r = new Record();
+//        r.setUserIdentityARN("arn:sample");
+//        List<Record> records = Arrays.asList(r, new Record());
+//        Collection<Record> sample = CollectionUtils.select(records, new Predicate() {
+//            @Override
+//            public boolean evaluate(Object o) {
+//                return o instanceof Record && ((Record) o).getUserIdentityARN() != null &&  ((Record) o).getUserIdentityARN().contains("sample");
+//            }
+//        });
+//
+//        Assertions.assertThat(sample).hasSize(1);
+//    }
 
     @Test
     public void testGitBranchSpec() {

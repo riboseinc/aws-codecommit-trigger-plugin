@@ -109,18 +109,6 @@ public final class StringUtils {
         return findValueByPatter(queueUrl, SQS_URL_PATTERN, "endpoint");
     }
 
-    /**
-     * Read `MessageId` from given message.body
-     *
-     * @param message
-     * @return Message Id
-     * */
-    @CheckForNull
-    public static String getMessageId(Message message) {
-        String body = message.getBody();
-        return StringUtils.findByUniqueJsonKey(body, "MessageId");
-    }
-
     public static String getCodeCommitRepoName(String codeCommitUrl) {
         return findValueByPatter(codeCommitUrl, CODE_COMMIT_PATTERN, "repoName");
     }

@@ -20,6 +20,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParser;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -44,26 +45,35 @@ public class CodeCommitMessageParser implements MessageParser {
         List<Event> events = Collections.emptyList();
 
         try {
-            MessageBody body = gson.fromJson(message.getBody(), MessageBody.class);
-            final String json = body.getMessage();
-            log.debug("Parse message %s", json);
+            log.info("Retrieved message-id: %s", message.getMessageId());
+            log.debug("Parse Message:\n%s", message.toString());
 
-            if (StringUtils.isEmpty(json)) {
-                log.warning("Message contains no text");
-                return Collections.emptyList();
+            String messageBody = message.getBody();
+            log.debug("Retrieved message-body: %s", messageBody);
+
+            MessageBody body = gson.fromJson(messageBody, MessageBody.class);
+            String recordsJson = body.getMessage();
+
+            if (StringUtils.isBlank(recordsJson)) {
+                log.warning("Message contains no text => Try to parse message-body instead");
+                recordsJson = messageBody;
             }
 
-            if (!json.startsWith("{") || !json.endsWith("}")) {
-                log.warning("Message text is no JSON");
-                return Collections.emptyList();
-            }
-
-            events = this.parseRecords(json);
-        } catch (final com.google.gson.JsonSyntaxException e) {
+            events = this.parseEvents(StringUtils.defaultString(recordsJson));
+        } catch (final JsonSyntaxException e) {
             log.error("JSON syntax exception, cannot parse message: %s", e);
         }
 
         return events;
+    }
+
+    private List<Event> parseEvents(final String recordsJson) {
+        if (!recordsJson.startsWith("{") || !recordsJson.endsWith("}")) {
+            log.warning("Message text is no JSON");
+            return Collections.emptyList();
+        }
+
+        return this.parseRecords(recordsJson);
     }
 
     private List<Event> parseRecords(final String json) {
@@ -80,7 +90,7 @@ public class CodeCommitMessageParser implements MessageParser {
             return;
         }
 
-        final CodeCommit codeCommit = record.getCodeCommit();
+        final CodeCommit codeCommit = record.getCodecommit();
 
         for (final Reference reference : codeCommit.getReferences()) {
             final Event event = new CodeCommitEvent(record, reference);

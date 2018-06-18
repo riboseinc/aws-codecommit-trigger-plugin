@@ -47,4 +47,20 @@ public class GsonParserTest {
         Records records = gson.fromJson(messageBody.getMessage(), Records.class);
         Assertions.assertThat(records).isNotNull().hasOnlyElementsOfTypes(Record.class);
     }
+
+    @Test
+    public void testIssue54() throws IOException {
+        String sqsResponse = IOUtils.toString(Utils.getResource(GsonParserTest.class, "issue_54.json"), StandardCharsets.UTF_8);
+        Assertions.assertThat(sqsResponse).isNotBlank();
+
+        MessageBody messageBody = gson.fromJson(sqsResponse, MessageBody.class);
+        Assertions.assertThat(messageBody).isNotNull()
+            .extracting("MessageId", "Message").isNotNull().isNotEmpty();
+
+        String recordsJson = messageBody.getMessage();
+        Assertions.assertThat(recordsJson).isNotBlank();
+
+        Records records = gson.fromJson(recordsJson, Records.class);
+        Assertions.assertThat(records).isNotNull().hasOnlyElementsOfTypes(Record.class);
+    }
 }

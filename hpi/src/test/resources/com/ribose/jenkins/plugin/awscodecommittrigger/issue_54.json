@@ -1,0 +1,12 @@
+{
+    "Type" : "Notification",
+    "MessageId" : "xxxx-xxxx-xxxx-xxxx-xxxx",
+    "TopicArn" : "arn:aws:sns:us-east-1:xxxx:codecommit-xxxx-topic",
+    "Subject" : "UPDATE: AWS CodeCommit us-east-1 push: xxxx",
+    "Message" : "{\"Records\":[{\"awsRegion\":\"us-east-1\",\"codecommit\":{\"references\":[{\"commit\":\"xxxxxxxxxxxxxxxxx\",\"ref\":\"refs/heads/master\"}]},\"customData\":\"\",\"eventId\":\"xxxx-xxxx-xxxx-xxxx-xxxx\",\"eventName\":\"ReferenceChanges\",\"eventPartNumber\":1,\"eventSource\":\"aws:codecommit\",\"eventSourceARN\":\"arn:aws:codecommit:us-east-1:1111111111:xxxx\",\"eventTime\":\"2018-06-14T02:28:43.851+0000\",\"eventTotalParts\":1,\"eventTriggerConfigId\":\"xxxx-xxxx-xxx-xxxx-xxxx\",\"eventTriggerName\":\"notifications\",\"eventVersion\":\"1.0\",\"userIdentityARN\":\"arn:aws:iam::1111111111:user/system/cc-xxx\"}]}",
+    "Timestamp" : "2018-06-14T02:28:43.890Z",
+    "SignatureVersion" : "1",
+    "Signature" : "xxxxxxxxxxxxxx",
+    "SigningCertURL" : "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-xxxxxxxxxx.pem",
+    "UnsubscribeURL" : "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:101221321624:codecommit-xxxx-topic:xxxxxx-xxxx-xxxx-xxxx-xxxx"
+}

@@ -25,26 +25,9 @@ import lombok.Data;
 public class Reference {
 
     @Expose
-//    @SerializedName("commit")
     private String commit;
 
     @Expose
     @SerializedName("ref")
     private String reference;
-
-//    public String getCommit() {
-//        return this.commit;
-//    }
-//
-/*    public String getName() {
-        return this.reference;
-    }*/
-
-//    public void setCommit(String commit) {
-//        this.commit = commit;
-//    }
-//
-//    public void setReference(String reference) {
-//        this.reference = reference;
-//    }
 }

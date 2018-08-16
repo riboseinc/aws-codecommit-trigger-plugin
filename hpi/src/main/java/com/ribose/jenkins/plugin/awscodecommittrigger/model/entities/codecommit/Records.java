@@ -18,11 +18,12 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
 import java.util.Iterator;
 import java.util.List;
 
-
+@Data
 public class Records implements Iterable<Record> {
 
     @Expose
@@ -36,9 +37,5 @@ public class Records implements Iterable<Record> {
 
     public int size() {
         return this.records.size();
-    }
-
-    public void setRecords(List<Record> records) {
-        this.records = records;
     }
 }

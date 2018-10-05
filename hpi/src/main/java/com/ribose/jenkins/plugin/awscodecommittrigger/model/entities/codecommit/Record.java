@@ -16,7 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit;
 
-import com.google.gson.annotations.Expose;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.annotations.Expose;
 import lombok.Data;
 
 

@@ -19,20 +19,27 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sqs</artifactId>
-            <version>${sqs.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-cbor</artifactId>
-            <version>2.9.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+        <!--dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency-->
     </dependencies>
 
     <build>
@@ -55,12 +62,17 @@
                             <include>com.fasterxml*:*</include>
                             <include>com.amazonaws*:*</include>
                             <include>software.amazon*:*</include>
+                            <include>com.google*:*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
                             <pattern>com.fasterxml</pattern>
                             <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.fasterxml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google</pattern>
+                            <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google</shadedPattern>
                         </relocation>
                     </relocations>
                     <promoteTransitiveDependencies>true</promoteTransitiveDependencies>

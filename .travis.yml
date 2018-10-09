@@ -1,5 +1,4 @@
-dist: precise
-sudo: required
+dist: trusty
 
 cache:
   directories:

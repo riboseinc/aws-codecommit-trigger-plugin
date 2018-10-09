@@ -16,11 +16,13 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+//import com.google.gson.Gson;
+//import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.MessageBody;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Record;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.Records;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.Gson;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -34,6 +36,18 @@ public class GsonParserTest {
     private final Gson gson =  new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
         .create();
+
+    @Test
+    public void testParseEvents() throws IOException {
+        String messageBody = IOUtils.toString(Utils.getResource(GsonParserTest.class, "sqsmsg.json"), StandardCharsets.UTF_8);
+        //Assertions.assertThat(sqsResponse).isNotNull().isNotEmpty();
+        //String messageBody = message.getBody();
+        MessageBody body = gson.fromJson(messageBody, MessageBody.class);
+        String recordsJson = body.getMessage();
+
+        Records records = gson.fromJson(recordsJson, Records.class);
+        System.out.println(records);
+    }
 
     @Test
     public void testParseSampleSqsResponse() throws IOException {

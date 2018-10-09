@@ -18,13 +18,13 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.model;
 
 import com.amazonaws.services.sqs.model.Message;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParser;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit.*;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.Gson;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.GsonBuilder;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.JsonSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;

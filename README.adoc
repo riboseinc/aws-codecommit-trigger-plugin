@@ -46,7 +46,7 @@ General steps to config your Amazon Services:
 3. Create SNS Topic subscribe to a Simple Queue Service (SQS) queue
 4. Open the SQS queue, do queue actions to subscribe it to SNS Topic
 5. Make sure the AWS Credentials used for this Plugin has Permission to
-   read/delete message from the SQS Queue.
+   *READ(sqs:ReceiveMessage) & DELETE(sqs:DeleteMessage)* message from the SQS Queue.
 
 
 === Jenkins System Configuration

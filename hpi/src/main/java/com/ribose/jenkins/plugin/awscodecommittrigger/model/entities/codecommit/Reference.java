@@ -16,8 +16,8 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.annotations.Expose;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 
@@ -25,26 +25,9 @@ import lombok.Data;
 public class Reference {
 
     @Expose
-//    @SerializedName("commit")
     private String commit;
 
     @Expose
     @SerializedName("ref")
     private String reference;
-
-//    public String getCommit() {
-//        return this.commit;
-//    }
-//
-/*    public String getName() {
-        return this.reference;
-    }*/
-
-//    public void setCommit(String commit) {
-//        this.commit = commit;
-//    }
-//
-//    public void setReference(String reference) {
-//        this.reference = reference;
-//    }
 }

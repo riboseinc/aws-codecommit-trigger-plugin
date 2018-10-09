@@ -16,60 +16,22 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.annotations.Expose;
 import lombok.Data;
 
 
 @Data
 public class Record {
 
-//    @Expose
-//    @SerializedName("awsRegion")
-//    private String awsRegion;
-
     @Expose
     private CodeCommit codecommit;
 
-//    @Expose
-//    @SerializedName("eventId")
-//    private String eventId;
-
-//    @Expose
-//    @SerializedName("eventName")
-//    private String eventName;
-
-//    @Expose
-//    @SerializedName("eventPartNumber")
-//    private int eventPartNumber;
-//
     @Expose
     private String eventSource;
 
     @Expose
     private String eventSourceARN;
 
-//    @Expose
-//    @SerializedName("eventTime")
-//    private String eventTime;
-
-//    @Expose
-//    @SerializedName("eventTotalParts")
-//    private int eventTotalParts;
-
-//    @Expose
-//    @SerializedName("eventTriggerConfigId")
-//    private String eventTriggerConfigId;
-
-//    @Expose
-//    @SerializedName("eventTriggerName")
-//    private String eventTriggerName;
-
-//    @Expose
-//    @SerializedName("eventVersion")
-//    private String eventVersion;
-
     @Expose
-//    @SerializedName("userIdentityARN")
     private String userIdentityARN;
 }

@@ -16,10 +16,10 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.FieldNamingPolicy;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.Gson;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google.gson.GsonBuilder;
 import hudson.model.FreeStyleBuild;
 import hudson.scm.SCM;
 import hudson.util.OneShotEvent;

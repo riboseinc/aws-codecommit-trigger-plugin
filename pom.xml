@@ -39,10 +39,6 @@
             <id>findify</id>
             <url>https://dl.bintray.com/findify/maven/</url>
         </repository>
-        <repository>
-            <id>maven2</id>
-            <url>http://central.maven.org/maven2</url>
-        </repository>
     </repositories>
 
     <pluginRepositories>

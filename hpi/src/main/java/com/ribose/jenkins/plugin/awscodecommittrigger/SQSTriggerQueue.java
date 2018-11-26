@@ -337,9 +337,9 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 switch (e.getStatusCode()) {//84937356886
                     case HttpStatus.SC_FORBIDDEN:
                         if (hasReadPermission) {
-                            return FormValidation.okWithMarkup("<span class=\"error\">User not has permission <i>sqs:DeleteMessageBatch</i></span>");
-                        }
-                        return FormValidation.okWithMarkup("<span class=\"error\">User not has permission <i>sqs:ReceiveMessage</i></span>");
+                            return FormValidation.okWithMarkup("<span class=\"error\">User does not have <i>sqs:DeleteMessageBatch</i> permission</span>");
+                        }. 
+                        return FormValidation.okWithMarkup("<span class=\"error\">User does not have <i>sqs:ReceiveMessage</i> permission</span>");
 
                     case HttpStatus.SC_BAD_REQUEST:
                         return FormValidation.okWithMarkup("<span class=\"info\">Access to SQS successful</span>");

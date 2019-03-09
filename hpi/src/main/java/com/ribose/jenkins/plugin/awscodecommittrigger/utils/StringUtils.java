@@ -17,7 +17,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
-import com.amazonaws.services.sqs.model.Message;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.Message;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;

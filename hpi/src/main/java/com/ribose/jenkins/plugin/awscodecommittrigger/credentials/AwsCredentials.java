@@ -1,7 +1,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.credentials;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.AWSCredentials;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.AWSCredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.NameWith;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;

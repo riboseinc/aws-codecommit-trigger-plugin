@@ -16,7 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.net;
 
-import com.amazonaws.services.sqs.model.Message;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.Message;
 
 import java.util.List;
 

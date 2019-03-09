@@ -16,8 +16,8 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.services.sqs.AmazonSQS;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.ClientConfiguration;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQS;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Context;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;

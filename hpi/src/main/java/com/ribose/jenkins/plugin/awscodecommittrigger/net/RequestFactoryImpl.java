@@ -17,10 +17,10 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.net;
 
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry;
-import com.amazonaws.services.sqs.model.Message;
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.Message;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 
 import java.util.ArrayList;

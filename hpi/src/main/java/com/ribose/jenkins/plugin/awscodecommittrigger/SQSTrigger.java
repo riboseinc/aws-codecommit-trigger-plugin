@@ -17,7 +17,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
-import com.amazonaws.services.sqs.model.Message;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.Message;
 import com.cloudbees.plugins.credentials.Credentials;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;

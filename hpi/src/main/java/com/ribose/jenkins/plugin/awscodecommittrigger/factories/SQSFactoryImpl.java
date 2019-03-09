@@ -17,17 +17,17 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.factories;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.PredefinedClientConfigurations;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
-import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
-import com.amazonaws.services.sqs.buffered.QueueBufferConfig;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.ClientConfiguration;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.PredefinedClientConfigurations;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.AWSCredentialsProvider;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.BasicAWSCredentials;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.regions.Regions;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQS;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.buffered.QueueBufferConfig;
 import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSExecutorFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;

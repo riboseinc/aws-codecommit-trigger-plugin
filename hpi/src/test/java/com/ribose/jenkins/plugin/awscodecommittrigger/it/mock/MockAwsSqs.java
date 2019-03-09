@@ -16,11 +16,11 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.Message;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.AWSCredentials;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.auth.AnonymousAWSCredentials;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQS;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQSClient;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.Message;
 import io.findify.sqsmock.SQSService;
 import org.assertj.core.api.Assertions;
 

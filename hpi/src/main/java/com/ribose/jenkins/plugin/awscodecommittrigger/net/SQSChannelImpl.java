@@ -16,9 +16,9 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.net;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.*;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.AmazonServiceException;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQS;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.*;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import org.apache.commons.collections.CollectionUtils;

@@ -74,6 +74,10 @@
                             <pattern>com.google</pattern>
                             <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.amazonaws</pattern>
+                            <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws</shadedPattern>
+                        </relocation>
                     </relocations>
                     <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
                 </configuration>

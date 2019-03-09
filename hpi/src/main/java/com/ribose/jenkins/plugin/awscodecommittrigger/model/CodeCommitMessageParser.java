@@ -17,7 +17,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.model;
 
-import com.amazonaws.services.sqs.model.Message;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.Message;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.MessageParser;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;

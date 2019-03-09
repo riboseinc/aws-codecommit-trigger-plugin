@@ -16,9 +16,9 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSAsync;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.ClientConfiguration;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQS;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQSAsync;
 
 import java.net.Proxy;
 import java.util.concurrent.ExecutorService;

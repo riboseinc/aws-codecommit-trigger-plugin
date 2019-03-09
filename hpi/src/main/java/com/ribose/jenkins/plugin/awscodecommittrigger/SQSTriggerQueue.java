@@ -17,12 +17,12 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.AmazonWebServiceRequest;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.*;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.AmazonServiceException;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.AmazonWebServiceRequest;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.regions.Region;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.regions.Regions;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.AmazonSQS;
+import com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws.services.sqs.model.*;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;

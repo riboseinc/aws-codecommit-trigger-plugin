@@ -21,7 +21,7 @@
             <artifactId>aws-java-sdk-sqs</artifactId>
         </dependency>
 
-        <dependency>
+        <!--dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-cbor</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -59,17 +59,17 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>com.fasterxml*:*</include>
+                            <!--<include>com.fasterxml*:*</include>-->
                             <include>com.amazonaws*:*</include>
                             <include>software.amazon*:*</include>
                             <include>com.google*:*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
-                        <relocation>
+                        <!--relocation>
                             <pattern>com.fasterxml</pattern>
                             <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.fasterxml</shadedPattern>
-                        </relocation>
+                        </relocation-->
                         <relocation>
                             <pattern>com.google</pattern>
                             <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google</shadedPattern>

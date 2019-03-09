@@ -96,6 +96,7 @@
         <!--<dependency>-->
             <!--<groupId>org.jenkins-ci.plugins</groupId>-->
             <!--<artifactId>display-url-api</artifactId>-->
+        <!--<version>2.2.0</version>-->
             <!--<scope>test</scope>-->
         <!--</dependency>-->
 
@@ -105,60 +106,89 @@
             <!--<scope>test</scope>-->
         <!--</dependency>-->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>junit</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <version>2.8.47</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <version>2.8.0</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.findify</groupId>
             <artifactId>sqsmock_2.11</artifactId>
+            <version>0.3.2</version>
             <scope>test</scope>
         </dependency>
 
         <!--pipeline-->
+        <!--dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-step-api</artifactId>
+            <version>2.12</version>
+            <scope>test</scope>
+        </dependency-->
+
+        <!--dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>display-url-api</artifactId>
+            <version>2.2.0</version>
+            <scope>test</scope>
+        </dependency-->
+
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-cps</artifactId>
+            <version>2.60</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-durable-task-step</artifactId>
+            <version>2.27</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <artifactId>workflow-durable-task-step</artifactId>
+            <artifactId>workflow-api</artifactId>
+            <version>2.22</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>pipeline-stage-step</artifactId>
+            <version>2.3</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

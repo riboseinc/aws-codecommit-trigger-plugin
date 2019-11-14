@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>aws-codecommit-trigger-parent</artifactId>
-        <version>2.0.6-SNAPSHOT</version>
+        <version>2.0.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>shaded</artifactId>
@@ -29,7 +29,15 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-cbor</artifactId>
+<<<<<<< HEAD
         </dependency-->
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+        </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -77,6 +85,10 @@
                         <relocation>
                             <pattern>com.amazonaws</pattern>
                             <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.amazonaws</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google</pattern>
+                            <shadedPattern>com.ribose.jenkins.plugins.awscodecommittrigger.shaded.com.google</shadedPattern>
                         </relocation>
                     </relocations>
                     <promoteTransitiveDependencies>true</promoteTransitiveDependencies>

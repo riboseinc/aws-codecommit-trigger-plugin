@@ -19,6 +19,7 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.model.entities.codecommit
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.Event;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.transport.URIish;
 
 

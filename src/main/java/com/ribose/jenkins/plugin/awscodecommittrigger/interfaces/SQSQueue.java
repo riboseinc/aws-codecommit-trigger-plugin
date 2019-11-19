@@ -17,7 +17,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.interfaces;
 
 import com.amazonaws.regions.Regions;
-import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
+import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials;
 
 
 /**
@@ -72,5 +72,5 @@ public interface SQSQueue {
 
     String getCredentialsId();
 
-    AwsCredentials lookupAwsCredentials();
+    AmazonWebServicesCredentials lookupAwsCredentials();
 }

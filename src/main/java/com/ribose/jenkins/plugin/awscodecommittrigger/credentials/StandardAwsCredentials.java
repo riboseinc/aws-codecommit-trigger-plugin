@@ -4,7 +4,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
-import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Context;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -15,6 +14,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.util.UUID;
 
 
+@Deprecated
 public class StandardAwsCredentials extends BaseStandardCredentials implements AwsCredentials {
 
     private static final Log log = Log.get(StandardAwsCredentials.class);

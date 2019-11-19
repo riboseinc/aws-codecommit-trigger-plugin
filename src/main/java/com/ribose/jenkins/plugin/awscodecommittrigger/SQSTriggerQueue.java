@@ -18,15 +18,17 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.AmazonWebServiceRequest;
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.*;
+import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
+import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
+import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;
-import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstriggerqueue.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -36,17 +38,20 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.security.ACL;
-import hudson.util.*;
-import hudson.util.HttpResponses;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+import hudson.util.Messages;
+import hudson.util.Secret;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.Stapler;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -222,7 +227,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
 
     @CheckForNull
     @Override
-    public AwsCredentials lookupAwsCredentials() {
+    public AmazonWebServicesCredentials lookupAwsCredentials() {
         if (this.credentialsId == null) {
             return null;
         }
@@ -316,12 +321,13 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 return FormValidation.warning("No Credential selected");
             }
 
-            AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
+            AmazonWebServicesCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
             if (credentials == null) {
                 return FormValidation.error("Credentials is null");
             }
 
-            AmazonSQS client = this.sqsFactory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
+            AWSCredentials awsCred = credentials.getCredentials();
+            AmazonSQS client = this.sqsFactory.createSQSAsync(awsCred.getAWSAccessKeyId(), awsCred.getAWSSecretKey(), region);
 
             boolean hasReadPermission = false;
 
@@ -373,10 +379,14 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         public ListBoxModel doFillUrlItems(@QueryParameter final String region, @QueryParameter final String credentialsId) throws IOException {
             ListBoxModel items = new ListBoxModel();
             try {
-                AwsCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
+                AmazonWebServicesCredentials credentials = AwsCredentialsHelper.getCredentials(credentialsId);
                 assert credentials != null;
 
-                AmazonSQS client = this.sqsFactory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
+                AWSCredentials awsCred = credentials.getCredentials();
+                String key = awsCred.getAWSAccessKeyId();
+                String secret = awsCred.getAWSSecretKey();
+
+                AmazonSQS client = this.sqsFactory.createSQSAsync(key, secret, region);
                 List<String> queueUrls = client.listQueues().getQueueUrls();
                 for (String queueUrl : queueUrls) {
                     items.add(com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(queueUrl), queueUrl);

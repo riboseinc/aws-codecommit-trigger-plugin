@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang.StringUtils;
 
 
+@Deprecated
 @NameWith(value = AwsCredentials.NameProvider.class, priority = 1)
 public interface AwsCredentials extends StandardCredentials, AWSCredentials, AWSCredentialsProvider {
 

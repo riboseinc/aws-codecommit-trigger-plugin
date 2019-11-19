@@ -20,7 +20,6 @@ package com.ribose.jenkins.plugin.awscodecommittrigger;
 import com.amazonaws.services.sqs.model.Message;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
-import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.model.Cause;
 import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;

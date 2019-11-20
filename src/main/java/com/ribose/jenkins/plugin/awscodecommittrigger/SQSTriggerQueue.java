@@ -29,6 +29,7 @@ import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;
+import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstriggerqueue.Messages;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.SQSQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
@@ -40,7 +41,6 @@ import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import hudson.util.Messages;
 import hudson.util.Secret;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
@@ -441,7 +441,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item context, @QueryParameter String credentialsId) {
             return new StandardListBoxModel()
                 .includeEmptyValue()
-                .includeAs(ACL.SYSTEM, context, AwsCredentials.class)
+                .includeAs(ACL.SYSTEM, context, AmazonWebServicesCredentials.class)
                 .includeCurrentValue(credentialsId);
         }
 

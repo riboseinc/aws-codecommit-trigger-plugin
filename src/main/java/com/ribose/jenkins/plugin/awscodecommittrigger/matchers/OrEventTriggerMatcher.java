@@ -21,7 +21,6 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.interfaces.EventTriggerMat
 import com.ribose.jenkins.plugin.awscodecommittrigger.logging.Log;
 import com.ribose.jenkins.plugin.awscodecommittrigger.model.job.SQSJob;
 
-
 import java.util.List;
 
 

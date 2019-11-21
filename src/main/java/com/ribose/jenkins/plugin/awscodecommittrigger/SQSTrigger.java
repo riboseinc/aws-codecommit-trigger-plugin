@@ -17,13 +17,16 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger;
 
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.sqs.model.Message;
-import com.cloudbees.plugins.credentials.Credentials;
-import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
+import com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl;
+import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials;
+import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.domains.Domain;
+import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.StandardAwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstrigger.Messages;
@@ -39,6 +42,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.Job;
+import hudson.security.ACL;
 import hudson.security.AccessDeniedException2;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
@@ -203,7 +207,8 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             public void run() {
                 try {
                     new SQSTriggerBuilder(SQSTrigger.this.sqsJob, message, userarns).run();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     UnexpectedException error = new UnexpectedException(e);
                     SQSTrigger.log.error("Unable to execute job for this message %s, cause: %s", SQSTrigger.this.job, message.getMessageId(), error);
                     throw error;
@@ -379,7 +384,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
             for (SQSTriggerQueue sqsQueue : this.sqsQueues) {
                 String version = sqsQueue.getVersion();
-                boolean compatible =  com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.checkCompatibility(version,  com.ribose.jenkins.plugin.awscodecommittrigger.PluginInfo.compatibleSinceVersion);
+                boolean compatible = PluginInfo.checkPluginCompatibility(version);
                 sqsQueue.setCompatible(compatible);
             }
 
@@ -411,7 +416,7 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             try {
                 Jenkins.getActiveInstance().checkPermission(CredentialsProvider.CREATE);
             }
-            catch (AccessDeniedException2 e){
+            catch (AccessDeniedException2 e) {
                 return FormValidation.error("No Permission to Create new Credentials in the System");
             }
 
@@ -421,36 +426,51 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
             for (SQSTriggerQueue sqsQueue : this.sqsQueues) {
                 if (!sqsQueue.isCompatible()) {
-                    final String accessKey = sqsQueue.getAccessKey();
-                    final Secret secretKey = sqsQueue.getSecretKey();
 
-                    StandardAwsCredentials credential = (StandardAwsCredentials) CollectionUtils.find(globalCredentials, new Predicate() {
+                    if (StringUtils.isBlank(sqsQueue.getVersion())) { //v1x detected
+                        log.debug("Detected config version is 1x");
+                        return FormValidation.error("Unable to upgrade to %s, please upgrade to version 2x before using this version", PluginInfo.version);
+                    }
+
+                    AwsCredentials cred = CredentialsMatchers.firstOrNull(
+                        CredentialsProvider.lookupCredentials(AwsCredentials.class, (Item) null, ACL.SYSTEM, null, null),
+                        CredentialsMatchers.withId(sqsQueue.getCredentialsId())
+                    );
+
+                    AmazonWebServicesCredentials credential = (AmazonWebServicesCredentials) CollectionUtils.find(globalCredentials, new Predicate() {
 
                         @Override
                         public boolean evaluate(Object o) {
-                            if (!StandardAwsCredentials.class.isInstance(o)) {
+                            if (!BaseStandardCredentials.class.isInstance(o)) {
                                 return false;
                             }
 
-                            StandardAwsCredentials c = StandardAwsCredentials.class.cast(o);
-                            return c.getAccessKey().equals(accessKey) && c.getSecretKey().equals(secretKey);
+                            AWSCredentials c = AmazonWebServicesCredentials.class.cast(o).getCredentials();
+                            return c.getAWSAccessKeyId().equals(cred.getAWSAccessKeyId()) && c.getAWSSecretKey().equals(cred.getAWSSecretKey());
                         }
                     });
 
                     if (credential == null) {
-                        credential = new StandardAwsCredentials("imported", accessKey, secretKey);
+                        credential = new AWSCredentialsImpl(
+                            CredentialsScope.GLOBAL,
+                            UUID.randomUUID().toString(),
+                            cred.getAWSAccessKeyId(),
+                            cred.getAWSSecretKey(),
+                            "migrated from old credential-id: " + sqsQueue.getCredentialsId()
+                        );
                         globalCredentials.add(credential);
                     }
 
                     sqsQueue.setCredentialsId(credential.getId());
-                    sqsQueue.setVersion(com.ribose.jenkins.plugin.awscodecommittrigger.PluginInfo.version);
                 }
+                sqsQueue.setVersion(PluginInfo.version);
             }
 
             if (originalSize < globalCredentials.size()) {//save new credentials added
                 try {
                     provider.save();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     return FormValidation.error("Unable to create credentials in Global Scope");
                 }
             }
@@ -459,8 +479,8 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             this.load();
             EventBroker.getInstance().post(new ConfigurationChangedEvent());
 
-            log.info("Migration successful");
-            return FormValidation.ok("Imported successful, click here to refresh the page");
+            log.info("Migration successful for %s queues", this.sqsQueues.size());
+            return FormValidation.ok("Migration successful, click here to refresh the page");
         }
     }
 }

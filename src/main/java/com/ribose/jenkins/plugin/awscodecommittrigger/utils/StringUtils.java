@@ -17,6 +17,9 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
+import com.ribose.jenkins.plugin.awscodecommittrigger.PluginInfo;
+import com.vdurmont.semver4j.Semver;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -124,30 +127,14 @@ public final class StringUtils {
     }
 
     // return true if "sourceVersion" compatible with "destVersion"
-    public static boolean checkCompatibility(@Nullable String sourceVersion, @Nullable String destVersion) {
-        if (org.apache.commons.lang.StringUtils.isBlank(sourceVersion) || org.apache.commons.lang.StringUtils.isBlank(destVersion)) {
-            return false;
-        }
-
-        Matcher dest = VERSION_PATTERN.matcher(destVersion);
-        Matcher source = VERSION_PATTERN.matcher(sourceVersion);
-
-        Boolean compatible = null;
-        while (compatible == null && dest.find()) {
-            int destv = Integer.parseInt(dest.group());
-            source.find();
-            int sourcev = Integer.parseInt(source.group());
-
-            if (destv > sourcev) {
-                compatible = false;
-            }
-            else if (destv <= sourcev) {
-                compatible = true;
-            }
-        }
-
-        return compatible != null && compatible;
-    }
+//    public static boolean checkPluginCompatibility(@Nullable String version) {
+//        if (org.apache.commons.lang.StringUtils.isBlank(version)) {
+//            return false;
+//        }
+//
+//        Semver semver = new Semver(PluginInfo.compatibleSinceVersion);
+//        return semver.isLowerThanOrEqualTo(version);
+//    }
 
 //    public static boolean isNoText(String value) {
 //        return value == null || value.trim().length() == 0;

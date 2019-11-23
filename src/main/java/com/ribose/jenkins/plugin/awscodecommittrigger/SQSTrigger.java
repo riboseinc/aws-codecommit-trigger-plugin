@@ -22,11 +22,13 @@ import com.amazonaws.services.sqs.model.Message;
 import com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl;
 import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials;
 import com.cloudbees.plugins.credentials.*;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
+import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.StandardAwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
 import com.ribose.jenkins.plugin.awscodecommittrigger.i18n.sqstrigger.Messages;
@@ -432,41 +434,37 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                         return FormValidation.error("Unable to upgrade to %s, please upgrade to version 2x before using this version", PluginInfo.version);
                     }
 
-                    AwsCredentials cred = CredentialsMatchers.firstOrNull(
-                        CredentialsProvider.lookupCredentials(AwsCredentials.class, (Item) null, ACL.SYSTEM, null, null),
-                        CredentialsMatchers.withId(sqsQueue.getCredentialsId())
-                    );
+                    StandardAwsCredentials cred = AwsCredentialsHelper.getCredentials(StandardAwsCredentials.class, sqsQueue.getCredentialsId());
+                    String accountId = cred.getAWSAccessKeyId();
+                    String secret = cred.getAWSSecretKey();
 
-                    AmazonWebServicesCredentials credential = (AmazonWebServicesCredentials) CollectionUtils.find(globalCredentials, new Predicate() {
-
-                        @Override
-                        public boolean evaluate(Object o) {
-                            if (!BaseStandardCredentials.class.isInstance(o)) {
-                                return false;
-                            }
-
-                            AWSCredentials c = AmazonWebServicesCredentials.class.cast(o).getCredentials();
-                            return c.getAWSAccessKeyId().equals(cred.getAWSAccessKeyId()) && c.getAWSSecretKey().equals(cred.getAWSSecretKey());
+                    boolean hasAwsCred = globalCredentials.stream().filter(o -> {
+                        if (!AmazonWebServicesCredentials.class.isInstance(o)) {
+                            return false;
                         }
-                    });
 
-                    if (credential == null) {
-                        credential = new AWSCredentialsImpl(
+                        AWSCredentials c = AmazonWebServicesCredentials.class.cast(o).getCredentials();
+                        return c.getAWSAccessKeyId().equals(accountId) && c.getAWSSecretKey().equals(secret);
+                    }).findFirst().isPresent();
+
+                    if (!hasAwsCred) {
+                        AmazonWebServicesCredentials credential = new AWSCredentialsImpl(
                             CredentialsScope.GLOBAL,
                             UUID.randomUUID().toString(),
-                            cred.getAWSAccessKeyId(),
-                            cred.getAWSSecretKey(),
-                            "migrated from old credential-id: " + sqsQueue.getCredentialsId()
+                            accountId,
+                            secret,
+                            "migrated from credential-id: " + sqsQueue.getCredentialsId()
                         );
                         globalCredentials.add(credential);
+                        sqsQueue.setCredentialsId(credential.getId());
                     }
 
-                    sqsQueue.setCredentialsId(credential.getId());
+                    globalCredentials.remove(cred);
                 }
                 sqsQueue.setVersion(PluginInfo.version);
             }
 
-            if (originalSize < globalCredentials.size()) {//save new credentials added
+            if (originalSize != globalCredentials.size()) {//save new credentials added
                 try {
                     provider.save();
                 }

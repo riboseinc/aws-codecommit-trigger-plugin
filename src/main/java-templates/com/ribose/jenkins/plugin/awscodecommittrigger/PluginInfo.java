@@ -14,7 +14,8 @@ public class PluginInfo {
             return false;
         }
 
-        Semver semver = new Semver(version);
-        return semver.isGreaterThanOrEqualTo(compatibleSinceVersion);
+        Semver since = new Semver(compatibleSinceVersion);
+        Semver current = new Semver(version).withClearedSuffixAndBuild();
+        return current.isGreaterThanOrEqualTo(since);
     }
 }

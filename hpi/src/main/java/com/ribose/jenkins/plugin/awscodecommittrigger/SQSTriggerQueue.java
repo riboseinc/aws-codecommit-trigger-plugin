@@ -321,6 +321,8 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 return FormValidation.error("Credentials is null");
             }
 
+            log.info("123 %s", credentials.getAWSSecretKey());
+
             AmazonSQS client = this.sqsFactory.createSQSAsync(credentials.getAWSAccessKeyId(), credentials.getAWSSecretKey(), region);
 
             boolean hasReadPermission = false;

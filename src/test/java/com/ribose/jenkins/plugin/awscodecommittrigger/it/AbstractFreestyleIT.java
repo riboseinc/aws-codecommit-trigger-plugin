@@ -13,6 +13,7 @@ import org.jvnet.hudson.test.TestBuilder;
 import java.io.IOException;
 import java.util.UUID;
 
+
 public class AbstractFreestyleIT extends AbstractJenkinsIT {
 
     protected void subscribeProject(final ProjectFixture fixture) throws Exception {

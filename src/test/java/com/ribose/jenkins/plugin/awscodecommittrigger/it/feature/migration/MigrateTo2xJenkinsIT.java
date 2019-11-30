@@ -44,7 +44,7 @@ public class MigrateTo2xJenkinsIT {
         List<SQSTriggerQueue> queues = desc.getSqsQueues();
         for (SQSTriggerQueue queue : queues) {
             String version = queue.getVersion();
-            Assertions.assertThat(StringUtils.checkCompatibility(version, PluginInfo.version)).isFalse();
+            Assertions.assertThat(PluginInfo.checkPluginCompatibility(version)).isFalse();
         }
 
         JenkinsRule.WebClient webClient = jenkinsRule.createWebClient();
@@ -63,7 +63,8 @@ public class MigrateTo2xJenkinsIT {
         queues = desc.getSqsQueues();
         for (SQSTriggerQueue queue : queues) {
             String version = queue.getVersion();
-            Assertions.assertThat(StringUtils.checkCompatibility(version, PluginInfo.version)).isTrue();
+            Assertions.assertThat(PluginInfo.checkPluginCompatibility(version)).isTrue();
+//            Assertions.assertThat(StringUtils.checkCompatibility(version, PluginInfo.version)).isTrue();
         }
     }
 }

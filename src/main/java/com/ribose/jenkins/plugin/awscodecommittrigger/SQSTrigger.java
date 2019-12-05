@@ -435,6 +435,10 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                     }
 
                     StandardAwsCredentials cred = AwsCredentialsHelper.getCredentials(StandardAwsCredentials.class, sqsQueue.getCredentialsId());
+                    if (cred == null) {
+                        continue;
+                    }
+
                     String accountId = cred.getAWSAccessKeyId();
                     String secret = cred.getAWSSecretKey();
 

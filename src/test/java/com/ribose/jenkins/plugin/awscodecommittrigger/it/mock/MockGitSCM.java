@@ -1,6 +1,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.mock;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
@@ -11,7 +12,10 @@ import hudson.plugins.git.SubmoduleConfig;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.plugins.git.browser.GitRepositoryBrowser;
 import hudson.plugins.git.extensions.GitSCMExtension;
+import hudson.scm.RepositoryBrowser;
+import hudson.scm.SCMDescriptor;
 import hudson.scm.SCMRevisionState;
+import hudson.triggers.TriggerDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
@@ -73,5 +77,13 @@ public class MockGitSCM extends GitSCM {
             branchSpecs.add(new BranchSpec(branch));
         }
         return fromUrlAndBranchSpecs(url, branchSpecs);
+    }
+
+    @Extension
+    public static final class DescriptorImpl extends SCMDescriptor<MockGitSCM> {
+
+        public DescriptorImpl() {
+            super(MockGitSCM.class, hudson.plugins.git.browser.GitRepositoryBrowser.class);
+        }
     }
 }

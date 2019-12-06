@@ -23,11 +23,16 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.SQSScmConfig;
 import hudson.model.FreeStyleBuild;
 import hudson.scm.SCM;
 import hudson.util.OneShotEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 
 public class ProjectFixture implements MarkIndex {
+
+    private String name;
+
     private static final Long TIMEOUT = 90_000L;//in milliseconds, e.g: 300_000 ~ 5 mins
 
     private List<SQSScmConfig> scmConfigs;
@@ -162,5 +167,14 @@ public class ProjectFixture implements MarkIndex {
 
     public void setLastBuild(FreeStyleBuild lastBuild) {
         this.lastBuild = lastBuild;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ProjectFixture setName(String name) {
+        this.name = name;
+        return this;
     }
 }

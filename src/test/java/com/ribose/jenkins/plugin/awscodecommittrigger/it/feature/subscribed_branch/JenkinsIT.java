@@ -88,6 +88,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo' matched",
                 new ProjectFixture()//without wildcard
+                    .setName("'foo' matched")
                     .setSendBranches("refs/heads/foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("foo"))))
                     .setShouldStarted(true)
@@ -95,6 +96,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'refs/heads/foo' matched",
                 new ProjectFixture()//without wildcard
+                    .setName("\"'refs/heads/foo' matched\"")
                     .setSendBranches("refs/heads/foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("refs/heads/foo"))))
                     .setShouldStarted(true)
@@ -102,6 +104,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo/bar' matched",
                 new ProjectFixture()//without wildcard
+                    .setName("'foo/bar' matched")
                     .setSendBranches("refs/heads/foo/bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("refs/heads/foo/bar"))))
                     .setShouldStarted(true)
@@ -109,6 +112,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo/bar/foo' matched",
                 new ProjectFixture()//without wildcard
+                    .setName("'foo/bar/foo' matched")
                     .setSendBranches("refs/heads/foo/bar/foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("refs/heads/foo/bar/foo"))))
                     .setShouldStarted(true)
@@ -116,6 +120,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo/bar/foo' not matched",
                 new ProjectFixture()//without wildcard
+                    .setName("'foo/bar/foo' not matched")
                     .setSendBranches("refs/heads/foo/bar/foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("refs/heads/foo/bar"))))
                     .setShouldStarted(false)
@@ -123,6 +128,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'*foo' not matched",
                 new ProjectFixture()//prefix wildcard
+                    .setName("'*foo' not matched")
                     .setSendBranches("refs/heads/foo-bar", "refs/heads/bar/foo", "refs/heads/foo/bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("*foo"))))
                     .setShouldStarted(false)
@@ -130,6 +136,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'*foo' matched",
                 new ProjectFixture()//prefix wildcard
+                    .setName("'*foo' matched")
                     .setSendBranches("refs/heads/bar/foo", "refs/heads/bar-foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("*foo"))))
                     .setShouldStarted(true),//triggered because of msg "refs/heads/bar-foo"
@@ -138,6 +145,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo*' not matched",
                 new ProjectFixture()//suffix wildcard
+                    .setName("'foo*' not matched")
                     .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar-foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("foo*"))))
                     .setShouldStarted(false)
@@ -145,6 +153,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo*' matched",
                 new ProjectFixture()//suffix wildcard
+                    .setName("'foo*' matched")
                     .setSendBranches("refs/heads/bar/foo", "refs/heads/foo-bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("foo*"))))
                     .setShouldStarted(true),
@@ -152,6 +161,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'*' not matched",
                 new ProjectFixture()// "*"
+                    .setName("'*' not matched")
                     .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("*"))))
                     .setShouldStarted(false),
@@ -159,6 +169,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'*' matched",
                 new ProjectFixture()// "*"
+                    .setName( "'*' matched")
                     .setSendBranches("refs/heads/foo", "refs/heads/foo-bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("*"))))
                     .setShouldStarted(true),
@@ -166,6 +177,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo**' not matched",
                 new ProjectFixture()// "**"
+                    .setName("'foo**' not matched")
                     .setSendBranches("refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/bar/foo-bar", "refs/heads/bar/foo/bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("foo**"))))
                     .setShouldStarted(false),
@@ -173,6 +185,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'foo**' matched",
                 new ProjectFixture()// "**"
+                    .setName("'foo**' matched")
                     .setSendBranches("refs/heads/foo/bar", "refs/heads/foo-bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("foo**"))))
                     .setShouldStarted(true)
@@ -180,6 +193,7 @@ public class JenkinsIT extends AbstractFreestyleParamsIT {
             {
                 "'**' (all) matched",
                 new ProjectFixture()// "**"
+                    .setName("'**' (all) matched")
                     .setSendBranches("refs/heads/foo/bar", "refs/heads/bar/foo", "refs/heads/bar/foo", "refs/heads/foo", "refs/heads/foo-bar")
                     .setScm(MockGitSCM.fromUrlAndBranchSpecs(defaultSCMUrl, Collections.singletonList(new BranchSpec("**"))))
                     .setShouldStarted(true),

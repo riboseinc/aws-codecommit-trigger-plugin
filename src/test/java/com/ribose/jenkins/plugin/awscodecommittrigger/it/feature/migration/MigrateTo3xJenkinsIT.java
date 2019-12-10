@@ -92,6 +92,8 @@ public class MigrateTo3xJenkinsIT {
 
         desc = (SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class);
         queues = desc.getSqsQueues();
+        Assertions.assertThat(queues).isNotNull();
+
         for (SQSTriggerQueue queue : queues) {
             String version = queue.getVersion();
             Assertions.assertThat(PluginInfo.checkPluginCompatibility(version))
@@ -99,7 +101,6 @@ public class MigrateTo3xJenkinsIT {
                 .isTrue();
         }
 
-        //TODO check global credentials list
         SystemCredentialsProvider provider = SystemCredentialsProvider.getInstance();
         List<Credentials> globalCredentials = provider.getDomainCredentialsMap().get(Domain.global());
         Assertions.assertThat(globalCredentials.size())

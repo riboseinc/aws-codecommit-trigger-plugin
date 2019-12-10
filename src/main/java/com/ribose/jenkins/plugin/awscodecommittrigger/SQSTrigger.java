@@ -25,6 +25,7 @@ import com.cloudbees.plugins.credentials.Credentials;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -428,8 +429,9 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
             SystemCredentialsProvider provider = SystemCredentialsProvider.getInstance();
             List<Credentials> globalCredentials = provider.getDomainCredentialsMap().get(Domain.global());
-            int originalSize = globalCredentials.size();
+//            int originalSize = globalCredentials.size();
 
+            Set<Credentials> deprecates = new HashSet<>();
             for (SQSTriggerQueue sqsQueue : this.sqsQueues) {
                 if (!sqsQueue.isCompatible()) {
 
@@ -439,46 +441,53 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                     }
 
                     StandardAwsCredentials cred = AwsCredentialsHelper.getCredentials(StandardAwsCredentials.class, sqsQueue.getCredentialsId());
-                    if (cred == null) {
+                    if (cred == null) { //so we might already delete old credentials
                         continue;
                     }
 
                     String accountId = cred.getAWSAccessKeyId();
                     String secret = cred.getAWSSecretKey();
 
-                    boolean hasAwsCred = globalCredentials.stream().anyMatch(o -> {
-                        if (!(o instanceof AmazonWebServicesCredentials)) {
-                            return false;
+                    Optional<Credentials> foundCredentials = globalCredentials.stream().filter(o -> {
+                        if (o instanceof AmazonWebServicesCredentials) {
+                            AWSCredentials c = ((AmazonWebServicesCredentials) o).getCredentials();
+                            return c.getAWSAccessKeyId().equals(accountId) && c.getAWSSecretKey().equals(secret);
                         }
 
-                        AWSCredentials c = ((AmazonWebServicesCredentials) o).getCredentials();
-                        return c.getAWSAccessKeyId().equals(accountId) && c.getAWSSecretKey().equals(secret);
-                    });
+                        return false;
+                    }).findFirst();
 
-                    if (!hasAwsCred) {
-                        AmazonWebServicesCredentials credential = new AWSCredentialsImpl(
+                    AmazonWebServicesCredentials credentials = null;
+                    if (foundCredentials.isPresent()) {
+                        credentials = (AmazonWebServicesCredentials)foundCredentials.get();
+                    }
+                    else {
+                        credentials = new AWSCredentialsImpl(
                             CredentialsScope.GLOBAL,
                             UUID.randomUUID().toString(),
                             accountId,
                             secret,
                             "migrated from credential-id: " + sqsQueue.getCredentialsId()
                         );
-                        globalCredentials.add(credential);
-                        sqsQueue.setCredentialsId(credential.getId());
+                        globalCredentials.add(credentials);
                     }
+                    sqsQueue.setCredentialsId(credentials.getId());
 
-                    globalCredentials.remove(cred);
+                    //globalCredentials.remove(cred);
+                    deprecates.add(cred);
                 }
                 sqsQueue.setVersion(PluginInfo.version);
             }
 
-            if (originalSize != globalCredentials.size()) {//save new credentials added
-                try {
-                    provider.save();
-                }
-                catch (IOException e) {
-                    return FormValidation.error("Unable to create credentials in Global Scope");
-                }
+            if (deprecates.size() > 0) {
+                globalCredentials.removeAll(deprecates);
+            }
+
+            try {
+                provider.save();
+            }
+            catch (IOException e) {
+                return FormValidation.error("Unable to create credentials in Global Scope");
             }
 
             this.save();

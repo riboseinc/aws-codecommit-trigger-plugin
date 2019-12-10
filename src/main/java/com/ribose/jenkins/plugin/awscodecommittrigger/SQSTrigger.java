@@ -21,13 +21,13 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.sqs.model.Message;
 import com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl;
 import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials;
-import com.cloudbees.plugins.credentials.*;
-import com.cloudbees.plugins.credentials.common.StandardCredentials;
+import com.cloudbees.plugins.credentials.Credentials;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.Domain;
-import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.AwsCredentialsHelper;
 import com.ribose.jenkins.plugin.awscodecommittrigger.credentials.StandardAwsCredentials;
 import com.ribose.jenkins.plugin.awscodecommittrigger.exception.UnexpectedException;
@@ -44,18 +44,15 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.Job;
-import hudson.security.ACL;
 import hudson.security.AccessDeniedException2;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import hudson.util.Secret;
 import hudson.util.SequentialExecutionQueue;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -68,6 +65,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static hudson.Functions.checkPermission;
 
 
 public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
@@ -416,7 +415,12 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
 
         public FormValidation doMigration() {
             try {
-                Jenkins.getActiveInstance().checkPermission(CredentialsProvider.CREATE);
+                Jenkins jenkins = Jenkins.getInstanceOrNull();
+                if (jenkins == null) {
+                    return FormValidation.error("No running Jenkins instance");
+                }
+
+                jenkins.checkPermission(CredentialsProvider.CREATE);
             }
             catch (AccessDeniedException2 e) {
                 return FormValidation.error("No Permission to Create new Credentials in the System");
@@ -442,14 +446,14 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
                     String accountId = cred.getAWSAccessKeyId();
                     String secret = cred.getAWSSecretKey();
 
-                    boolean hasAwsCred = globalCredentials.stream().filter(o -> {
-                        if (!AmazonWebServicesCredentials.class.isInstance(o)) {
+                    boolean hasAwsCred = globalCredentials.stream().anyMatch(o -> {
+                        if (!(o instanceof AmazonWebServicesCredentials)) {
                             return false;
                         }
 
-                        AWSCredentials c = AmazonWebServicesCredentials.class.cast(o).getCredentials();
+                        AWSCredentials c = ((AmazonWebServicesCredentials) o).getCredentials();
                         return c.getAWSAccessKeyId().equals(accountId) && c.getAWSSecretKey().equals(secret);
-                    }).findFirst().isPresent();
+                    });
 
                     if (!hasAwsCred) {
                         AmazonWebServicesCredentials credential = new AWSCredentialsImpl(

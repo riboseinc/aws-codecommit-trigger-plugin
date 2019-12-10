@@ -4,6 +4,8 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.git.BranchSpec;
@@ -13,6 +15,7 @@ import hudson.plugins.git.UserRemoteConfig;
 import hudson.plugins.git.browser.GitRepositoryBrowser;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.scm.RepositoryBrowser;
+import hudson.scm.SCM;
 import hudson.scm.SCMDescriptor;
 import hudson.scm.SCMRevisionState;
 import hudson.triggers.TriggerDescriptor;
@@ -36,7 +39,15 @@ public class MockGitSCM extends GitSCM {
     }
 
     @DataBoundConstructor
-    public MockGitSCM(List<UserRemoteConfig> userRemoteConfigs, List<BranchSpec> branches, Boolean doGenerateSubmoduleConfigurations, Collection<SubmoduleConfig> submoduleCfg, GitRepositoryBrowser browser, String gitTool, List<GitSCMExtension> extensions) {
+    public MockGitSCM(
+        List<UserRemoteConfig> userRemoteConfigs,
+        List<BranchSpec> branches,
+        Boolean doGenerateSubmoduleConfigurations,
+        Collection<SubmoduleConfig> submoduleCfg,
+        GitRepositoryBrowser browser,
+        String gitTool,
+        List<GitSCMExtension> extensions
+    ) {
         super(userRemoteConfigs, branches, doGenerateSubmoduleConfigurations, submoduleCfg, browser, gitTool, extensions);
         this.url = userRemoteConfigs.get(0).getUrl();
     }
@@ -79,11 +90,11 @@ public class MockGitSCM extends GitSCM {
         return fromUrlAndBranchSpecs(url, branchSpecs);
     }
 
-    @Extension
-    public static final class DescriptorImpl extends SCMDescriptor<MockGitSCM> {
-
-        public DescriptorImpl() {
-            super(MockGitSCM.class, hudson.plugins.git.browser.GitRepositoryBrowser.class);
-        }
-    }
+//    @Extension
+//    public static final class DescriptorImpl extends Descriptor<MockGitSCM> {
+//
+//        public DescriptorImpl() {
+//            //super(MockGitSCM.class, hudson.plugins.git.browser.GitRepositoryBrowser.class);
+//        }
+//    }
 }

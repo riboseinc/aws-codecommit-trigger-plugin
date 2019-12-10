@@ -9,12 +9,12 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.PluginInfo;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue;
 import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
-import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.recipes.LocalData;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -22,10 +22,31 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class MigrateTo2xJenkinsIT {
+public class MigrateTo3xJenkinsIT {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
+
+//    @Before
+//    public void before() throws IOException {
+//        SystemCredentialsProvider provider = SystemCredentialsProvider.getInstance();
+//        List<Credentials> globalCredentials = provider.getDomainCredentialsMap().get(Domain.global());
+//
+//        //StandardAwsCredentials cred = AwsCredentialsHelper.getCredentials(StandardAwsCredentials.class, sqsQueue.getCredentialsId());
+//
+//        String accountId = "accountId";
+//        String secret = "secret";
+//        AmazonWebServicesCredentials credential = new AWSCredentialsImpl(
+//            CredentialsScope.GLOBAL,
+//            UUID.randomUUID().toString(),
+//            accountId,
+//            secret,
+//            "migration testing"
+//        );
+//
+//        globalCredentials.add(credential);
+//        provider.save();
+//    }
 
     @Test
     public void shouldNotSeeMigrationButton() throws IOException, SAXException {
@@ -35,10 +56,20 @@ public class MigrateTo2xJenkinsIT {
         Assertions.assertThat(buttons).isEmpty();
     }
 
+    //TODO add test case to display "unsupported migration version"
     @Test
+    public void testUnsupportedMigrationVersion() {
+        System.out.println("implementing");
+    }
+
+    @Test
+    @LocalData("v2")
     public void shouldMigrateSQSTriggerQueue() throws IOException, SAXException {
-        String v1File = Utils.getResource(MigrateTo2xJenkinsIT.class, "com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger.xml", true).getFile();
-        FileUtils.copyFileToDirectory(new File(v1File), jenkinsRule.getInstance().getRootDir());
+//        String v2File = Utils.getResource(MigrateTo3xJenkinsIT.class, "v2/com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger.xml", true).getFile();
+//        FileUtils.copyFileToDirectory(new File(v2File), jenkinsRule.getInstance().getRootDir());
+//
+//        String credFile = Utils.getResource(MigrateTo3xJenkinsIT.class, "v2/credentials.xml", true).getFile();
+//        FileUtils.copyFileToDirectory(new File(credFile), jenkinsRule.getInstance().getRootDir());
 
         SQSTrigger.DescriptorImpl desc = (SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class);
         List<SQSTriggerQueue> queues = desc.getSqsQueues();

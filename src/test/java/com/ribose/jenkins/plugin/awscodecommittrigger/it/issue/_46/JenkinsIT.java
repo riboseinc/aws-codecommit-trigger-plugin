@@ -24,6 +24,7 @@ public class JenkinsIT extends AbstractFreestyleIT {
         String sqsMessage = IOUtils.toString(Utils.getResource(this.getClass(), "us-west-2.json"), StandardCharsets.UTF_8);
         GitSCM scm = MockGitSCM.fromSqsMessage(sqsMessage, "refs/heads/master");
         this.fixture = new ProjectFixture()
+            .setName("test suite for issue #46")
             .setSqsMessage(sqsMessage)
             .setSubscribeInternalScm(true)
             .setScm(scm)

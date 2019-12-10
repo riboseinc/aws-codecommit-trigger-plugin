@@ -62,8 +62,9 @@ public class MigrateTo3xJenkinsIT {
 
     //TODO add test case to display "unsupported migration version"
     @Test
+    @LocalData("v1")
     public void testUnsupportedMigrationVersion() {
-        System.out.println("implementing");
+
     }
 
     @Test

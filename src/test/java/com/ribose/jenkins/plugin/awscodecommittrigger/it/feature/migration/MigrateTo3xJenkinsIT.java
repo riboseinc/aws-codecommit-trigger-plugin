@@ -1,5 +1,9 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.migration;
 
+import com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials;
+import com.cloudbees.plugins.credentials.Credentials;
+import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
+import com.cloudbees.plugins.credentials.domains.Domain;
 import com.gargoylesoftware.htmlunit.AjaxController;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -65,17 +69,13 @@ public class MigrateTo3xJenkinsIT {
     @Test
     @LocalData("v2")
     public void shouldMigrateSQSTriggerQueue() throws IOException, SAXException {
-//        String v2File = Utils.getResource(MigrateTo3xJenkinsIT.class, "v2/com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger.xml", true).getFile();
-//        FileUtils.copyFileToDirectory(new File(v2File), jenkinsRule.getInstance().getRootDir());
-//
-//        String credFile = Utils.getResource(MigrateTo3xJenkinsIT.class, "v2/credentials.xml", true).getFile();
-//        FileUtils.copyFileToDirectory(new File(credFile), jenkinsRule.getInstance().getRootDir());
-
         SQSTrigger.DescriptorImpl desc = (SQSTrigger.DescriptorImpl) jenkinsRule.jenkins.getDescriptor(SQSTrigger.class);
         List<SQSTriggerQueue> queues = desc.getSqsQueues();
         for (SQSTriggerQueue queue : queues) {
             String version = queue.getVersion();
-            Assertions.assertThat(PluginInfo.checkPluginCompatibility(version)).isFalse();
+            Assertions.assertThat(PluginInfo.checkPluginCompatibility(version))
+                .describedAs("Queue %s has version %s is not compatible, so we can not test migration", queue.getName(), queue.getVersion())
+                .isFalse();
         }
 
         JenkinsRule.WebClient webClient = jenkinsRule.createWebClient();
@@ -94,8 +94,21 @@ public class MigrateTo3xJenkinsIT {
         queues = desc.getSqsQueues();
         for (SQSTriggerQueue queue : queues) {
             String version = queue.getVersion();
-            Assertions.assertThat(PluginInfo.checkPluginCompatibility(version)).isTrue();
-//            Assertions.assertThat(StringUtils.checkCompatibility(version, PluginInfo.version)).isTrue();
+            Assertions.assertThat(PluginInfo.checkPluginCompatibility(version))
+                .describedAs("Queue %s can not migrated", queue.getName())
+                .isTrue();
         }
+
+        //TODO check global credentials list
+        SystemCredentialsProvider provider = SystemCredentialsProvider.getInstance();
+        List<Credentials> globalCredentials = provider.getDomainCredentialsMap().get(Domain.global());
+        Assertions.assertThat(globalCredentials.size())
+            .describedAs("Global queue size must have only 1 migrated credentials")
+            .isEqualTo(1);
+        globalCredentials.forEach(credentials -> {
+            Assertions.assertThat(credentials)
+                .describedAs("Credentials must be an instanceof class AmazonWebServicesCredentials")
+                .isInstanceOf(AmazonWebServicesCredentials.class);
+        });
     }
 }

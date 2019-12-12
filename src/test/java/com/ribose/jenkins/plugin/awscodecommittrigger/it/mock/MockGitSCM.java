@@ -19,6 +19,7 @@ import hudson.scm.SCM;
 import hudson.scm.SCMDescriptor;
 import hudson.scm.SCMRevisionState;
 import hudson.triggers.TriggerDescriptor;
+import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
@@ -54,6 +55,7 @@ public class MockGitSCM extends GitSCM {
 
     @Override
     public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
+        System.out.println("Mock GitSCM checkout code");
     }
 
     public String getUrl() {
@@ -90,11 +92,7 @@ public class MockGitSCM extends GitSCM {
         return fromUrlAndBranchSpecs(url, branchSpecs);
     }
 
-//    @Extension
-//    public static final class DescriptorImpl extends Descriptor<MockGitSCM> {
-//
-//        public DescriptorImpl() {
-//            //super(MockGitSCM.class, hudson.plugins.git.browser.GitRepositoryBrowser.class);
-//        }
-//    }
+    public void buildEnvironment(Run<?, ?> build, java.util.Map<String, String> env) {
+        System.out.println("mock git scm function");
+    }
 }

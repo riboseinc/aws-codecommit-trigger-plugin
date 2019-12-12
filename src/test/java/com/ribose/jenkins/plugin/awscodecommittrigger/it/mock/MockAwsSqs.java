@@ -55,6 +55,7 @@ public class MockAwsSqs {
     }
 
     private void start() throws IOException {
+        System.out.println("starting mock sqs server");
         //this.port = findFreeLocalPort(); @see https://github.com/findify/sqsmock/pull/7
         this.api = new SQSService(this.port, 1);
         this.api.start();
@@ -83,6 +84,7 @@ public class MockAwsSqs {
     }
 
     public synchronized void clearAndShutdown() {
+        System.out.println("mock sqs server clear and shutdown");
         this.sqsMessageTemplate = null;
         List<Message> messages = this.sqsClient.receiveMessage(this.sqsUrl).getMessages();
         for (Message message : messages) {

@@ -82,6 +82,8 @@ public abstract class AbstractJenkinsIT {
         this.subscribeProject(fixture);
         OneShotEvent event = fixture.getEvent();
         event.block(fixture.getTimeout());
-        Assertions.assertThat(event.isSignaled()).isEqualTo(fixture.getShouldStarted());
+        Assertions.assertThat(event.isSignaled())
+            .describedAs("Fixture %s should be pass", fixture.getName())
+            .isEqualTo(fixture.getShouldStarted());
     }
 }

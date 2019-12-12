@@ -175,14 +175,14 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
     }
 
     private boolean isMultiScmAvailable() {
-        final Jenkins jenkins = Jenkins.getActiveInstance();
+        final Jenkins jenkins = Jenkins.get();
         boolean hasPlugin = jenkins.getPlugin("multiple-scms") != null;
         log.debug("Multiple-SCMs plugin found: %s", hasPlugin);
         return hasPlugin;
     }
 
     private boolean isGitScmAvailable() {
-        final Jenkins jenkins = Jenkins.getActiveInstance();
+        final Jenkins jenkins = Jenkins.get();
         boolean hasPlugin = jenkins.getPlugin("git") != null;
         log.debug("Git plugin found: %s", hasPlugin);
         return hasPlugin;

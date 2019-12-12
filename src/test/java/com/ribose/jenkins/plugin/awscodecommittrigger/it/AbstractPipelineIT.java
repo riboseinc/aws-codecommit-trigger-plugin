@@ -2,13 +2,16 @@ package com.ribose.jenkins.plugin.awscodecommittrigger.it;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
+import hudson.model.Result;
 import hudson.model.queue.QueueTaskFuture;
 import hudson.util.OneShotEvent;
+import org.assertj.core.api.Assertions;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
+import java.util.List;
 import java.util.UUID;
 
 public class AbstractPipelineIT extends AbstractJenkinsIT {
@@ -24,7 +27,11 @@ public class AbstractPipelineIT extends AbstractJenkinsIT {
         job.setDefinition(flowDefinition);
 
         QueueTaskFuture<WorkflowRun> run = job.scheduleBuild2(0);
-        jenkinsRule.assertBuildStatusSuccess(run.get());
+        WorkflowRun wfRun = run.get();
+        Assertions.assertThat(wfRun.getResult())
+            .describedAs("Pipeline unable to start succeed")
+            .isEqualTo(Result.SUCCESS);
+        jenkinsRule.assertBuildStatusSuccess(wfRun);
 
         resetPipelineBuildEvent(fixture);
 

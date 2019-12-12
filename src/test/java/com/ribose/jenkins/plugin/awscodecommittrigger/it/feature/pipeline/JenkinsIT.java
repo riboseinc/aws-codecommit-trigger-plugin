@@ -17,6 +17,7 @@ public class JenkinsIT extends AbstractPipelineIT {
 
     public JenkinsIT() throws IOException {
         this.fixture
+            .setName("issues#29")
             .setPipelineScript(IOUtils.toString(Utils.getResource(JenkinsIT.class, "Jenkinsfile")))
             .setSubscribeInternalScm(true)
             .setSendBranches("refs/heads/master")

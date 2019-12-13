@@ -4,24 +4,20 @@ import com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.Describable;
-import hudson.model.Descriptor;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import hudson.model.*;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.SubmoduleConfig;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.plugins.git.browser.GitRepositoryBrowser;
 import hudson.plugins.git.extensions.GitSCMExtension;
-import hudson.scm.RepositoryBrowser;
-import hudson.scm.SCM;
-import hudson.scm.SCMDescriptor;
-import hudson.scm.SCMRevisionState;
+import hudson.scm.*;
 import hudson.triggers.TriggerDescriptor;
 import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +58,17 @@ public class MockGitSCM extends GitSCM {
         return url;
     }
 
+    @Override
+    public void buildEnvironment(Run<?, ?> build, java.util.Map<String, String> env) {
+        System.out.println("mock git scm function");
+    }
+
+    @Override
+    public PollingResult compareRemoteRevisionWith(@Nonnull Job<?, ?> project, @Nullable Launcher launcher, @Nullable FilePath workspace, @Nonnull TaskListener listener, @Nonnull SCMRevisionState baseline) throws IOException, InterruptedException {
+        return PollingResult.BUILD_NOW;
+    }
+
+
     public static MockGitSCM fromSqsMessage(String sqsMessage) {
         String url = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitUrl__");
         String branches = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitBranches__");
@@ -92,7 +99,4 @@ public class MockGitSCM extends GitSCM {
         return fromUrlAndBranchSpecs(url, branchSpecs);
     }
 
-    public void buildEnvironment(Run<?, ?> build, java.util.Map<String, String> env) {
-        System.out.println("mock git scm function");
-    }
 }

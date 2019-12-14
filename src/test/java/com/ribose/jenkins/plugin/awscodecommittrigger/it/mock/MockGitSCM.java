@@ -68,7 +68,6 @@ public class MockGitSCM extends GitSCM {
         return PollingResult.BUILD_NOW;
     }
 
-
     public static MockGitSCM fromSqsMessage(String sqsMessage) {
         String url = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitUrl__");
         String branches = StringUtils.findByUniqueJsonKey(sqsMessage, "__gitBranches__");

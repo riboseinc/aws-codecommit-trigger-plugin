@@ -13,6 +13,7 @@ node {
     stage('Build') {
         sh "echo 'Heee'"
     }
+
     stage('Results') {
         sh "echo 'Heee Result'"
         ${EmitEvent}

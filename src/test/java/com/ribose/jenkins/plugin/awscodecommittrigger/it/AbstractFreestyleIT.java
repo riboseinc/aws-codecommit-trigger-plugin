@@ -33,12 +33,13 @@ public class AbstractFreestyleIT extends AbstractJenkinsIT {
             trigger = new SQSTrigger(uuid, fixture.isSubscribeInternalScm(), fixture.getScmConfigs());
         }
 
-        final OneShotEvent event = new OneShotEvent();
+//        final OneShotEvent event = new OneShotEvent();
+        fixture.setEvent(new OneShotEvent());
         job.getBuildersList().add(new TestBuilder() {
 
             @Override
             public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-                event.signal();
+                fixture.getEvent().signal();
                 fixture.setLastBuild(job.getLastBuild());
                 return true;
             }
@@ -50,6 +51,6 @@ public class AbstractFreestyleIT extends AbstractJenkinsIT {
             job.addTrigger(trigger);
         }
 
-        fixture.setEvent(event);
+//        fixture.setEvent(event);
     }
 }

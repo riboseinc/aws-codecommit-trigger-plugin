@@ -74,11 +74,11 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
     private transient AmazonSQS sqs;
     private transient boolean compatible;
 
-    @Deprecated/*since 2.0*/
-    private transient String accessKey;
-
-    @Deprecated/*since 2.0*/
-    private transient Secret secretKey;
+//    @Deprecated/*since 2.0*/
+//    private transient String accessKey;
+//
+//    @Deprecated/*since 2.0*/
+//    private transient Secret secretKey;
 
     @DataBoundConstructor
     public SQSTriggerQueue(final String uuid,
@@ -174,21 +174,21 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         return compatible;
     }
 
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public Secret getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(Secret secretKey) {
-        this.secretKey = secretKey;
-    }
+//    public String getAccessKey() {
+//        return accessKey;
+//    }
+//
+//    public void setAccessKey(String accessKey) {
+//        this.accessKey = accessKey;
+//    }
+//
+//    public Secret getSecretKey() {
+//        return secretKey;
+//    }
+//
+//    public void setSecretKey(Secret secretKey) {
+//        this.secretKey = secretKey;
+//    }
 
     @Override
     public String getUuid() {

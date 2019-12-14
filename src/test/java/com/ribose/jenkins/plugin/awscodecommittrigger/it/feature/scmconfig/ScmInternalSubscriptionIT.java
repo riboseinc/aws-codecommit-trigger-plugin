@@ -1,6 +1,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.scmconfig;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.AbstractFreestyleParamsIT;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.AbstractFreestyleParamsTestProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import hudson.plugins.git.BranchSpec;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class JenkinsIRIT extends AbstractFreestyleParamsIT {
+public class ScmInternalSubscriptionIT extends AbstractFreestyleParamsTestProject {
 
     /* Freestyle Job SCM integration test (type="IR")
 

@@ -16,7 +16,7 @@
 
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.subscribed_branch;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.AbstractFreestyleParamsIT;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.AbstractFreestyleParamsTestProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
 import hudson.plugins.git.BranchSpec;
@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class JenkinsIT extends AbstractFreestyleParamsIT {
+public class StandardTestSuiteIT extends AbstractFreestyleParamsTestProject {
 
     /* Subscribe branches integration test, Freestyle Job SCM (type="IR") used as default SCM
 

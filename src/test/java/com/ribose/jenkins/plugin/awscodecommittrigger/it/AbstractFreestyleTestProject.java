@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 
-public class AbstractFreestyleIT extends AbstractJenkinsIT {
+public abstract class AbstractFreestyleTestProject extends AbstractJenkinsTestProject {
 
     protected void subscribeProject(final ProjectFixture fixture) throws Exception {
         String name = UUID.randomUUID().toString();

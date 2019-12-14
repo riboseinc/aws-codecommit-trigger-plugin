@@ -1,6 +1,6 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.scmconfig;
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.AbstractFreestyleParamsIT;
+import com.ribose.jenkins.plugin.awscodecommittrigger.it.feature.AbstractFreestyleParamsTestProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ScmConfigFactory;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class JenkinsERIT extends AbstractFreestyleParamsIT {
+public class ScmExternalSubscriptionIT extends AbstractFreestyleParamsTestProject {
 
     private final static ScmConfigFactory scmConfigFactory = ScmConfigFactory.get();
 

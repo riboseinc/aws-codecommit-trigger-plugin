@@ -25,7 +25,10 @@ import java.util.List;
 @ExportedBean
 public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
-    public enum Type {IR, ER}
+    public enum Type {
+        IR, //internal subscription scm
+        ER //external subscription scm
+    }
 
     private String subscribedBranches;
     private Type type;

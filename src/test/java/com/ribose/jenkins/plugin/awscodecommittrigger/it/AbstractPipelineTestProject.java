@@ -11,10 +11,9 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
-import java.util.List;
 import java.util.UUID;
 
-public class AbstractPipelineIT extends AbstractJenkinsIT {
+public abstract class AbstractPipelineTestProject extends AbstractJenkinsTestProject {
 
     protected static OneShotEvent buildEvent;
 
@@ -22,7 +21,7 @@ public class AbstractPipelineIT extends AbstractJenkinsIT {
         String name = UUID.randomUUID().toString();
         WorkflowJob job = jenkinsRule.getInstance().createProject(WorkflowJob.class, name);
 
-        String script = fixture.getPipelineScript().replace("${EmitEvent}", AbstractPipelineIT.class.getName() + ".emitBuildEvent()");
+        String script = fixture.getPipelineScript().replace("${EmitEvent}", AbstractPipelineTestProject.class.getName() + ".emitBuildEvent()");
         CpsFlowDefinition flowDefinition = new CpsFlowDefinition(script, true);
         job.setDefinition(flowDefinition);
 

@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class MigrateTo3xJenkinsIT {
+public class Migrate2_3xIT {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();

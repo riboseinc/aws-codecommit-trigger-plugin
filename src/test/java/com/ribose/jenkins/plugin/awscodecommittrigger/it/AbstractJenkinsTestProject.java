@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 
-public abstract class AbstractJenkinsIT {
+public abstract class AbstractJenkinsTestProject {
     protected static Logger logger = Logger.getLogger(JenkinsRule.class.getName());
 
     @Rule
@@ -42,7 +42,7 @@ public abstract class AbstractJenkinsIT {
 
     static {
         try {
-            defaultSqsMessageTemplate = IOUtils.toString(Utils.getResource(AbstractJenkinsIT.class, "sqsmsg.json.tpl", true), StandardCharsets.UTF_8);
+            defaultSqsMessageTemplate = IOUtils.toString(Utils.getResource(AbstractJenkinsTestProject.class, "sqsmsg.json.tpl", true), StandardCharsets.UTF_8);
             defaultSCM = MockGitSCM.fromSqsMessage(defaultSqsMessageTemplate);
 
             defaultSCMUrl = ((MockGitSCM) defaultSCM).getUrl();
@@ -59,7 +59,7 @@ public abstract class AbstractJenkinsIT {
 
         File workDir = jenkinsRule.getInstance().getRootDir();
         String configName = "com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger.xml";
-        File configFile = new File(Utils.getResource(AbstractJenkinsIT.class, configName, true).toURI());
+        File configFile = new File(Utils.getResource(AbstractJenkinsTestProject.class, configName, true).toURI());
         FileUtils.copyFileToDirectory(configFile, workDir);
         configFile = new File(FilenameUtils.concat(workDir.getPath(), configName));
 

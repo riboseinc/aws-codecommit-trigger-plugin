@@ -1,4 +1,4 @@
-package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._32;
+package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._30;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractFreestyleTestProject;
@@ -13,19 +13,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 
-@Issue("riboseinc/aws-codecommit-trigger-plugin/issues/32")
-public class Issue32Test extends AbstractFreestyleTestProject {
+@Issue("riboseinc/aws-codecommit-trigger-plugin/issues/30")
+public class Issue30IT extends AbstractFreestyleTestProject {
 
     private final ProjectFixture fixture;
 
-    public Issue32Test() throws IOException {
+    public Issue30IT() throws IOException {
         String sqsMessage = IOUtils.toString(Utils.getResource(this.getClass(), "us-east-1.json"), StandardCharsets.UTF_8);
-        GitSCM scm = MockGitSCM.fromSqsMessage(sqsMessage, "refs/heads/master");
+        GitSCM scm = MockGitSCM.fromSqsMessage(sqsMessage);
         this.fixture = new ProjectFixture()
             .setSqsMessage(sqsMessage)
             .setSubscribeInternalScm(true)
             .setScm(scm)
-            .setShouldStarted(true);
+            .setShouldStarted(Boolean.TRUE);
     }
 
     @Test

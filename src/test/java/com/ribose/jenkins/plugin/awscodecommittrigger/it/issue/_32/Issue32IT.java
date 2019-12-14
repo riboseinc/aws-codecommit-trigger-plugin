@@ -1,30 +1,27 @@
-package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._46;
-
+package com.ribose.jenkins.plugin.awscodecommittrigger.it.issue._32;
 
 import com.ribose.jenkins.plugin.awscodecommittrigger.Utils;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.AbstractFreestyleTestProject;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.fixture.ProjectFixture;
 import com.ribose.jenkins.plugin.awscodecommittrigger.it.mock.MockGitSCM;
-import hudson.model.Cause;
 import hudson.plugins.git.GitSCM;
 import org.apache.commons.io.IOUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Issue("riboseinc/aws-codecommit-trigger-plugin/issues/46")
-public class Issue46Test extends AbstractFreestyleTestProject {
+
+@Issue("riboseinc/aws-codecommit-trigger-plugin/issues/32")
+public class Issue32IT extends AbstractFreestyleTestProject {
 
     private final ProjectFixture fixture;
 
-    public Issue46Test() throws IOException {
-        String sqsMessage = IOUtils.toString(Utils.getResource(this.getClass(), "us-west-2.json"), StandardCharsets.UTF_8);
+    public Issue32IT() throws IOException {
+        String sqsMessage = IOUtils.toString(Utils.getResource(this.getClass(), "us-east-1.json"), StandardCharsets.UTF_8);
         GitSCM scm = MockGitSCM.fromSqsMessage(sqsMessage, "refs/heads/master");
         this.fixture = new ProjectFixture()
-            .setName("test suite for issue #46")
             .setSqsMessage(sqsMessage)
             .setSubscribeInternalScm(true)
             .setScm(scm)
@@ -34,9 +31,6 @@ public class Issue46Test extends AbstractFreestyleTestProject {
     @Test
     public void shouldPassIt() throws Exception {
         this.mockAwsSqs.sendMessage(this.fixture.getSqsMessage());
-        this.submitAndAssertFixture(this.fixture);
-        Cause cause = this.fixture.getLastBuild().getCauses().get(0);
-        Assertions.assertThat(cause).isNotNull();
-        Assertions.assertThat(cause.getShortDescription()).contains("User invoked:");
+        this.submitAndAssertFixture(fixture);
     }
 }

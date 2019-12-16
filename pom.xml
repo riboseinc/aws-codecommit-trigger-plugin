@@ -275,11 +275,11 @@
                 <version>1.14.0</version>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
-                    <featureSquash>true</featureSquash>
+                    <releaseRebase>true</releaseRebase>
 
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
-                        <developmentBranch>dev</developmentBranch>
+                        <developmentBranch>master</developmentBranch> <!-- release from JenkinsCI repo require master branch-->
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>

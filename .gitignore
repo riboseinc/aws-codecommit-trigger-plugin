@@ -25,3 +25,4 @@ docker/
 ruby/
 
 AwsFunctionsIT.java
+*ignoreme*

@@ -39,8 +39,8 @@ public abstract class AbstractFreestyleTestProject extends AbstractJenkinsTestPr
 
             @Override
             public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-                fixture.getEvent().signal();
                 fixture.setLastBuild(job.getLastBuild());
+                fixture.getEvent().signal();
                 return true;
             }
         });

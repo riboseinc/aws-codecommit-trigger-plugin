@@ -4,9 +4,11 @@ cache:
   directories:
     - $HOME/.m2
 
-jdk: [oraclejdk8]
+jdk:
+  - oraclejdk8
+  - oraclejdk11
 
 language: java
 
 script:
-  - mvn clean verify -P$TRAVIS_BRANCH
+  - mvn clean compile -Pit

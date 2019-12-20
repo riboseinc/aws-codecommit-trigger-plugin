@@ -17,11 +17,7 @@
 package com.ribose.jenkins.plugin.awscodecommittrigger.utils;
 
 
-import com.ribose.jenkins.plugin.awscodecommittrigger.PluginInfo;
-import com.vdurmont.semver4j.Semver;
-
 import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -125,18 +121,4 @@ public final class StringUtils {
         }
         return true;
     }
-
-    // return true if "sourceVersion" compatible with "destVersion"
-//    public static boolean checkPluginCompatibility(@Nullable String version) {
-//        if (org.apache.commons.lang.StringUtils.isBlank(version)) {
-//            return false;
-//        }
-//
-//        Semver semver = new Semver(PluginInfo.compatibleSinceVersion);
-//        return semver.isLowerThanOrEqualTo(version);
-//    }
-
-//    public static boolean isNoText(String value) {
-//        return value == null || value.trim().length() == 0;
-//    }
 }

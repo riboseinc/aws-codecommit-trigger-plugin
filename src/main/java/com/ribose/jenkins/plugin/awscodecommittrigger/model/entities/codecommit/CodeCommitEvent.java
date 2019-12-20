@@ -86,8 +86,9 @@ public class CodeCommitEvent implements Event {
 
         // from https://github.com/riboseinc/aws-codecommit-trigger-plugin/issues/54#issuecomment-546503407
         // ignore the difference of the last slash
-        String p1 = this.path.endsWith("/") ? this.path : this.path + "/";
+        String p1 =  this.path.endsWith("/") ? this.path : this.path + "/";
         String p2 = uri.getPath().endsWith("/") ? uri.getPath() : uri.getPath() + "/";
+
         if (!StringUtils.equalsIgnoreCase(p1, p2)) {
             log.debug("Event %s not match path %s", this.getArn(), uri.getPath());
             return false;

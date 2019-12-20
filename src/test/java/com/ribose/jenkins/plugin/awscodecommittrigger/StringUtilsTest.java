@@ -25,11 +25,23 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class StringUtilsTest {
+
+//    @Test
+//    public void testNormalizeUri() {
+//        String url = "foo/bar////";
+//        String abc = Arrays.stream(url.split("/"))
+//            .filter( s -> org.apache.commons.lang.StringUtils.isNotBlank(s) )
+//            .collect(Collectors.joining("/"));
+//        System.out.println(abc);
+//    }
 
     @Test
     public void testBranchMatch() {

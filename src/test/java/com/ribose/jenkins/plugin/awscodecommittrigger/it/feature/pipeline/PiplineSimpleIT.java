@@ -11,14 +11,14 @@ import java.io.IOException;
 
 
 @Issue("riboseinc/aws-codecommit-trigger-plugin/issues/29")
-public class PiplineSimpleTest extends AbstractPipelineTestProject {
+public class PiplineSimpleIT extends AbstractPipelineTestProject {
 
     private ProjectFixture fixture = new ProjectFixture();
 
-    public PiplineSimpleTest() throws IOException {
+    public PiplineSimpleIT() throws IOException {
         this.fixture
             .setName("issues#29")
-            .setPipelineScript(IOUtils.toString(Utils.getResource(PiplineSimpleTest.class, "Jenkinsfile")))
+            .setPipelineScript(IOUtils.toString(Utils.getResource(PiplineSimpleIT.class, "Jenkinsfile")))
             .setSubscribeInternalScm(true)
             .setSendBranches("refs/heads/master")
             .setShouldStarted(true);

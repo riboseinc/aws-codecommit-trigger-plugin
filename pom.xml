@@ -47,7 +47,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>3.0.0-beta-1-SNAPTHOST</version>
+    <version>3.0.0-beta-1-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <properties>

@@ -69,6 +69,18 @@
             </snapshots>
         </repository>
         <repository>
+            <id>repo.jenkins-ci.org-releases</id>
+            <url>https://repo.jenkins-ci.org/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        
+        <repository>
             <id>findify</id>
             <url>https://dl.bintray.com/findify/maven/</url>
         </repository>

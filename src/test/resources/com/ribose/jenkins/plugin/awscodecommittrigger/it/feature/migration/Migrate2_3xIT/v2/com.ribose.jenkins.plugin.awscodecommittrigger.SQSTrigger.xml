@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger_-DescriptorImpl plugin="aws-codecommit-trigger@2.0-SNAPSHOT">
+    <sqsQueues>
+        <com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
+            <version>2.0.8-SNAPSHOT</version>
+            <uuid>df2d747f-89d8-43c6-aa00-cfa74fc2a52d</uuid>
+            <waitTimeSeconds>20</waitTimeSeconds>
+            <maxNumberOfMessages>10</maxNumberOfMessages>
+            <url>https://sqs.us-west-2.amazonaws.com/239062223385/testjenkinssqs</url>
+            <region>US_WEST_2</region>
+            <credentialsId>phuonghqh</credentialsId>
+        </com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
+
+        <com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
+            <version>2.0.8-SNAPSHOT</version>
+            <uuid>sample</uuid>
+            <waitTimeSeconds>20</waitTimeSeconds>
+            <maxNumberOfMessages>10</maxNumberOfMessages>
+            <url>https://sqs.us-west-2.amazonaws.com/239062223385/testjenkinssqs2</url>
+            <region>US_WEST_1</region>
+            <credentialsId>phuonghqh</credentialsId>
+        </com.ribose.jenkins.plugin.awscodecommittrigger.SQSTriggerQueue>
+    </sqsQueues>
+</com.ribose.jenkins.plugin.awscodecommittrigger.SQSTrigger_-DescriptorImpl>

@@ -47,7 +47,7 @@
     </parent>
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>3.0.0-beta-1</version>
+    <version>3.0.0-beta-1-SNAPTHOST</version>
     <packaging>hpi</packaging>
 
     <properties>
@@ -191,6 +191,7 @@
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
+                    <fetchRemote>false</fetchRemote>
 
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>

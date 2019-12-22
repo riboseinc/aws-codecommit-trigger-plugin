@@ -205,7 +205,6 @@
                     <releaseRebase>true</releaseRebase>
                     <fetchRemote>false</fetchRemote>
                     <installProject>false</installProject>
-                    <verbose>true</verbose>
 
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>

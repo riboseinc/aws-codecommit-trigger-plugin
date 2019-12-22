@@ -197,24 +197,20 @@
             </plugin>
 
             <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
+                <groupId>com.github.phuonghuynh</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.14.0</version>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
-                    <fetchRemote>false</fetchRemote>
-                    <installProject>false</installProject>
-
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
-                        <developmentBranch>dev</developmentBranch> <!-- release from JenkinsCI repo require master branch-->
+                        <developmentBranch>dev</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
-                    <postFeatureFinishGoals>
-                        <preProductionMergeGoals>deploy:deploy</preProductionMergeGoals>
-                    </postFeatureFinishGoals>
+                    <releaseFinish>
+                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
+                    </releaseFinish>
                 </configuration>
             </plugin>
 

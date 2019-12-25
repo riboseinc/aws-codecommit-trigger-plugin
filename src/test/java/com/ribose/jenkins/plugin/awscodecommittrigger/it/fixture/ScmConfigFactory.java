@@ -19,7 +19,7 @@ public class ScmConfigFactory {
     }
 
     public List<SQSScmConfig> createIR() {
-        return Collections.singletonList(new SQSScmConfig(SQSScmConfig.Type.IR, null, null));
+        return Collections.singletonList(new SQSScmConfig(SQSScmConfig.Type.AutoSubscription, null, null));
     }
 
     public List<SQSScmConfig> createERs(String... args) {
@@ -27,7 +27,7 @@ public class ScmConfigFactory {
         for (int i = 0; i < args.length; i += 2) {
             String url = args[i];
             String subscribedBranches = args[i + 1];
-            scms.add(new SQSScmConfig(SQSScmConfig.Type.ER, url, subscribedBranches));
+            scms.add(new SQSScmConfig(SQSScmConfig.Type.ManualSubscription, url, subscribedBranches));
         }
         return Collections.unmodifiableList(scms);
     }

@@ -26,8 +26,8 @@ import java.util.List;
 public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
 
     public enum Type {
-        IR, //internal subscription scm
-        ER //external subscription scm
+        AutoSubscription, //internal subscription scm
+        ManualSubscription //external subscription scm
     }
 
     private String subscribedBranches;
@@ -44,7 +44,7 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
         this.subscribedBranches = subscribedBranches;
         this.type = type;
 
-        if (this.type == Type.IR) {
+        if (this.type == Type.AutoSubscription) {
             url = "";
         }
         this.url = url;

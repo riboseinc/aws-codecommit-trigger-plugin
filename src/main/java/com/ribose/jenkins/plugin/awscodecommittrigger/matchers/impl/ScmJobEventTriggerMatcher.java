@@ -50,17 +50,17 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             scmConfigs.addAll(triggerScms);
         }
         if (trigger.isSubscribeInternalScm()) {
-            scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.IR, null, null));
+            scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.AutoSubscription, null, null));
         }
 
         List<SCM> scms = new ArrayList<>();
         for (SQSScmConfig scmConfig : scmConfigs) {
             switch (scmConfig.getType()) {
-                case IR:
+                case AutoSubscription:
                     scms.addAll(job.getScmList());
                     break;
 
-                case ER:
+                case ManualSubscription:
                     scms.add(scmConfig.toGitSCM());
                     break;
             }

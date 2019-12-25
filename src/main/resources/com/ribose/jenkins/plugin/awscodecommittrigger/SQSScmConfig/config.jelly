@@ -7,7 +7,7 @@
     </f:block>
 
     <f:invisibleEntry>
-        <f:readOnlyTextbox default="ER" field="type"/>
+        <f:readOnlyTextbox default="ManualSubscription" field="type"/>
     </f:invisibleEntry>
 
     <f:entry title="Code commit repository URL" field="url">

@@ -59,10 +59,6 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
         this.url = url;
     }
 
-    public void doMigration() {
-
-    }
-
     public String getSubscribedBranches() {
         return subscribedBranches;
     }

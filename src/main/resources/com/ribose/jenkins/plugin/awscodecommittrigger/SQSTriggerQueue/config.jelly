@@ -6,10 +6,10 @@
         <f:readOnlyTextbox field="version" value="${descriptor.version}"/>
     </f:invisibleEntry>
 
-    <f:description>Support only <b>"Standard Aws Credentials"</b></f:description>
+    <f:description>Support only <b>"Aws Credentials"</b></f:description>
 
     <f:entry field="credentialsId" title="Credentials">
-        <c:select context="com.ribose.jenkins.plugins.awscodecommittrigger.credentials.StandardAwsCredentials" />
+        <c:select context="com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials" />
     </f:entry>
 
     <f:entry title="AWS Region" field="region">

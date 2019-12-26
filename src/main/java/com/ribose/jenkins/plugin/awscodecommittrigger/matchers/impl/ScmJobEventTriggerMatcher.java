@@ -50,7 +50,7 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
             scmConfigs.addAll(triggerScms);
         }
         if (trigger.isSubscribeInternalScm()) {
-            scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.AutoSubscription, null, null));
+            scmConfigs.add(new SQSScmConfig(SQSScmConfig.Type.AutoSubscription.name(), null, null));
         }
 
         List<SCM> scms = new ArrayList<>();

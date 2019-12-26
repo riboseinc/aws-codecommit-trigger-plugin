@@ -414,6 +414,10 @@ public class SQSTrigger extends Trigger<Job<?, ?>> implements SQSQueueListener {
             return true;
         }
 
+        /*
+         * Migration components: from v2x
+         *   1. Credentials
+         * */
         public FormValidation doMigration() {
             try {
                 Jenkins jenkins = Jenkins.getInstanceOrNull();

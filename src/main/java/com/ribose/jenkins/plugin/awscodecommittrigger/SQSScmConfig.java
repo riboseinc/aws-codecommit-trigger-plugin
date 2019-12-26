@@ -40,14 +40,27 @@ public class SQSScmConfig extends AbstractDescribableImpl<SQSScmConfig> {
     private transient ScmFactory scmFactory;
 
     @DataBoundConstructor
-    public SQSScmConfig(Type type, String url, String subscribedBranches) {
+    public SQSScmConfig(String type, String url, String subscribedBranches) {
         this.subscribedBranches = subscribedBranches;
-        this.type = type;
+
+        if ("ER".equalsIgnoreCase(type)) { //old type
+            this.type = Type.ManualSubscription;
+        }
+        else if ("IR".equalsIgnoreCase(type)) { //old type
+            this.type = Type.AutoSubscription;
+        }
+        else {
+            this.type = Type.valueOf(type);
+        }
 
         if (this.type == Type.AutoSubscription) {
             url = "";
         }
         this.url = url;
+    }
+
+    public void doMigration() {
+
     }
 
     public String getSubscribedBranches() {

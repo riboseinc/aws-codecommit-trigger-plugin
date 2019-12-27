@@ -46,40 +46,34 @@ General steps to config your Amazon Services:
 3. Create SNS Topic subscribe to a Simple Queue Service (SQS) queue
 4. Open the SQS queue, do queue actions to subscribe it to SNS Topic
 5. Make sure the AWS Credentials used for this Plugin has Permission to
-   *READ(sqs:ReceiveMessage) & DELETE(sqs:DeleteMessage)* message from the SQS Queue.
+    -  `sqs:ReceiveMessage`
+    -  `sqs:DeleteMessage`
+    -  `sqs:DeleteMessageBatch`
+    -  `sqs:GetQueueAttributes`
+    -  `sqs:ListQueues` (optional)
 
 
 === Jenkins System Configuration
+
+image::doc/images/global-config.png["Jenkins configuration test"]
 
 1. Go to `Jenkins > Manage Jenkins > Configure System` on your Jenkins
 
 2. Go to `AWS Code Commit Trigger SQS Plugin`
 
 3. Configure a queue
-
-    * Select the name of the queue you just created (the list auto-loaded using _Access key ID_ & _Secret key_)
-    * Select "Standard Aws Credentials" from the list or click on button "Add Credentials" to create one
+    * Select the name of the queue you just created (the list auto-loaded using _selected AWS Credentials_)
+    * Select "Aws Credentials" from the list or click on button "Add Credentials" to create one
+    * `Access Key ID` and `Secret Access Key` is setup using https://plugins.jenkins.io/aws-credential[AWS Credentials]
+    * *NOT* support for `IAM Roles and IAM MFA Token`
 
 4. Click on *Test access*
 
-You should see a success message as in the screenshot below. If you get
-an error message make sure you entered the credentials correctly. If you
+You should see a success message.
+
+If you get an error message make sure you entered the credentials correctly. If you
 still see errors double check the user, group and permissions you set up
 on Amazon Web Services.
-
-image::doc/images/global-config.png["Jenkins configuration test"]
-
-If you get the error `Unable to find a region via the region provider chain`,
-create the directory `.aws` inside the Jenkins home directory.
-Then inside the `.aws` directory add the `config` file with the following configuration.
-
-```
-[default]
-output = json
-region = <region where is your repository>
-```
-
-image::doc/images/region-not-found.png["Region not found error"]
 
 == Jenkins Job Configuration
 

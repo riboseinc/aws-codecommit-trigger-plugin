@@ -15,14 +15,9 @@
         </f:block>
 
         <f:block>
-            <span>User required permissions from AWS SQS to make the plugin work</span>
-            <ul>
-                <li>sqs:ReceiveMessage</li>
-                <li>sqs:DeleteMessage</li>
-                <li>sqs:DeleteMessageBatch</li>
-                <li>sqs:GetQueueAttributes</li>
-                <li>sqs:ListQueues <b>(optional - to query ListQueues)</b></li>
-            </ul>
+            <span>User required permissions from AWS SQS to make the plugin work (click on help button)</span>
+            <f:helpLink url="${descriptor.getHelpFile('list-permissions')}"/>
+            <f:helpArea />
         </f:block>
 
         <f:nested>

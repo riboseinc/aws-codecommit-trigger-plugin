@@ -174,22 +174,6 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
         return compatible;
     }
 
-//    public String getAccessKey() {
-//        return accessKey;
-//    }
-//
-//    public void setAccessKey(String accessKey) {
-//        this.accessKey = accessKey;
-//    }
-//
-//    public Secret getSecretKey() {
-//        return secretKey;
-//    }
-//
-//    public void setSecretKey(Secret secretKey) {
-//        this.secretKey = secretKey;
-//    }
-
     @Override
     public String getUuid() {
         return this.uuid;

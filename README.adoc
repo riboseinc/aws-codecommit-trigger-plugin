@@ -104,6 +104,9 @@ to SQS as a build trigger.
 
 image::doc/images/job-triggers.png[Build trigger configuration]
 
+== Pipeline usage sample
+
+
 == Contributing
 
 1. Fork it

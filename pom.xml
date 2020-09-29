@@ -42,7 +42,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.37</version>
+        <version>4.7</version>
         <relativePath/>
     </parent>
 
@@ -51,7 +51,7 @@
     <packaging>hpi</packaging>
 
     <properties>
-        <jenkins.version>2.138.4</jenkins.version>
+        <jenkins.version>2.244</jenkins.version>
 
 <!--        <jenkins.version>2.222.4</jenkins.version>-->
         <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
@@ -164,12 +164,12 @@
             <version>1.54</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>junit</artifactId>
-            <version>1.20</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jenkins-ci.plugins</groupId>-->
+<!--            <artifactId>junit</artifactId>-->
+<!--            <version>1.20</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.assertj</groupId>

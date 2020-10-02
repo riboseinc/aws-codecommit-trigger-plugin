@@ -30,7 +30,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
-import org.jenkinsci.plugins.multiplescms.MultiSCM;
+//import org.jenkinsci.plugins.multiplescms.MultiSCM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,9 +94,11 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
         if (this.isGitScmAvailable() && this.matchesGitSCM(event, scm)) {
             return true;
-        } else if (this.isMultiScmAvailable() && this.matchesMultiSCM(event, scm)) {
-            return true;
-        } else {
+        }
+//        else if (this.isMultiScmAvailable() && this.matchesMultiSCM(event, scm)) {
+//            return true;
+//        }
+        else {
             return false;
         }
     }
@@ -114,21 +116,21 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return matched;
     }
 
-    private boolean matchesMultiSCM(final Event event, final SCM scmProvider) {
-        if (!(scmProvider instanceof org.jenkinsci.plugins.multiplescms.MultiSCM)) {
-            return false;
-        }
-
-        final MultiSCM multiSCM = (MultiSCM) scmProvider;
-        final List<SCM> scms = multiSCM.getConfiguredSCMs();
-
-        for (final SCM scm : scms) {
-            if (this.matches(event, scm)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean matchesMultiSCM(final Event event, final SCM scmProvider) {
+//        if (!(scmProvider instanceof org.jenkinsci.plugins.multiplescms.MultiSCM)) {
+//            return false;
+//        }
+//
+//        final MultiSCM multiSCM = (MultiSCM) scmProvider;
+//        final List<SCM> scms = multiSCM.getConfiguredSCMs();
+//
+//        for (final SCM scm : scms) {
+//            if (this.matches(event, scm)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     private boolean matchesConfigs(final Event event, final List<RemoteConfig> configs) {
         for (final RemoteConfig config : configs) {
@@ -174,12 +176,12 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
         return null;
     }
 
-    private boolean isMultiScmAvailable() {
-        final Jenkins jenkins = Jenkins.get();
-        boolean hasPlugin = jenkins.getPlugin("multiple-scms") != null;
-        log.debug("Multiple-SCMs plugin found: %s", hasPlugin);
-        return hasPlugin;
-    }
+//    private boolean isMultiScmAvailable() {
+//        final Jenkins jenkins = Jenkins.get();
+//        boolean hasPlugin = jenkins.getPlugin("multiple-scms") != null;
+//        log.debug("Multiple-SCMs plugin found: %s", hasPlugin);
+//        return hasPlugin;
+//    }
 
     private boolean isGitScmAvailable() {
         final Jenkins jenkins = Jenkins.get();

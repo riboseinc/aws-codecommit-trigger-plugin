@@ -94,9 +94,11 @@ public class ScmJobEventTriggerMatcher implements EventTriggerMatcher {
 
         if (this.isGitScmAvailable() && this.matchesGitSCM(event, scm)) {
             return true;
-        } else if (this.isMultiScmAvailable() && this.matchesMultiSCM(event, scm)) {
+        }
+        else if (this.isMultiScmAvailable() && this.matchesMultiSCM(event, scm)) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }

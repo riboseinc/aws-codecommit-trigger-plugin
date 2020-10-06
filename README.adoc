@@ -77,6 +77,8 @@ on Amazon Web Services.
 
 == Jenkins Job Configuration
 
+=== Freestyle Job
+
 1. Go to `Jenkins > $job`
 2. Click on `Configure`
 3. Scroll down to `Build Triggers`
@@ -93,6 +95,37 @@ increase the amount of requests your Jenkins will have to send to AWS.
 Normally you would use the same queue and topic for multiple jobs, but
 for billing purposes it may be easier to use multiple queues, especially
 if you're running builds on behalf of a customer.
+
+=== Pipeline Job
+
+Sample Pipeline Script
+
+.Jenkinsfile
+----
+node {
+    stage('Preparation') {
+        sh "echo 'Preparation phase'"
+
+        checkout scm: [
+            $class           : 'GitSCM',
+            userRemoteConfigs: [[url: "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/testjenkins", credentialsId: "test"]], //mins
+            branches         : [[name: "refs/heads/master"]],
+        ], poll: false
+    }
+
+    stage('Build') {
+        sh "echo 'Build phase'"
+    }
+
+    stage('Results') {
+        sh "echo 'Result phase'"
+    }
+}
+----
+
+Configuration sample
+
+image::doc/images/job-pipeline-triggers.png["Pipeline configuration test"]
 
 
 == Test your setup

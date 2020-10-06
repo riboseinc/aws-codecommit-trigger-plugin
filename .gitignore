@@ -26,3 +26,7 @@ ruby/
 
 AwsFunctionsIT.java
 *ignoreme*
+<<<<<<< HEAD
+=======
+test.sh
+>>>>>>> ribose/master

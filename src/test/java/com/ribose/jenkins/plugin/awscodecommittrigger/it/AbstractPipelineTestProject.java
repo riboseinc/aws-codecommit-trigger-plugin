@@ -26,9 +26,12 @@ public abstract class AbstractPipelineTestProject extends AbstractJenkinsTestPro
         job.setDefinition(flowDefinition);
 
         QueueTaskFuture<WorkflowRun> run = job.scheduleBuild2(0);
+        assert run != null;
+
+        run.waitForStart();
         WorkflowRun wfRun = run.get();
         Assertions.assertThat(wfRun.getResult())
-            .describedAs("Pipeline unable to start succeed")
+            .describedAs("FAILED to run pipeline job")
             .isEqualTo(Result.SUCCESS);
         jenkinsRule.assertBuildStatusSuccess(wfRun);
 

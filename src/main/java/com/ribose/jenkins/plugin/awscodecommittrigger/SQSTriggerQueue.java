@@ -314,6 +314,7 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
             AWSCredentials awsCred = credentials.getCredentials();
             AmazonSQS client = this.sqsFactory.createSQSAsync(awsCred.getAWSAccessKeyId(), awsCred.getAWSSecretKey(), region);
 
+            String queueName = com.ribose.jenkins.plugin.awscodecommittrigger.utils.StringUtils.getSqsQueueName(url);
             boolean hasReadPermission = false;
 
             try {
@@ -328,19 +329,19 @@ public class SQSTriggerQueue extends AbstractDescribableImpl<SQSTriggerQueue> im
                 switch (e.getStatusCode()) {//84937356886
                     case HttpStatus.SC_FORBIDDEN:
                         if (hasReadPermission) {
-                            return FormValidation.okWithMarkup("<span class=\"error\">User does not have <i>sqs:DeleteMessageBatch</i> permission</span>");
+                            return FormValidation.errorWithMarkup("<span class=\"error\">User does not have <i>sqs:DeleteMessageBatch</i> permission</span>");
                         }
-                        return FormValidation.okWithMarkup("<span class=\"error\">User does not have <i>sqs:ReceiveMessage</i> permission</span>");
+                        return FormValidation.errorWithMarkup("<span class=\"error\">User does not have <i>sqs:ReceiveMessage</i> permission</span>");
 
                     case HttpStatus.SC_BAD_REQUEST:
-                        return FormValidation.okWithMarkup("<span class=\"info\">Access to SQS successful</span>");
+                        return FormValidation.okWithMarkup(String.format("<span class=\"info\">Access to %s successful</span>", queueName));
 
                     default:
                         return FormValidation.error(e, e.getMessage());
                 }
             } catch (final Exception e) {
                 log.error(e.getMessage(), e);
-                return FormValidation.error(e, "Error validating SQS access");
+                return FormValidation.error(e, String.format("Error validating %s access", queueName));
             }
             finally {
                 client.shutdown();

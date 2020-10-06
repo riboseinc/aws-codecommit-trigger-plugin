@@ -14,14 +14,14 @@
         <c:select context="com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentials"/>
     </f:entry>
 
-    <f:entry title="AWS Region" field="region">
-        <f:select/>
-        <tr/>
+    <f:entry title="${%AWS Region}" field="region">
+        <f:select />
+<!--        <tr/>-->
     </f:entry>
 
     <f:entry title="${%SQS Queue}" field="url">
         <f:select/>
-        <tr/>
+<!--        <tr/>-->
     </f:entry>
 
     <f:validateButton title="${%Test access}" with="region,url,credentialsId" method="validate"/>

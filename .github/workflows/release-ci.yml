@@ -20,13 +20,15 @@ jobs:
         with:
           submodules: recursive
       - name: Set Env variables
+        uses: allenevans/set-env@v1.0.0
+        with:
+          JENKINS_CI_USERNAME: ${{ secrets.JENKINS_CI_USERNAME }}
+          JENKINS_CI_PASSWORD: ${{ secrets.JENKINS_CI_PASSWORD }}
+      - name: Set GitHub config
         run: |
           echo "set some necessary env-vars"
           git config user.name "GHA Bot"
           git config user.email "actions@users.noreply.github.com"
-        env:
-          JENKINS_CI_USERNAME: ${{ secrets.JENKINS_CI_USERNAME }}
-          JENKINS_CI_PASSWORD: ${{ secrets.JENKINS_CI_PASSWORD }}
       - name: Restore maven .m2
         uses: actions/cache@v1
         with:

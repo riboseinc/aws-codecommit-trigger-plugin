@@ -248,7 +248,10 @@
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
+                    <verbose>true</verbose>
                     <gitFlowConfig>
+                        <origin>ribose</origin>
+
                         <productionBranch>master</productionBranch>
                         <developmentBranch>dev</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>

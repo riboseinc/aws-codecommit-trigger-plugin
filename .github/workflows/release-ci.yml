@@ -42,9 +42,9 @@ jobs:
         run: ./mvnw install
 #        run: ./mvnw install -Pit
       - name: Prepare for release
-        run: ./mvnw gitflow:release-start -B
+        run: echo -ne '\n' | ./mvnw gitflow:release-start
       - name: Deploy to CI
-        run: ./mvnw gitflow:release-finish
+        run: echo -ne '\n' | ./mvnw gitflow:release-finish
 #      - name: Commit changes to master
 #        uses: ad-m/github-push-action@master
 #        with:

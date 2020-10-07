@@ -248,6 +248,7 @@
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
+                    <pushRemote>false</pushRemote>
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
                         <developmentBranch>dev</developmentBranch>

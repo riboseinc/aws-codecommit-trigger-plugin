@@ -1,10 +1,9 @@
 name: release-ci
 
 on:
-  branch:
-    push:
-      branches:
-        - release
+  push:
+    branches:
+      - release
 
 jobs:
   release:

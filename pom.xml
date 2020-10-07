@@ -255,9 +255,9 @@
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
-                    <releaseFinish>
-                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
-                    </releaseFinish>
+<!--                    <releaseFinish>-->
+<!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
+<!--                    </releaseFinish>-->
                 </configuration>
             </plugin>
 

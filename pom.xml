@@ -257,19 +257,24 @@
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
 
-                        <releaseFinish>
-                            <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
-                        </releaseFinish>
+<!--                        <releaseFinish>-->
+<!--                            <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
+<!--                        </releaseFinish>-->
                     </gitFlowConfig>
+                    <settings>
+                        <servers>
+                            <server>
+                                <id>maven.jenkins-ci.org</id>
+                                <username>phuonghqh</username>
+                                <password>1234</password>
+                            </server>
+                        </servers>
+                    </settings>
+                    <commitMessagePrefix>[mvn]</commitMessagePrefix>
+                    <preReleaseGoals>clean install deploy:deploy</preReleaseGoals>
 <!--                    <releaseFinish>-->
 <!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
 <!--                    </releaseFinish>-->
-
-                    <commitMessages>
-                        <releaseStartMessage>[mvn] Update versions for release</releaseStartMessage>
-                        <releaseFinishMessage>[mvn] Update for next development version</releaseFinishMessage>
-                        <releaseVersionUpdateMessage>[mvn] Update for next development version</releaseVersionUpdateMessage>
-                    </commitMessages>
                 </configuration>
             </plugin>
 

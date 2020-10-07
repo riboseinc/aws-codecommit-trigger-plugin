@@ -214,7 +214,6 @@
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
-                    <fetchRemote>false</fetchRemote>
 <!--                    <pushRemote>false</pushRemote>-->
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>

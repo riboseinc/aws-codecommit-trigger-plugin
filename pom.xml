@@ -242,8 +242,9 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.phuonghuynh</groupId>
+                <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.14.0</version>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
@@ -252,10 +253,20 @@
                         <developmentBranch>dev</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
+
+                        <releaseFinish>
+                            <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
+                        </releaseFinish>
                     </gitFlowConfig>
-                    <releaseFinish>
-                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
-                    </releaseFinish>
+<!--                    <releaseFinish>-->
+<!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
+<!--                    </releaseFinish>-->
+
+                    <commitMessages>
+                        <releaseStartMessage>[mvn] Update versions for release</releaseStartMessage>
+                        <releaseFinishMessage>[mvn] Update for next development version</releaseFinishMessage>
+                        <releaseVersionUpdateMessage>[mvn] Update for next development version</releaseVersionUpdateMessage>
+                    </commitMessages>
                 </configuration>
             </plugin>
 

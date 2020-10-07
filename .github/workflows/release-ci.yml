@@ -31,11 +31,12 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: Generate mvn settings xml
+        uses: s4u/maven-settings-action@v2.1.1
+        with:
+          servers: '[{"id": "maven.jenkins-ci.org", "username": "${{ secrets.JENKINS_CI_USERNAME }}", "password": "${{ secrets.JENKINS_CI_PASSWORD }}"}]'
       - name: Build and invoke integration test HPI
         run: ./mvnw install
 #        run: ./mvnw install -Pit
       - name: Prepare for release
         run: echo -ne '\n' | ./mvnw gitflow:release-start gitflow:release-finish
-        env:
-          JENKINS_CI_USERNAME: ${{ secrets.JENKINS_CI_USERNAME }}
-          JENKINS_CI_PASSWORD: ${{ secrets.JENKINS_CI_PASSWORD }}

@@ -223,17 +223,17 @@
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
                     <releaseFinish>
-                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
+                        <preProductionMergeGoals>deploy:deploy</preProductionMergeGoals>
                     </releaseFinish>
-                    <settings>
-                        <servers>
-                            <server>
-                                <id>maven.jenkins-ci.org</id>
-                                <username>phuonghqh</username>
-                                <password>waiting$22i2</password>
-                            </server>
-                        </servers>
-                    </settings>
+<!--                    <settings>-->
+<!--                        <servers>-->
+<!--                            <server>-->
+<!--                                <id>maven.jenkins-ci.org</id>-->
+<!--                                <username></username>-->
+<!--                                <password></password>-->
+<!--                            </server>-->
+<!--                        </servers>-->
+<!--                    </settings>-->
                 </configuration>
             </plugin>
 

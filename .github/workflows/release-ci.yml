@@ -41,15 +41,15 @@ jobs:
         run: echo -ne '\n' | ./mvnw gitflow:release-start
       - name: Deploy to CI
         run: echo -ne '\n' | ./mvnw gitflow:release-finish
-      - name: Commit changes to master
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'master'
-          tags: true
-      - name: Commit changes to dev
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'dev'
-          tags: true
+#      - name: Commit changes to master
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: 'master'
+#          tags: true
+#      - name: Commit changes to dev
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: 'dev'
+#          tags: true

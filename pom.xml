@@ -242,41 +242,53 @@
             </plugin>
 
             <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
+                <groupId>com.github.phuonghuynh</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.14.0</version>
+                <version>1.6.3</version>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
                     <releaseRebase>true</releaseRebase>
-                    <verbose>true</verbose>
                     <gitFlowConfig>
-                        <origin>ribose</origin>
-
                         <productionBranch>master</productionBranch>
                         <developmentBranch>dev</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
-
-<!--                        <releaseFinish>-->
-<!--                            <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
-<!--                        </releaseFinish>-->
                     </gitFlowConfig>
-                    <settings>
-                        <servers>
-                            <server>
-                                <id>maven.jenkins-ci.org</id>
-                                <username>phuonghqh</username>
-                                <password>1234</password>
-                            </server>
-                        </servers>
-                    </settings>
-                    <commitMessagePrefix>[mvn]</commitMessagePrefix>
-                    <preReleaseGoals>clean install deploy:deploy</preReleaseGoals>
-<!--                    <releaseFinish>-->
-<!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
-<!--                    </releaseFinish>-->
+                    <releaseFinish>
+                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
+                    </releaseFinish>
                 </configuration>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>com.amashchenko.maven.plugin</groupId>-->
+<!--                <artifactId>gitflow-maven-plugin</artifactId>-->
+<!--                <version>1.14.0</version>-->
+<!--                <configuration>-->
+<!--                    <skipTestProject>true</skipTestProject>-->
+<!--                    <releaseRebase>true</releaseRebase>-->
+<!--                    <verbose>true</verbose>-->
+<!--                    <gitFlowConfig>-->
+<!--                        <origin>ribose</origin>-->
+
+<!--                        <productionBranch>master</productionBranch>-->
+<!--                        <developmentBranch>dev</developmentBranch>-->
+<!--                        <releaseBranchPrefix>release-</releaseBranchPrefix>-->
+<!--                        <versionTagPrefix>v</versionTagPrefix>-->
+<!--                    </gitFlowConfig>-->
+<!--                    <settings>-->
+<!--                        <servers>-->
+<!--                            <server>-->
+<!--                                <id>maven.jenkins-ci.org</id>-->
+<!--                                <username>phuonghqh</username>-->
+<!--                                <password>1234</password>-->
+<!--                            </server>-->
+<!--                        </servers>-->
+<!--                    </settings>-->
+<!--                    <commitMessagePrefix>[mvn]</commitMessagePrefix>-->
+<!--                    <preReleaseGoals>clean install deploy:deploy</preReleaseGoals>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>

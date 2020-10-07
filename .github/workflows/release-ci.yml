@@ -21,4 +21,21 @@ jobs:
         with:
           submodules: recursive
       - name: Build and invoke integration test HPI
-        run: mvn install -Pit
+        run: ./mvnw install
+#        run: ./mvnw install -Pit
+      - name: Prepare for release
+        run: ./mvnw gitflow:release-start -B
+      - name: Deploy to CI
+        run: ./mvnw gitflow:release-finish
+#      - name: Commit changes to master
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: 'master'
+#          tags: true
+#      - name: Commit changes to dev
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: 'dev'
+#          tags: true

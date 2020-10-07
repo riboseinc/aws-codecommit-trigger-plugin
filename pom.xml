@@ -222,7 +222,7 @@
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
                     <releaseFinish>
-                        <preProductionMergeGoals>deploy:deploy</preProductionMergeGoals>
+                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
                     </releaseFinish>
 <!--                    <settings>-->
 <!--                        <servers>-->

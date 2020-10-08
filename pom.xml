@@ -236,15 +236,14 @@
                     <releaseMergeFFOnly>true</releaseMergeFFOnly>
                     <verbose>true</verbose>
                     <gitFlowConfig>
-                        <origin>ribose</origin>
+                        <!--                        <origin>ribose</origin>-->
                         <productionBranch>release</productionBranch>
                         <developmentBranch>master</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
                     <releaseFinish>
-                        <preProductionMergeGoals>clean install</preProductionMergeGoals>
-                        <!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
+                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
                     </releaseFinish>
                 </configuration>
             </plugin>

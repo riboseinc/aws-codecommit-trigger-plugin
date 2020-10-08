@@ -208,33 +208,44 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.phuonghuynh</groupId>
+                <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.6.3</version>
+                <version>1.14.0</version>
                 <configuration>
                     <skipTestProject>true</skipTestProject>
-                    <releaseRebase>true</releaseRebase>
-<!--                    <pushRemote>false</pushRemote>-->
+                    <releaseMergeFFOnly>true</releaseMergeFFOnly>
+                    <verbose>true</verbose>
                     <gitFlowConfig>
-                        <productionBranch>master</productionBranch>
-                        <developmentBranch>dev</developmentBranch>
+                        <origin>ribose</origin>
+                        <productionBranch>release</productionBranch>
+                        <developmentBranch>master</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <versionTagPrefix>v</versionTagPrefix>
                     </gitFlowConfig>
-                    <releaseFinish>
-                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
-                    </releaseFinish>
-<!--                    <settings>-->
-<!--                        <servers>-->
-<!--                            <server>-->
-<!--                                <id>maven.jenkins-ci.org</id>-->
-<!--                                <username></username>-->
-<!--                                <password></password>-->
-<!--                            </server>-->
-<!--                        </servers>-->
-<!--                    </settings>-->
+                    <commitMessagePrefix>[mvn]</commitMessagePrefix>
+                    <preReleaseGoals>clean install</preReleaseGoals>
+                    <!--preReleaseGoals>clean install deploy:deploy</preReleaseGoals-->
                 </configuration>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>com.github.phuonghuynh</groupId>-->
+<!--                <artifactId>gitflow-maven-plugin</artifactId>-->
+<!--                <version>1.6.3</version>-->
+<!--                <configuration>-->
+<!--                    <skipTestProject>true</skipTestProject>-->
+<!--                    <releaseRebase>true</releaseRebase>-->
+<!--                    <gitFlowConfig>-->
+<!--                        <productionBranch>master</productionBranch>-->
+<!--                        <developmentBranch>dev</developmentBranch>-->
+<!--                        <releaseBranchPrefix>release-</releaseBranchPrefix>-->
+<!--                        <versionTagPrefix>v</versionTagPrefix>-->
+<!--                    </gitFlowConfig>-->
+<!--                    <releaseFinish>-->
+<!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
+<!--                    </releaseFinish>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>

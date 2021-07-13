@@ -20,23 +20,6 @@
             <f:helpArea />
         </f:block>
 
-        <f:nested>
-            <table style="width:100%">
-                <f:block>
-                    <f:repeatable field="sqsQueues" minimum="${1}" noAddButton="true">
-                        <table style="width:100%">
-                            <st:include from="${descriptor}" page="${descriptor.configPage}"/>
-                            <f:entry>
-                                <div align="right">
-                                    <input type="button" value="${%Add}" class="repeatable-add show-if-last"/>
-                                    <input type="button" value="${%Delete}"
-                                           class="repeatable-delete danger show-if-not-only" style="margin-left: 1em;"/>
-                                </div>
-                            </f:entry>
-                        </table>
-                    </f:repeatable>
-                </f:block>
-            </table>
-        </f:nested>
+        <f:repeatableProperty add="Add SQS Config" field="sqsQueues" />
     </f:section>
 </j:jelly>

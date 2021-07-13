@@ -16,12 +16,10 @@
 
     <f:entry title="${%AWS Region}" field="region">
         <f:select />
-<!--        <tr/>-->
     </f:entry>
 
     <f:entry title="${%SQS Queue}" field="url">
         <f:select/>
-<!--        <tr/>-->
     </f:entry>
 
     <f:validateButton title="${%Test access}" with="region,url,credentialsId" method="validate"/>
@@ -37,4 +35,6 @@
             <f:textbox default="10"/>
         </f:entry>
     </f:advanced>
+
+    <f:repeatableDeleteButton />
 </j:jelly>

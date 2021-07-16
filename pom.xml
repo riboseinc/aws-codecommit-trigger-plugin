@@ -58,6 +58,11 @@
 
     <repositories>
         <repository>
+            <id>local</id>
+            <url>file://${user.dir}/.m2</url>
+        </repository>
+
+        <repository>
             <id>repo.jenkins-ci.org</id>
             <url>https://repo.jenkins-ci.org/public/</url>
             <releases>
@@ -80,10 +85,10 @@
             </snapshots>
         </repository>
 
-        <repository>
-            <id>findify</id>
-            <url>https://dl.bintray.com/findify/maven/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>findify</id>-->
+<!--            <url>https://dl.bintray.com/findify/maven/</url>-->
+<!--        </repository>-->
     </repositories>
 
     <pluginRepositories>

@@ -211,24 +211,30 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.phuonghuynh</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.6.3</version>
-                <configuration>
-                    <skipTestProject>true</skipTestProject>
-                    <releaseMergeFFOnly>true</releaseMergeFFOnly>
-                    <verbose>true</verbose>
-                    <gitFlowConfig>
-                        <productionBranch>release</productionBranch>
-                        <developmentBranch>master</developmentBranch>
-                        <releaseBranchPrefix>release-</releaseBranchPrefix>
-                        <versionTagPrefix>v</versionTagPrefix>
-                    </gitFlowConfig>
-                    <releaseFinish>
-                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>
-                    </releaseFinish>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.8.1</version>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>com.github.phuonghuynh</groupId>-->
+<!--                <artifactId>gitflow-maven-plugin</artifactId>-->
+<!--                <version>1.6.3</version>-->
+<!--                <configuration>-->
+<!--                    <skipTestProject>true</skipTestProject>-->
+<!--                    <releaseMergeFFOnly>true</releaseMergeFFOnly>-->
+<!--                    <verbose>true</verbose>-->
+<!--                    <gitFlowConfig>-->
+<!--                        <productionBranch>release</productionBranch>-->
+<!--                        <developmentBranch>master</developmentBranch>-->
+<!--                        <releaseBranchPrefix>release-</releaseBranchPrefix>-->
+<!--                        <versionTagPrefix>v</versionTagPrefix>-->
+<!--                    </gitFlowConfig>-->
+<!--                    <releaseFinish>-->
+<!--                        <preProductionMergeGoals>clean install deploy:deploy</preProductionMergeGoals>-->
+<!--                    </releaseFinish>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>

@@ -7,6 +7,7 @@ on:
 
 env:
   PUSH_BRANCH: gha/${{github.workflow}}#${{github.run_id}}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   release:
@@ -34,6 +35,14 @@ jobs:
         uses: s4u/maven-settings-action@v2.1.1
         with:
           servers: '[{"id": "maven.jenkins-ci.org", "username": "${{ secrets.JENKINS_CI_USERNAME }}", "password": "${{ secrets.JENKINS_CI_PASSWORD }}"}]'
+
+      - name: Restore maven .m2
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: deploy hpi to jenkins-ci
         run: |

@@ -1,4 +1,4 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat Dec 07 00:20:51 ICT 2019
-sqsmock_2.11-0.3.2.jar>findify=
-sqsmock_2.11-0.3.2.pom>findify=
+#Sat Jul 17 13:51:47 ICT 2021
+sqsmock_2.11-0.3.2.jar>=
+sqsmock_2.11-0.3.2.pom>=

@@ -28,8 +28,14 @@ jobs:
         uses: s4u/maven-settings-action@v2.1.1
         with:
           servers: '[{"id": "maven.jenkins-ci.org", "username": "${{ secrets.JENKINS_CI_USERNAME }}", "password": "${{ secrets.JENKINS_CI_PASSWORD }}"}]'
-      - name: Build and invoke integration test HPI
-        run: ./mvnw install
+
+      - name: set release version
+        run: |
+          ./mvnw install
+          ./mvnw release:update-versions -DautoVersionSubmodules=true
 #        run: ./mvnw install -Pit
-      - name: Prepare for release
-        run: echo -ne '\n' | ./mvnw gitflow:release-start gitflow:release-finish
+#      - name: Prepare for release
+#        run: echo -ne '\n' | ./mvnw gitflow:release-start gitflow:release-finish
+
+      - name: deploy hpi to jenkins-ci
+        run: ./mvnw deploy:deploy

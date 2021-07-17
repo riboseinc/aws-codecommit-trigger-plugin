@@ -21,16 +21,9 @@ jobs:
           submodules: recursive
       - name: Set Git Config
         run: |
-          echo "set some necessary env-vars"
-          git config user.name "GHA Bot"
-          git config user.email "actions@users.noreply.github.com"
-      - name: Restore maven .m2
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          git config --global user.name "github-actions"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Generate mvn settings xml
         uses: s4u/maven-settings-action@v2.1.1
         with:

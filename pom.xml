@@ -58,6 +58,12 @@
 
     <repositories>
         <repository>
+            <id>localm2</id>
+            <url>file://${project.basedir}/.m2</url>
+            <layout>default</layout>
+        </repository>
+
+        <repository>
             <id>repo.jenkins-ci.org</id>
             <url>https://repo.jenkins-ci.org/public/</url>
             <releases>
@@ -78,11 +84,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-
-        <repository>
-            <id>findify</id>
-            <url>https://dl.bintray.com/findify/maven/</url>
         </repository>
     </repositories>
 
@@ -207,26 +208,6 @@
                 </configuration>
             </plugin>
 
-            <!--            <plugin>-->
-            <!--                <groupId>com.amashchenko.maven.plugin</groupId>-->
-            <!--                <artifactId>gitflow-maven-plugin</artifactId>-->
-            <!--                <version>1.14.0</version>-->
-            <!--                <configuration>-->
-            <!--                    <skipTestProject>true</skipTestProject>-->
-            <!--                    <releaseMergeFFOnly>true</releaseMergeFFOnly>-->
-            <!--                    <verbose>true</verbose>-->
-            <!--                    <gitFlowConfig>-->
-            <!--                        <origin>ribose</origin>-->
-            <!--                        <productionBranch>release</productionBranch>-->
-            <!--                        <developmentBranch>master</developmentBranch>-->
-            <!--                        <releaseBranchPrefix>release-</releaseBranchPrefix>-->
-            <!--                        <versionTagPrefix>v</versionTagPrefix>-->
-            <!--                    </gitFlowConfig>-->
-            <!--                    <commitMessagePrefix>[mvn]</commitMessagePrefix>-->
-            <!--                    <preReleaseGoals>clean install deploy:deploy</preReleaseGoals>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
-
             <plugin>
                 <groupId>com.github.phuonghuynh</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
@@ -236,7 +217,6 @@
                     <releaseMergeFFOnly>true</releaseMergeFFOnly>
                     <verbose>true</verbose>
                     <gitFlowConfig>
-                        <!--                        <origin>ribose</origin>-->
                         <productionBranch>release</productionBranch>
                         <developmentBranch>master</developmentBranch>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>

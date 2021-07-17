@@ -5,6 +5,9 @@ on:
     branches:
       - release
 
+env:
+  PUSH_BRANCH: gha/${{github.workflow}}#${{github.run_id}}
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -19,23 +22,34 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
+
       - name: Set Git Config
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b ${{env.PUSH_BRANCH}}
+          git push origin ${{env.PUSH_BRANCH}}
 
       - name: Generate mvn settings xml
         uses: s4u/maven-settings-action@v2.1.1
         with:
           servers: '[{"id": "maven.jenkins-ci.org", "username": "${{ secrets.JENKINS_CI_USERNAME }}", "password": "${{ secrets.JENKINS_CI_PASSWORD }}"}]'
 
-      - name: set release version
+      - name: deploy hpi to jenkins-ci
         run: |
           ./mvnw install
-          ./mvnw release:update-versions -DautoVersionSubmodules=true
-#        run: ./mvnw install -Pit
-#      - name: Prepare for release
-#        run: echo -ne '\n' | ./mvnw gitflow:release-start gitflow:release-finish
+          echo -ne '\n' | ./mvnw release:prepare
+          git push origin ${{env.PUSH_BRANCH}}
 
-      - name: deploy hpi to jenkins-ci
-        run: ./mvnw deploy:deploy
+      - name: send PR to review
+        if: always()
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: release
+          destination_branch: master
+          pr_reviewer: phuonghuynh
+          pr_assignee: phuonghuynh
+          pr_title: "Deployed to Jenkins, GHA id: '${{github.workflow}}#${{github.run_id}}'"
+          pr_body: "Console log can be view [here](${{env.RUN_URL}})"
+          pr_allow_empty: true
+          pr_label: release-ci

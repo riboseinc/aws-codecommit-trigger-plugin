@@ -59,7 +59,7 @@
     <repositories>
         <repository>
             <id>localm2</id>
-            <url>file://${user.dir}/.m2</url>
+            <url>file://${project.basedir}/.m2</url>
             <layout>default</layout>
         </repository>
 

@@ -54,7 +54,7 @@ jobs:
         if: always()
         uses: repo-sync/pull-request@v2
         with:
-          source_branch: release
+          source_branch: ${{env.PUSH_BRANCH}}
           destination_branch: master
           pr_reviewer: phuonghuynh
           pr_assignee: phuonghuynh

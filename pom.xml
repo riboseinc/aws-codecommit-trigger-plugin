@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <artifactId>aws-codecommit-trigger</artifactId>
-    <version>3.0.12-SNAPSHOT</version>
+    <version>3.0.13-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
 
@@ -47,12 +47,12 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.7</version>
+        <version>4.8</version>
         <relativePath />
     </parent>
 
     <properties>
-        <jenkins.version>2.235.5</jenkins.version>
+        <jenkins.version>2.289.1</jenkins.version>
         <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
         <java.level>8</java.level>
     </properties>
@@ -110,10 +110,30 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--// resolve deps-->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20190722</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.12.89-292.v2712528e879c</version>
+        </dependency>
+        <!--        com.amazonaws:aws-java-sdk-sqs:1.11.298-->
+        <!--// -->
+<!--        <dependency>-->
+<!--            <groupId>org.jenkins-ci.plugins</groupId>-->
+<!--            <artifactId>ssh-credentials</artifactId>-->
+<!--            <version>1.19</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>git</artifactId>
-            <version>4.4.4</version>
+            <version>4.10.3</version>
         </dependency>
 
         <dependency>
@@ -125,7 +145,8 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>aws-credentials</artifactId>
-            <version>1.28</version>
+            <!--            <version>1.28</version>-->
+            <version>1.33</version>
         </dependency>
 
         <dependency>
@@ -159,20 +180,21 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
-            <version>2.22</version>
+            <version>622.vb_8e7c15b_c95a_</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>script-security</artifactId>
-            <version>1.75</version>
+            <version>1118.vba21ca2e3286</version>
+<!--            <version>1.78</version>-->
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>1.18</version>
+            <version>1.19</version>
             <scope>test</scope>
         </dependency>
 
@@ -215,10 +237,10 @@
                 <version>3.0.0-M4</version>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
-<!--                    <preparationGoals>clean</preparationGoals>-->
+                    <!--                    <preparationGoals>clean</preparationGoals>-->
                     <preparationGoals>install deploy:deploy</preparationGoals>
                     <pushChanges>false</pushChanges>
-<!--                    <remoteTagging>false</remoteTagging>-->
+                    <!--                    <remoteTagging>false</remoteTagging>-->
                 </configuration>
             </plugin>
 
